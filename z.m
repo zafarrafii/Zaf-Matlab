@@ -1,6 +1,5 @@
 classdef z
-    % Z
-    %   This class proposes some basic methods for audio signal processing.
+    % Z This class implements few basic methods for audio signal processing
     %
     % Z Methods:
     %   stft - Short-Time Fourier Transform (STFT)
@@ -15,7 +14,7 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   08/14/17
+    %   08/16/17
     %
     % References
     %   Judith C. Brown, Calculation of a constant Q spectral transform,
@@ -28,39 +27,48 @@ classdef z
     methods (Static = true)
         
         function audio_stft = stft(audio_signal,window_function,step_length)
-            % Short-Time Fourier Transform (STFT)
-            %   Here is some help text for this method.
+            % stft Short-Time Fourier Transform (STFT)
             %   
-            %   Example:
-            %       % Audio signal and sample rate in Hz
+            %   Arguments:
+            %       audio_signal: vector of size [number_samples,1]
+            %       window_function: vector of size [window_length,1]
+            %       step_length: scalar
+            %       audio_stft: matrix of size [window_length,number_frames]
+            %   
+            %   Example: Visualize the spectrogram of an audio file
+            %       % Stereo signal and sample rate in Hz
             %       [audio_signal,sample_rate] = audioread('audio_file.wav');
-            %
+            %       
             %       % Window duration in seconds (audio is stationary around 40 milliseconds)
             %       window_duration = 0.04;
-            %
+            %       
             %       % Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
             %       window_length = 2^nextpow2(window_duration*sample_rate);
-            %
+            %       
             %       % Window function (periodic Hamming window for COLA)
             %       window_function = hamming(window_length,'periodic');
-            %
+            %       
             %       % Step length in samples (half the window length for COLA)
             %       step_length = window_length/2;
-            % 
-            %       % STFT of the left channel
-            %       audio_stft = z.stft(audio_signal(:,1),window_function,step_length);
-            %
+            %       
+            %       % STFT of the average over the channels
+            %       audio_stft = z.stft(mean(audio_signal,2),window_function,step_length);
+            %       
             %       % Magnitude spectrogram (without the DC component and the mirrored frequencies)
             %       audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
-            %
-            %       % Spectrogram displayed in dB
+            %       
+            %       % Spectrogram displayed in dB, s, and kHz
             %       figure
             %       imagesc(db(audio_spectrogram))
             %       axis xy
             %       colormap(jet)
-            %       title('Spectrogram')
-            %       xlabel('Time')
-            %       ylabel('Frequency')
+            %       title('Spectrogram (dB)')
+            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
+            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
+            %       xlabel('Time (s)')
+            %       yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
+            %       yticklabels(1:sample_rate/2*1e-3)
+            %       ylabel('Frequency (kHz)')
             %
             %   See also fft, istft
             
@@ -96,8 +104,46 @@ classdef z
         end
         
         function audio_signal = istft(audio_stft,window_function,step_length)
-            % Inverse Short-Time Fourier Transform (ISTFT)
-            %   Here is some help text for this method.
+            % istft Inverse Short-Time Fourier Transform
+            %   
+            %   Arguments:
+            %       audio_stft: matrix of size [window_length,number_frames]
+            %       window_function: vector of size [window_length,1]
+            %       step_length: scalar
+            %       audio_signal: vector of size [number_samples,1]
+            %   
+            %   Example: Apply a simple time-frequency mask to extract the center channel
+            %       % Stereo signal and sample rate in Hz
+            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %       
+            %       % Parameters for the STFT (see also stft)
+            %       window_duration = 0.04;
+            %       window_length = 2^nextpow2(window_duration*sample_rate);
+            %       window_function = hamming(window_length,'periodic');
+            %       step_length = window_length/2;
+            %       
+            %       % STFT of the left and right channels
+            %       audio_stft1 = z.stft(audio_signal(:,1),window_function,step_length);
+            %       audio_stft2 = z.stft(audio_signal(:,1),window_function,step_length);
+            %       
+            %       % Magnitude spectrogram (with DC component) of the left and right channels
+            %       audio_spectrogram1 = abs(audio_stft1(1:window_length/2+1,:));
+            %       audio_spectrogram2 = abs(audio_stft2(1:window_length/2+1,:));
+            %       
+            %       % Time-frequency mask of the center channel for the left and right channels
+            %       audio_mask1 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram1;
+            %       audio_mask2 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram2;
+            %       
+            %       % STFT of the center channel for the left and right channels (with extension to mirrored frequencies)
+            %       audio_stft1 = cat(1,audio_mask1,flipud(audio_mask1(2:end-1,:))).*audio_stft1;
+            %       audio_stft2 = cat(1,audio_mask2,flipud(audio_mask2(2:end-1,:))).*audio_stft2;
+            %       
+            %       % Synthesized signal of the center channel for the left and right channels 
+            %       audio_signal1 = z.istft(audio_stft1,window_function,step_length);
+            %       audio_signal2 = z.istft(audio_stft2,window_function,step_length);
+            %       
+            %       % Finalized stereo signal of the center channel
+            %       audiowrite('center_signal.wav',cat(2,audio_signal1,audio_signal2),sample_rate);
             %
             %   See also ifft, stft
             
