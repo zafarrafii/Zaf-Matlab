@@ -30,12 +30,12 @@ classdef z
             % stft Short-Time Fourier Transform (STFT)
             %   
             %   Arguments:
-            %       audio_signal: vector of size [number_samples,1]
-            %       window_function: vector of size [window_length,1]
-            %       step_length: scalar
-            %       audio_stft: matrix of size [window_length,number_frames]
+            %       audio_signal: single-channel audio signal [number_samples,1]
+            %       window_function: one-column window function [window_length,1]
+            %       step_length: step length (in samples)
+            %       audio_stft: complex audio STFT [window_length,number_frames]
             %   
-            %   Example: Visualize the spectrogram of an audio file
+            %   Example: Compute and display the spectrogram of an audio file
             %       % Stereo signal and sample rate in Hz
             %       [audio_signal,sample_rate] = audioread('audio_file.wav');
             %       
@@ -57,7 +57,7 @@ classdef z
             %       % Magnitude spectrogram (without the DC component and the mirrored frequencies)
             %       audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
             %       
-            %       % Spectrogram displayed in dB, s, and kHz
+            %       % Spectrogram displayed in dB, seconds, and kHz
             %       figure
             %       imagesc(db(audio_spectrogram))
             %       axis xy
@@ -70,7 +70,7 @@ classdef z
             %       yticklabels(1:sample_rate/2*1e-3)
             %       ylabel('Frequency (kHz)')
             %
-            %   See also fft, istft
+            %   See also fft, istft, spectrogram
             
             % Number of samples
             number_samples = length(audio_signal);
@@ -107,12 +107,12 @@ classdef z
             % istft Inverse Short-Time Fourier Transform
             %   
             %   Arguments:
-            %       audio_stft: matrix of size [window_length,number_frames]
-            %       window_function: vector of size [window_length,1]
-            %       step_length: scalar
-            %       audio_signal: vector of size [number_samples,1]
+            %       audio_stft: complex audio STFT [window_length,number_frames]
+            %       window_function: one-column window function [window_length,1]
+            %       step_length: step length (in samples)
+            %       audio_signal: single-channel audio signal [number_samples,1]
             %   
-            %   Example: Apply a simple time-frequency mask to extract the center channel
+            %   Example: Generate time-frequency masks to synthesize the center and side channels of a stereo audio file
             %       % Stereo signal and sample rate in Hz
             %       [audio_signal,sample_rate] = audioread('audio_file.wav');
             %       
@@ -182,33 +182,79 @@ classdef z
         end
         
         function audio_mfcc = mfcc(audio_signal,sample_rate,number_filters,number_coefficients)
-            % Mel Frequency Cepstrum Coefficients (MFFCs)
-            %
+            % mfcc Mel Frequency Cepstrum Coefficients (MFFCs)
+            %   
+            %   Arguments:
+            %       audio_signal: single-channel audio signal [number_samples,1]
+            %       sample_rate: sample rate (in Hz)
+            %       number_filters: number of triangular 
+            %       number_coefficients: number of mel-frequency cepstrum coefficients (without the 0th coefficient)
+            %       audio_signal: vector of size [number_samples,1]
+            %   
+            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+            %       % Stereo signal and sample rate in Hz
+            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %       
+            %       % MFCC of the average over the channels for a given number of filters and coefficients
+            %       number_filters = 40;
+            %       number_coefficients = 20;
+            %       audio_mfcc = z.mfcc(mean(audio_signal,2),sample_rate,number_filters,number_coefficients);
+            %       
+            %       % Delta and delta-delta MFCCs
+            %       audio_deltamfcc = diff(audio_mfcc,1,2);
+            %       audio_deltadeltamfcc = diff(audio_deltamfcc,1,2);
+            %       
+            %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs
+            %       figure
+            %       subplot(3,1,1)
+            %       plot(audio_mfcc')
+            %       axis tight
+            %       title('MFCC')
+            %       xlabel('Time frames')
+            %       subplot(3,1,2)
+            %       plot(audio_deltamfcc')
+            %       axis tight
+            %       title('Delta MFCC')
+            %       xlabel('Time frames')
+            %       subplot(3,1,3)
+            %       plot(audio_deltadeltamfcc')
+            %       axis tight
+            %       title('Delta-delta MFCC')
+            %       xlabel('Time frames')
+            %   
+            %   See also z.stft, dct
             
-            % Compute the audio spectrogram
-            window_length = 2^nextpow2(0.04*sample_rate);
+            % Compute the magnitude spectrogram (without the DC component and mirrored frequencies)
+            window_duration = 0.04;
+            window_length = 2^nextpow2(window_duration*sample_rate);
             window_function = hamming(window_length,'periodic');
             step_length = window_length/2;
-            audio_spectrogram = spectrogram(audio_signal,window_function,step_length);  % Matlab's spectrogram
-            audio_spectrogram = abs(audio_spectrogram(2:end,:));                        % Remove the DC component and take magnitude value
+            audio_stft = z.stft(audio_signal,window_function,step_length);
+            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
             
             % Compute the start indices of the triangular filters
-            mininum_melfrequency = frq2mel(sample_rate/window_length);                          % Minimum mel frequency value in Hz
-            maximum_melfrequency = frq2mel(sample_rate/2);                                      % Maximum mel frequency value in Hz
+            mininum_melfrequency = z.frq2mel(sample_rate/window_length);                          % Minimum mel frequency value in Hz
+            maximum_melfrequency = z.frq2mel(sample_rate/2);                                      % Maximum mel frequency value in Hz
             filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);	% Width of a triangular filter in the mel scale
             filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;          % Start (and end) indices of the triangular filters (linearly spaced in the mel scale)
-            filter_indices = round(mel2frq(filter_indices)*window_length/sample_rate);          % Start (and end) indices of the triangular filters (logarithmically spaced in the linear scale)
+            filter_indices = round(z.mel2frq(filter_indices)*window_length/sample_rate);          % Start (and end) indices of the triangular filters (logarithmically spaced in the linear scale)
             
             % Compute the MFCCs
             filter_bank = zeros(number_filters,window_length/2);                                      % Filter bank
             for filter_index = 1:number_filters                                                     % Loop over the filters
+                % Left side of the triangle filter (linspace gives more rigorous results than triang!)
                 filter_bank(filter_index,filter_indices(filter_index):filter_indices(filter_index+1)) ...
-                    = linspace(0,1,filter_indices(filter_index+1)-filter_indices(filter_index)+1);    % Left side of the triangle filter (linspace gives more rigorous results than triang!)
+                    = linspace(0,1,filter_indices(filter_index+1)-filter_indices(filter_index)+1);
+                % Right side of the triangle filter
                 filter_bank(filter_index,filter_indices(filter_index+1):filter_indices(filter_index+2)) ...
-                    = linspace(1,0,filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);  % Right side of the triangle filter
+                    = linspace(1,0,filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);  
             end
-            audio_mfcc = dct(log(filter_bank*audio_spectrogram));                                   % Discrete Cosine Transform of the log of the magnitude spectrogram mapped onto the melscale using the filter bank
-            audio_mfcc = audio_mfcc(2:number_coefficients+1,:);                                     % The first coefficients (not including the 0th) represent the MFCCs
+            
+            % Discrete Cosine Transform of the log of the magnitude spectrogram mapped onto the melscale using the filter bank
+            audio_mfcc = dct(log(filter_bank*audio_spectrogram));
+            
+            % The first coefficients (not including the 0th) represent the MFCCs
+            audio_mfcc = audio_mfcc(2:number_coefficients+1,:);
             
         end
         
