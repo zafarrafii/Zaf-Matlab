@@ -14,7 +14,7 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   08/16/17
+    %   08/18/17
     %
     % References
     %   Judith C. Brown, Calculation of a constant Q spectral transform,
@@ -187,7 +187,7 @@ classdef z
             %   Arguments:
             %       audio_signal: single-channel audio signal [number_samples,1]
             %       sample_rate: sample rate (in Hz)
-            %       number_filters: number of triangular 
+            %       number_filters: number of filters 
             %       number_coefficients: number of mel-frequency cepstrum coefficients (without the 0th coefficient)
             %       audio_signal: vector of size [number_samples,1]
             %   
@@ -224,52 +224,71 @@ classdef z
             %   
             %   See also z.stft, dct
             
-            % Compute the magnitude spectrogram (without the DC component and mirrored frequencies)
+            %%% Compute the spectrogram
+            % Window duration in seconds (audio is stationary around 40 
+            % milliseconds)
             window_duration = 0.04;
+            
+            % Window length in samples (power of 2 for fast FFT and 
+            % constant overlap-add (COLA))
             window_length = 2^nextpow2(window_duration*sample_rate);
+            
+            % Window function (periodic Hamming window for COLA)
             window_function = hamming(window_length,'periodic');
+            
+            % Step length in samples (half the window length for COLA)
             step_length = window_length/2;
-            audio_stft = z.stft(audio_signal,window_function,step_length);
+            
+            % STFT of the average over the channels
+            audio_stft = z.stft(mean(audio_signal,2),window_function,step_length);
+            
+            % Magnitude spectrogram (without the DC component and the 
+            % mirrored frequencies)
             audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
             
-            % Compute the start indices of the triangular filters
-            mininum_melfrequency = z.frq2mel(sample_rate/window_length);                          % Minimum mel frequency value in Hz
-            maximum_melfrequency = z.frq2mel(sample_rate/2);                                      % Maximum mel frequency value in Hz
-            filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);	% Width of a triangular filter in the mel scale
-            filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;          % Start (and end) indices of the triangular filters (linearly spaced in the mel scale)
-            filter_indices = round(z.mel2frq(filter_indices)*window_length/sample_rate);          % Start (and end) indices of the triangular filters (logarithmically spaced in the linear scale)
+            %%% Compute the filter bank
+            % Minimum mel frequency
+            mininum_melfrequency = 2595*log10(1+(sample_rate/window_length)/700);
             
-            % Compute the MFCCs
-            filter_bank = zeros(number_filters,window_length/2);                                      % Filter bank
-            for filter_index = 1:number_filters                                                     % Loop over the filters
-                % Left side of the triangle filter (linspace gives more rigorous results than triang!)
+            % Maximum mel frequency
+            maximum_melfrequency = 2595*log10(1+(sample_rate/2)/700);
+            
+            % Width of a filter in the mel scale
+            filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
+            
+            % Indices of the overlapping filters (linearly spaced in the 
+            % mel scale)
+            filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
+            
+            % Indices of the overlapping filters (logarithmically spaced in 
+            % the linear scale)
+            filter_indices = round((700*(10.^(filter_indices/2595)-1))*window_length/sample_rate);
+            
+            % Filter bank
+            filter_bank = zeros(number_filters,window_length/2);
+            
+            % Loop over the filters
+            for filter_index = 1:number_filters
+                                
+                % Left side of the triangular overlapping filter (linspace 
+                % gives a cleaner filter bank than triang or bartlett!)
                 filter_bank(filter_index,filter_indices(filter_index):filter_indices(filter_index+1)) ...
                     = linspace(0,1,filter_indices(filter_index+1)-filter_indices(filter_index)+1);
-                % Right side of the triangle filter
+                
+                % Right side of the triangular overlapping filter
                 filter_bank(filter_index,filter_indices(filter_index+1):filter_indices(filter_index+2)) ...
-                    = linspace(1,0,filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);  
+                    = linspace(1,0,filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);
             end
             
-            % Discrete Cosine Transform of the log of the magnitude spectrogram mapped onto the melscale using the filter bank
+            %%% Compute the MFCCs
+            % Discrete cosine transform of the log of the magnitude 
+            % spectrogram mapped onto the mel scale using the filter bank
             audio_mfcc = dct(log(filter_bank*audio_spectrogram));
             
-            % The first coefficients (not including the 0th) represent the MFCCs
+            % The first coefficients (without the 0th) represent the MFCCs
             audio_mfcc = audio_mfcc(2:number_coefficients+1,:);
             
         end
-        
-        function melfrequency_value = frq2mel(frequency_value)
-            
-            melfrequency_value = 2595*log10(1+frequency_value/700);
-            
-        end
-        
-        function frequency_value = mel2frq(melfrequency_value)
-            
-            frequency_value = 700*(10.^(melfrequency_value/2595)-1);
-            
-        end
-        
         
         function cqt_kernel = kernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
             
