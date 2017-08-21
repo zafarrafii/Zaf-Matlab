@@ -5,8 +5,8 @@ classdef z
     %   stft - Short-Time Fourier Transform (STFT)
     %   istft - Inverse STFT
     %   mfcc - Mel Frequency Cepstrum Coefficients (MFCCs)
-    %   cqt - Constant Q Transform (CQT)
-    %   cqtkernel - CQT kernel
+    %   cqtkernel - Constant Q Transform (CQT) kernel
+    %   cqtspectrogram - CQT spectrogram
     %   chromagram - Chromagram
     %
     % See also http://zafarrafii.com
@@ -14,26 +14,19 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   08/18/17
-    %
-    % References
-    %   Judith C. Brown, Calculation of a constant Q spectral transform,
-    %   The Journal of the Acoustical Society of America, 89, 1991.
-    %
-    %   Judith C. Brown and Miller S. Puckette, An efficient algorithm for
-    %   the calculation of a constant Q transform, The Journal of the
-    %   Acoustical Society of America, 95, 1992.
+    %   08/21/17
     
     methods (Static = true)
         
         function audio_stft = stft(audio_signal,window_function,step_length)
             % stft Short-Time Fourier Transform (STFT)
+            %   audio_stft = z.stft(audio_signal,window_function,step_length);
             %   
             %   Arguments:
             %       audio_signal: single-channel audio signal [number_samples,1]
             %       window_function: one-column window function [window_length,1]
             %       step_length: step length (in samples)
-            %       audio_stft: complex audio STFT [window_length,number_frames]
+            %       audio_stft: audio STFT [window_length,number_frames]
             %   
             %   Example: Compute and display the spectrogram of an audio file
             %       % Stereo signal and sample rate in Hz
@@ -105,9 +98,10 @@ classdef z
         
         function audio_signal = istft(audio_stft,window_function,step_length)
             % istft Inverse Short-Time Fourier Transform
+            %   audio_signal = z.istft(audio_stft,window_function,step_length);
             %   
             %   Arguments:
-            %       audio_stft: complex audio STFT [window_length,number_frames]
+            %       audio_stft: audio STFT [window_length,number_frames]
             %       window_function: one-column window function [window_length,1]
             %       step_length: step length (in samples)
             %       audio_signal: single-channel audio signal [number_samples,1]
@@ -183,6 +177,7 @@ classdef z
         
         function audio_mfcc = mfcc(audio_signal,sample_rate,number_filters,number_coefficients)
             % mfcc Mel Frequency Cepstrum Coefficients (MFFCs)
+            %   audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
             %   
             %   Arguments:
             %       audio_signal: single-channel audio signal [number_samples,1]
@@ -290,7 +285,36 @@ classdef z
             
         end
         
-        function cqt_kernel = kernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
+        function cqt_kernel = cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
+            % cqtkernel Constant Q Transform (CQT) kernel
+            %   cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %   
+            %   Arguments:
+            %       sample_rate: sample rate (in Hz)
+            %       frequency_resolution: frequency resolution in number of frequency channels per semitones
+            %       minimum_frequency: minimum frequency in Hz
+            %       maximum_frequency: maximum frequency in Hz
+            %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
+            %   
+            %   Example: Compute and display the CQT kernel
+            %       % CQT kernel parameters
+            %       sample_rate = 44100;
+            %       frequency_resolution = 2;
+            %       minimum_frequency = 55;
+            %       maximum_frequency = sample_rate/2;
+            %       
+            %       % CQT kernel
+            %       cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       
+            %       % CQT kernel displayed
+            %       figure
+            %       imagesc(abs(cqt_kernel))
+            %       colormap(jet)
+            %       title('CQT kernel (magnitude)')
+            %       xlabel('FFT length')
+            %       ylabel('CQT frequency')
+            %
+            %   See also z.cqt, fft
             
             % Number of frequency channels per octave
             octave_resolution = 12*frequency_resolution;
@@ -301,33 +325,39 @@ classdef z
             % Number of frequency channels for the CQT
             number_frequencies = round(octave_resolution*log2(maximum_frequency/minimum_frequency));
             
-            % Window length for the FFT (= window length for the mininim frequency = longuest window)
+            % Window length for the FFT (= window length of the mininim frequency = longuest window)
             fft_length = 2^nextpow2(quality_factor*sample_rate/minimum_frequency);
             
-            % Initialize the CQT kernel
+            % Energy threshold for making the kernel sparse
+            energy_threshold = 0.01;
+            
+            % Initialize the kernel
             cqt_kernel = zeros(number_frequencies,fft_length);
-
+            
             % Loop over the frequency channels
             for frequency_index = 1:number_frequencies
                 
                 % Frequency value (in Hz)
                 frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
                 
-                % Window length (nearest odd value for symmetry, in samples)
+                % Window length (nearest odd value because the complex 
+                % exponential will have an odd length, in samples)
                 window_length = 2*round(quality_factor*sample_rate/frequency_value/2)+1;
                 
-                % Temporal kernel (symmetric)
+                % Temporal kernel (without zero-padding, odd and symmetric)
                 temporal_kernel = hamming(window_length,'symmetric')' ... 
                     .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
                 
-                % Pre zero-padding to center FFT (FFT does post zero-padding)
-                temporal_kernel = cat(2,zeros(1,ceil((fft_length-window_length)/2)),temporal_kernel);
+                % Pre zero-padding to center the FFT's (FFT does post zero-
+                % padding; temporal kernel still odd but almost symmetric)
+                temporal_kernel = cat(2,zeros(1,(fft_length-window_length+1)/2),temporal_kernel);
                 
-                % Spectral kernel (mostly real)
+                % Spectral kernel (mostly real because temporal kernel
+                % almost symmetric)
                 spectral_kernel = fft(temporal_kernel,fft_length);
                 
                 % Make the spectral kernel sparser
-                spectral_kernel(abs(spectral_kernel)<0.01) = 0;
+                spectral_kernel(abs(spectral_kernel)<energy_threshold) = 0;
                 
                 % Save the spectral kernels
                 cqt_kernel(frequency_index,:) = spectral_kernel;
@@ -341,7 +371,43 @@ classdef z
             
         end
         
-        function audio_spectrogram = spectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel)
+        function audio_spectrogram = cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel)
+            % cqtspectrogram CQT spectrogram
+            %   audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            %   
+            %   Read ...
+            %   
+            %   Arguments:
+            %       audio_signal: single-channel audio signal [number_samples,1]
+            %       sample_rate: sample rate (in Hz)
+            %       time_resolution: time resolution in number of time frames per second
+            %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
+            %   
+            %   Example: Compute and display the CQT spectrogram
+            %       % CQT kernel
+            %       sample_rate = 44100;
+            %       frequency_resolution = 2;
+            %       minimum_frequency = 55;
+            %       maximum_frequency = sample_rate/2;
+            %       cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       
+            %       % CQT spectrogram
+            %       audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            %       
+            %       % CQT kernel displayed (in dB, s, and semitones)
+            %       figure
+            %       imagesc(db(audio_spectrogram))
+            %       axis xy
+            %       colormap(jet)
+            %       title('CQT spectrogram (dB)')
+            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/time_resolution))
+            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
+            %       xlabel('Time (s)')
+            %       yticks(1:frequency_resolution:frequency_resolution*12)
+            %       yticklabels({'A1','A#1','B1','C1','C#1','D1','D#1','E1','F1','F#1','G1','G#1'})
+            %       ylabel('Frequency (semitones)')
+            %
+            %   See also z.cqt, fft
             
             % Number of time samples per time frame
             step_length = round(sample_rate/time_resolution);
@@ -353,7 +419,8 @@ classdef z
             [number_frequencies,fft_length] = size(cqt_kernel);
             
             % Zero-padding to center the CQT
-            audio_signal = [zeros(ceil((fft_length-step_length)/2),1);audio_signal;zeros(floor((fft_length-step_length)/2),1)];
+            audio_signal = [zeros(ceil((fft_length-step_length)/2),1); ...
+                audio_signal;zeros(floor((fft_length-step_length)/2),1)];
             
             % Initialize the spectrogram
             audio_spectrogram = zeros(number_frequencies,number_times);
@@ -362,15 +429,30 @@ classdef z
             for time_index = 1:number_times
                 
                 % CQT with kernel (magnitude)
-                audio_spectrogram(:,time_index) = abs(cqt_kernel*fft(audio_signal((1:fft_length)+step_length*(time_index-1))));
+                sample_index = step_length*(time_index-1);
+                audio_spectrogram(:,time_index) = abs(cqt_kernel...
+                    *fft(audio_signal(sample_index+1:sample_index+fft_length)));
             end
             
         end
         
         function audio_chromagram = chromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel)
+            % cqtspectrogram CQT spectrogram
+            %   audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            %   
+            %   Arguments:
+            %       audio_signal: single-channel audio signal [number_samples,1]
+            %       sample_rate: sample rate (in Hz)
+            %       time_resolution: time resolution in number of time frames per second
+            %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
+            %   
+            %   Example: Compute and display the chromagram
+            %       
+            %
+            %   See also z.cqt
             
             % CQT spectrogram
-            audio_spectrogram = cqt.spectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
             
             % Number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_spectrogram);
@@ -389,7 +471,5 @@ classdef z
             end
         end
         
-        
     end
-    
 end
