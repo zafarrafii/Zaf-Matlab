@@ -398,7 +398,6 @@ classdef z
             %       audio_signal = mean(audio_signal,2);
             %       
             %       % CQT kernel
-            %       sample_rate = 44100;
             %       frequency_resolution = 2;
             %       minimum_frequency = 55;
             %       maximum_frequency = 3520;
@@ -467,7 +466,6 @@ classdef z
             %       audio_signal = mean(audio_signal,2);
             %       
             %       % CQT kernel
-            %       sample_rate = 44100;
             %       frequency_resolution = 2;
             %       minimum_frequency = 55;
             %       maximum_frequency = 3520;
