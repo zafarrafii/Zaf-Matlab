@@ -376,5 +376,4 @@ axis tight
 
     Zafar Rafii
     zafarrafii@gmail.com
-    08/24/17
-    See also http://zafarrafii.com
+    http://zafarrafii.com
