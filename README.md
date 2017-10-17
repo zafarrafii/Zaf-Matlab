@@ -13,7 +13,6 @@ z Methods:
 - imdct - Inverse MDCT
 
 ## stft Short-time Fourier transform (STFT)
-
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
     
 Arguments:
@@ -113,7 +112,6 @@ audiowrite('sides_signal.wav',sides_signal,sample_rate);
 ```
 
 ## cqtkernel Constant-Q transform (CQT) kernel
-
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
 
 Arguments:
@@ -124,6 +122,7 @@ minimum_frequency: minimum frequency in Hz
 maximum_frequency: maximum frequency in Hz
 cqt_kernel: CQT kernel [number_frequencies,fft_length]
 ```
+
 Example: Compute and display the CQT kernel
 ```
 % CQT kernel parameters
@@ -143,6 +142,7 @@ title('Magnitude CQT kernel')
 xlabel('FFT length')
 ylabel('CQT frequency')
 ```
+
 ## cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
@@ -197,6 +197,7 @@ frequency_resolution: frequency resolution in number of frequency channels per s
 cqt_kernel: CQT kernel [number_frequencies,fft_length]
 audio_chromagram: audio chromagram [number_chromas,number_times]
 ```
+
 Example: Compute and display the CQT chromagram
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -228,7 +229,6 @@ ylabel('Chroma')
 ```
 
 ## mfcc Mel frequency cepstrum coefficients (MFFCs)
-
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
 
 Arguments:
@@ -239,6 +239,7 @@ number_filters: number of filters
 number_coefficients: number of coefficients (without the 0th coefficient)
 audio_mfcc: audio MFCCs [number_times,number_coefficients]
 ```
+
 Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -281,7 +282,6 @@ axis tight
 ```
         
 ## mdct Modified discrete cosine transform (mdct) using the DCT-IV
-
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
 Arguments:
@@ -290,6 +290,7 @@ audio_signal: audio signal [number_samples,1]
 window_function: window function [window_length,1]
 audio_mdct: audio mdct [number_frequencies,number_times]
 ```
+
 Example: Compute and display the mdct as used in the AC-3 audio coding format
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -321,7 +322,6 @@ ylabel('Frequency (kHz)')
 ```
 
 ## imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
-
 `audio_signal = z.imdct(audio_mdct,window_function);`
 
 Arguments:
@@ -330,6 +330,7 @@ window_function: window function [window_length,1]
 audio_mdct: audio MDCT [number_frequencies,number_times]
 audio_signal: audio signal [number_samples,1]
 ```
+
 Example: Verify that the MDCT is perfectly invertible
 ```
 % Audio file averaged over the channels and sample rate in Hz
