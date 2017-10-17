@@ -1,4 +1,6 @@
-# Z Matlab class
+# Z
+
+## Z Matlab class
 
 This class implements few basic methods for audio signal processing
 
@@ -12,7 +14,7 @@ z Methods:
 - mdct - Modified discrete cosine transform (MDCT)
 - imdct - Inverse MDCT
 
-## stft Short-time Fourier transform (STFT)
+### stft Short-time Fourier transform (STFT)
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
     
 Arguments:
@@ -59,7 +61,7 @@ yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
 ```
 
-## istft Inverse short-time Fourier transform (STFT)
+### istft Inverse short-time Fourier transform (STFT)
 `audio_signal = z.istft(audio_stft,window_function,step_length);`
 
 Arguments:
@@ -111,7 +113,7 @@ audiowrite('center_signal.wav',center_signal,sample_rate);
 audiowrite('sides_signal.wav',sides_signal,sample_rate);
 ```
 
-## cqtkernel Constant-Q transform (CQT) kernel
+### cqtkernel Constant-Q transform (CQT) kernel
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
 
 Arguments:
@@ -143,7 +145,7 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
-## cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
 Arguments:
@@ -184,7 +186,7 @@ yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)
 ylabel('Frequency (semitones)')
 ```
 
-## cqtchromagram Constant-Q transform (CQT) chromagram using a kernel
+### cqtchromagram Constant-Q transform (CQT) chromagram using a kernel
 
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
@@ -228,7 +230,7 @@ yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
 ylabel('Chroma')
 ```
 
-## mfcc Mel frequency cepstrum coefficients (MFFCs)
+### mfcc Mel frequency cepstrum coefficients (MFFCs)
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
 
 Arguments:
@@ -281,7 +283,7 @@ xlabel('Time (s)')
 axis tight
 ```
         
-## mdct Modified discrete cosine transform (mdct) using the DCT-IV
+### mdct Modified discrete cosine transform (mdct) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
 Arguments:
@@ -321,7 +323,7 @@ yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
 ```
 
-## imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
+### imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_signal = z.imdct(audio_mdct,window_function);`
 
 Arguments:
@@ -372,7 +374,7 @@ xlabel('Time (s)')
 axis tight
 ```
 
-# Z Python module
+## Z Python module
 
 Working on it...
 
