@@ -293,7 +293,7 @@ window_function: window function [window_length,1]
 audio_mdct: audio mdct [number_frequencies,number_times]
 ```
 
-Example: Compute and display the mdct as used in the AC-3 audio coding format
+Example: Compute and display the MDCT as used in the AC-3 audio coding format
 ```
 % Audio file averaged over the channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
