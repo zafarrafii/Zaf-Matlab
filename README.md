@@ -1,4 +1,4 @@
-# Z
+# Z Matlab class
 
 This class implements few basic methods for audio signal processing
 
@@ -372,7 +372,11 @@ xlabel('Time (s)')
 axis tight
 ```
 
-## Author
+# Z Python module
+
+Working on it...
+
+# Author
 
     Zafar Rafii
     zafarrafii@gmail.com
