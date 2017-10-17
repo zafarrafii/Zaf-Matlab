@@ -18,10 +18,10 @@ z Methods:
     
 Arguments:
 ```
-  audio_signal: audio signal [number_samples,1]
-  window_function: window function [window_length,1]
-  step_length: step length in samples
-  audio_stft: audio stft [window_length,number_frames]
+audio_signal: audio signal [number_samples,1]
+window_function: window function [window_length,1]
+step_length: step length in samples
+audio_stft: audio stft [window_length,number_frames]
 ```
 
 Example: Compute and display the spectrogram of an audio file
