@@ -527,16 +527,20 @@ classdef z
             %       matlab_dct3 = dct(audio_signal,'Type',3);
             %       matlab_dct4 = dct(audio_signal,'Type',4);
             %       
-            %       % DCT-I, II, III, and IV and Matlab's version displayed
+            %       % DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
             %       figure
-            %       subplot(4,2,1), plot(audio_dct1), axis tight, title('DCT-I')
-            %       subplot(4,2,2), plot(matlab_dct1),axis tight, title('Maltab''s DCT-I')
-            %       subplot(4,2,3), plot(audio_dct2), axis tight, title('DCT-II')
-            %       subplot(4,2,4), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II')
-            %       subplot(4,2,5), plot(audio_dct3), axis tight, title('DCT-III')
-            %       subplot(4,2,6), plot(matlab_dct3),axis tight, title('Maltab''s DCT-III')
-            %       subplot(4,2,7), plot(audio_dct4), axis tight, title('DCT-IV')
-            %       subplot(4,2,8), plot(matlab_dct4),axis tight, title('Maltab''s DCT-IV')
+            %       subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I')
+            %       subplot(4,3,2), plot(matlab_dct1),axis tight, title('Maltab''s DCT-I')
+            %       subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences')
+            %       subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II')
+            %       subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II')
+            %       subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences')
+            %       subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III')
+            %       subplot(4,3,8), plot(matlab_dct3),axis tight, title('Maltab''s DCT-III')
+            %       subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences')
+            %       subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV')
+            %       subplot(4,3,11), plot(matlab_dct4),axis tight, title('Maltab''s DCT-IV')
+            %       subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
             %   
             %   See also dct, fft, ifft
             
