@@ -11,6 +11,7 @@ z Methods:
 - cqtspectrogram - CQT spectrogram using a kernel
 - cqtchromagram - CQT chromagram using a kernel
 - mfcc - Mel frequency cepstrum coefficients (MFCCs)
+- dct - Discrete cosine transform (DCT)
 - mdct - Modified discrete cosine transform (MDCT)
 - imdct - Inverse MDCT
 
@@ -282,7 +283,55 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
 axis tight
 ```
-        
+
+### dct Discrete Cosine Transform (dct) using the DFT
+audio_dct = z.dct(audio_signal,dct_type);
+
+Arguments:
+```
+audio_signal: audio signal [number_samples,number_frames]
+dct_type: dct type (1, 2, 3, or 4)
+audio_dct: audio dct [number_frequencies,number_frames]
+```
+
+Example: Compute the DCTs for the 4 different types and compare them to Matlab's DCTs
+```
+% Audio signal averaged over its channels and sample rate in Hz
+[audio_signal,sample_rate] = audioread('audio_file.wav');
+audio_signal = mean(audio_signal,2);
+
+% Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal(1*sample_rate+1:1*sample_rate+window_length);
+
+% dct-I, II, III, and IV
+audio_dct1 = z.dct(audio_signal,1);
+audio_dct2 = z.dct(audio_signal,2);
+audio_dct3 = z.dct(audio_signal,3);
+audio_dct4 = z.dct(audio_signal,4);
+
+% Matlab's dct-I, II, III, and IV
+matlab_dct1 = dct(audio_signal,'Type',1);
+matlab_dct2 = dct(audio_signal,'Type',2);
+matlab_dct3 = dct(audio_signal,'Type',3);
+matlab_dct4 = dct(audio_signal,'Type',4);
+
+% dct-I, II, III, and IV, Matlab's versions, and their differences displayed
+figure
+subplot(4,3,1), plot(audio_dct1), axis tight, title('dct-I')
+subplot(4,3,2), plot(matlab_dct1),axis tight, title('Maltab''s dct-I')
+subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences')
+subplot(4,3,4), plot(audio_dct2), axis tight, title('dct-II')
+subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s dct-II')
+subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences')
+subplot(4,3,7), plot(audio_dct3), axis tight, title('dct-III')
+subplot(4,3,8), plot(matlab_dct3),axis tight, title('Maltab''s dct-III')
+subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences')
+subplot(4,3,10), plot(audio_dct4), axis tight, title('dct-IV')
+subplot(4,3,11), plot(matlab_dct4),axis tight, title('Maltab''s dct-IV')
+subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
+```
+
 ### mdct Modified discrete cosine transform (mdct) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
