@@ -11,9 +11,10 @@ z Methods:
 - cqtspectrogram - CQT spectrogram using a kernel
 - cqtchromagram - CQT chromagram using a kernel
 - mfcc - Mel frequency cepstrum coefficients (MFCCs)
-- dct - Discrete cosine transform (DCT)
-- mdct - Modified discrete cosine transform (MDCT)
-- imdct - Inverse MDCT
+- dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+- dst - Discrete sine transform (DST) using the FFT
+- mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
+- imdct - Inverse MDCT using the DCT-IV
 
 ### stft Short-time Fourier transform (STFT)
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
@@ -284,17 +285,17 @@ xlabel('Time (s)')
 axis tight
 ```
 
-### dct Discrete Cosine Transform (dct) using the DFT
-audio_dct = z.dct(audio_signal,dct_type);
+### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+`audio_dct = z.dct(audio_signal,dct_type);`
 
 Arguments:
 ```
 audio_signal: audio signal [number_samples,number_frames]
 dct_type: dct type (1, 2, 3, or 4)
-audio_dct: audio dct [number_frequencies,number_frames]
+audio_dct: audio DCT [number_frequencies,number_frames]
 ```
 
-Example: Compute the DCTs for the 4 different types and compare them to Matlab's DCTs
+Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
 ```
 % Audio signal averaged over its channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -304,32 +305,80 @@ audio_signal = mean(audio_signal,2);
 window_length = 1024;
 audio_signal = audio_signal(1*sample_rate+1:1*sample_rate+window_length);
 
-% dct-I, II, III, and IV
+% DCT-I, II, III, and IV
 audio_dct1 = z.dct(audio_signal,1);
 audio_dct2 = z.dct(audio_signal,2);
 audio_dct3 = z.dct(audio_signal,3);
 audio_dct4 = z.dct(audio_signal,4);
 
-% Matlab's dct-I, II, III, and IV
+% Matlab's DCT-I, II, III, and IV
 matlab_dct1 = dct(audio_signal,'Type',1);
 matlab_dct2 = dct(audio_signal,'Type',2);
 matlab_dct3 = dct(audio_signal,'Type',3);
 matlab_dct4 = dct(audio_signal,'Type',4);
 
-% dct-I, II, III, and IV, Matlab's versions, and their differences displayed
+% DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
 figure
-subplot(4,3,1), plot(audio_dct1), axis tight, title('dct-I')
-subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s dct-I')
+subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I')
+subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I')
 subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences')
-subplot(4,3,4), plot(audio_dct2), axis tight, title('dct-II')
-subplot(4,3,5), plot(matlab_dct2), axis tight, title('Maltab''s dct-II')
+subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II')
+subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II')
 subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences')
-subplot(4,3,7), plot(audio_dct3), axis tight, title('dct-III')
-subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s dct-III')
+subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III')
+subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III')
 subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences')
-subplot(4,3,10), plot(audio_dct4), axis tight, title('dct-IV')
-subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s dct-IV')
+subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV')
+subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV')
 subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
+```
+
+### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
+`audio_dst = z.dst(audio_signal,dst_type);`
+
+Arguments:
+```
+audio_signal: audio signal [number_samples,number_frames]
+dst_type: DST type (1, 2, 3, or 4)
+audio_dst: audio DST [number_frequencies,number_frames]
+```
+
+Example: Compute the 4 different DSTs and compare them to their respective inverses
+```
+% Audio signal averaged over its channels and sample rate in Hz
+[audio_signal,sample_rate] = audioread('audio_file.wav');
+audio_signal = mean(audio_signal,2);
+
+% Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal(1*sample_rate+1:1*sample_rate+window_length);
+
+% DST-I, II, III, and IV
+audio_dst1 = z.dst(audio_signal,1);
+audio_dst2 = z.dst(audio_signal,2);
+audio_dst3 = z.dst(audio_signal,3);
+audio_dst4 = z.dst(audio_signal,4);
+
+% Respective inverses, i.e., DST-I, II, III, and IV
+audio_idst1 = z.dst(audio_dst1,1);
+audio_idst2 = z.dst(audio_dst2,3);
+audio_idst3 = z.dst(audio_dst3,2);
+audio_idst4 = z.dst(audio_dst4,4);
+
+% DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+figure
+subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I')
+subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I')
+subplot(4,3,3), plot(audio_idst1-audio_signal), axis tight, title('Differences with signal')
+subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II')
+subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III')
+subplot(4,3,6), plot(audio_idst2-audio_signal), axis tight, title('Differences with signal')
+subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III')
+subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II')
+subplot(4,3,9), plot(audio_idst3-audio_signal), axis tight, title('Differences with signal')
+subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV')
+subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
+subplot(4,3,12), plot(audio_idst4-audio_signal), axis tight, title('Differences with signal')
 ```
 
 ### mdct Modified discrete cosine transform (mdct) using the DCT-IV
