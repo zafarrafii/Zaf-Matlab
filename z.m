@@ -5,8 +5,8 @@ classdef z
     %   stft - Short-time Fourier transform (STFT)
     %   istft - Inverse STFT
     %   cqtkernel - Constant-Q transform (CQT) kernel
-    %   cqtspectrogram - CQT spectrogram
-    %   cqtchromagram - CQT chromagram
+    %   cqtspectrogram - CQT spectrogram using a kernel
+    %   cqtchromagram - CQT chromagram using a kernel
     %   mfcc - Mel frequency cepstrum coefficients (MFCCs)
     %   dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
     %   dst - Discrete sine transform (DST) using the FFT
