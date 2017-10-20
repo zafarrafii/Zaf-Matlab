@@ -8,8 +8,8 @@ z Methods:
 - stft - Short-time Fourier transform (STFT)
 - istft - Inverse STFT
 - cqtkernel - Constant-Q transform (CQT) kernel
-- cqtspectrogram - CQT spectrogram using a kernel
-- cqtchromagram - CQT chromagram using a kernel
+- cqtspectrogram - CQT spectrogram using a CQT kernel
+- cqtchromagram - CQT chromagram using a CQT kernel
 - mfcc - Mel frequency cepstrum coefficients (MFCCs)
 - dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 - dst - Discrete sine transform (DST) using the FFT
@@ -147,7 +147,7 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
-### cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
 Arguments:
@@ -188,8 +188,7 @@ yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)
 ylabel('Frequency (semitones)')
 ```
 
-### cqtchromagram Constant-Q transform (CQT) chromagram using a kernel
-
+### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
 Arguments:
@@ -232,7 +231,7 @@ yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
 ylabel('Chroma')
 ```
 
-### mfcc Mel frequency cepstrum coefficients (MFFCs)
+### mfcc Mel frequency cepstrum coefficients (MFCCs)
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
 
 Arguments:
@@ -381,14 +380,14 @@ subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
 subplot(4,3,12), plot(audio_idst4-audio_signal), axis tight, title('Differences with signal')
 ```
 
-### mdct Modified discrete cosine transform (mdct) using the DCT-IV
+### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
 Arguments:
 ```
 audio_signal: audio signal [number_samples,1]
 window_function: window function [window_length,1]
-audio_mdct: audio mdct [number_frequencies,number_times]
+audio_mdct: audio MDCT [number_frequencies,number_times]
 ```
 
 Example: Compute and display the MDCT as used in the AC-3 audio coding format
@@ -404,10 +403,10 @@ window_function = kaiser(window_length/2+1,alpha_value*pi);
 window_function2 = cumsum(window_function(1:window_length/2));
 window_function = sqrt([window_function2;window_function2(window_length/2:-1:1)]./sum(window_function));
 
-% mdct
+% MDCT
 audio_mdct = z.mdct(audio_signal,window_function);
 
-% mdct displayed in dB, s, and kHz
+% MDCT displayed in dB, s, and kHz
 figure
 imagesc(db(audio_mdct))
 axis xy
