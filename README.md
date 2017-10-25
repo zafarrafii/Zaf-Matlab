@@ -1,14 +1,16 @@
 # Z Library
 
-This library includes a Matlab class and a Python module with several basic functions for audio signal processing.
+This library includes a Matlab class and a Python module with several basic methods/functions for audio signal processing.
 
 - [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
     - [Inverse STFT](#istft-inverse-short-time-fourier-transform-istft)
     - [Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
-    - [CQT spectrogram using CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-cqt-kernel)
-    - [CQT chromagram using CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-cqt-kernel)
+    - [CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel)
+    - [CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel)
     - [Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs)
+    - [Discrete cosine transform (DCT) using the fast Fourier transform (FFT)] (#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft)
+    - [Discrete sine transform (DST) using the FFT] (#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft)
 - [z Python module](#z-python-module)
 
 
@@ -145,7 +147,7 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
-### cqtspectrogram Constant-Q transform (CQT) spectrogram using CQT kernel
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
 Arguments:
@@ -186,7 +188,7 @@ yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)
 ylabel('Frequency (semitones)')
 ```
 
-### cqtchromagram Constant-Q transform (CQT) chromagram using CQT kernel
+### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
 Arguments:
