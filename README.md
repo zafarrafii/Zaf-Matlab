@@ -1,7 +1,7 @@
 # Z
 
 - [Z](#)
-	- [Z Matlab class](#)
+	- [Z Matlab class](#Z Matlab class)
 		- [stft Short-time Fourier transform (STFT)](#)
 		- [istft Inverse short-time Fourier transform (STFT)](#)
 		- [cqtkernel Constant-Q transform (CQT) kernel](#)
