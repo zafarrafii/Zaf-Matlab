@@ -4,7 +4,7 @@ This library includes a Matlab class and a Python module with several basic meth
 
 - [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
-    - [Inverse STFT](#istft-inverse-short-time-fourier-transform-istft)
+    - [Inverse STFT](#istft-inverse-short-time-fourier-transform-stft)
     - [Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
     - [CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel)
     - [CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel)
