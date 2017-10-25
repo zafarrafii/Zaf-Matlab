@@ -2,7 +2,7 @@
 
 ## Z Matlab class
 
-This class implements few basic methods for audio signal processing
+This class implements few basic methods for audio signal processing.
 
 z Methods:
 - stft - Short-time Fourier transform (STFT)
@@ -473,13 +473,13 @@ axis tight
 
 ## Z Python module
 
-This module implements few basic methods for audio signal processing.
+This module implements few basic functions for audio signal processing.
 
 z Functions:
 - stft - Short-time Fourier transform (STFT)
 
 ### stft Short-time Fourier transform (STFT)
-`audio_stft = z.stft(audio_signal,window_function,step_length);`
+`audio_stft = z.stft(audio_signal, window_function, step_length)`
     
 Arguments:
 ```
