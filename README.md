@@ -496,6 +496,7 @@ Example: Compute and display the spectrogram of an audio file
 import scipy.io.wavfile
 import numpy as np
 import scipy.signal
+import z
 import matplotlib.pyplot as plt
 
 # Audio signal (normalized) averaged over its channels and sample rate in Hz
