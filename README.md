@@ -474,7 +474,7 @@ xlabel('Time (s)')
 axis tight
 ```
 
-## Z Python module
+## z Python module
 
 ### stft Short-time Fourier transform (STFT)
 ```
