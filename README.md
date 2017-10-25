@@ -115,7 +115,7 @@ audiowrite('center_signal.wav',center_signal,sample_rate);
 audiowrite('sides_signal.wav',sides_signal,sample_rate);
 ```
 
-### cqtkernel Constant-Q transform (CQT) kernel
+### cqtkernel [Constant-Q transform (CQT)](https://en.wikipedia.org/wiki/Constant-Q_transform) kernel
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
 
 Arguments:
@@ -188,7 +188,7 @@ yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)
 ylabel('Frequency (semitones)')
 ```
 
-### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
+### cqtchromagram Constant-Q transform (CQT) [chromagram](https://en.wikipedia.org/wiki/Chroma_feature) using a CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
 Arguments:
@@ -231,7 +231,7 @@ yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
 ylabel('Chroma')
 ```
 
-### mfcc Mel frequency cepstrum coefficients (MFCCs)
+### mfcc [Mel frequency cepstrum coefficients (MFCCs)](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
 
 Arguments:
@@ -284,7 +284,7 @@ xlabel('Time (s)')
 axis tight
 ```
 
-### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+### dct [Discrete cosine transform (DCT)](https://en.wikipedia.org/wiki/Discrete_cosine_transform) using the fast Fourier transform (FFT)
 `audio_dct = z.dct(audio_signal,dct_type);`
 
 Arguments:
@@ -332,7 +332,7 @@ subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV')
 subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
 ```
 
-### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
+### dst [Discrete sine transform (DST)](https://en.wikipedia.org/wiki/Discrete_sine_transform) using the fast Fourier transform (FFT)
 `audio_dst = z.dst(audio_signal,dst_type);`
 
 Arguments:
@@ -380,7 +380,7 @@ subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
 subplot(4,3,12), plot(audio_idst4-audio_signal), axis tight, title('Differences with signal')
 ```
 
-### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
+### mdct [Modified discrete cosine transform (MDCT)](https://en.wikipedia.org/wiki/Modified_discrete_cosine_transform) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
 Arguments:
