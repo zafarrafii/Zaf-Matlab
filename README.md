@@ -1,10 +1,11 @@
 # Z
 
-- [Z Matlab class](#z-matlab-class)
-- [Z Python module](#z-python-module)
+- [z Matlab class](#z-matlab-class)
+    - [stft Short-time Fourier transform (STFT)](#stft-short-time-Fourier-transform-(STFT))
+- [z Python module](#z-python-module)
 
 
-## Z Matlab class
+## z Matlab class
 
 This class implements few basic methods for audio signal processing.
 
