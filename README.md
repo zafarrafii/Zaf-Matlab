@@ -1,5 +1,11 @@
 # Z
 
+##### Table of Contents  
+[Headers](#headers)  
+...snip...    
+<a name="headers"/>
+## Headers
+
 ## Z Matlab class
 
 This class implements few basic methods for audio signal processing.
@@ -511,7 +517,7 @@ window_length = int(np.power(2, np.ceil(np.log2(window_duration * sample_rate)))
 # Window function (periodic Hamming window for COLA)
 window_function = scipy.signal.hamming(window_length, False)
 
-# Step length in samples(half the window length for COLA)
+# Step length in samples (half the window length for COLA)
 step_length = int(window_length/2)
 
 # Magnitude spectrogram (without the DC component and the mirrored frequencies)
