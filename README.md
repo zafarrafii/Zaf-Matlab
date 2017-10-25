@@ -5,7 +5,10 @@ This library implements several basic functions for audio signal processing.
 - [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
     - [Inverse STFT](#istft-inverse-short-time-fourier-transform-istft)
-    - [cqtkernel Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
+    - [Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
+    - [CQT spectrogram using CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-cqt-kernel)
+    - [CQT chromagram using CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-cqt-kernel)
+    - [Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs)
 - [z Python module](#z-python-module)
 
 
@@ -156,7 +159,7 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
-### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
 Arguments:
@@ -197,7 +200,7 @@ yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)
 ylabel('Frequency (semitones)')
 ```
 
-### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
+### cqtchromagram Constant-Q transform (CQT) chromagram using CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
 Arguments:
