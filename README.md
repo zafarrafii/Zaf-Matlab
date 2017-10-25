@@ -1,5 +1,7 @@
 # Z Library
 
+This library implements several basic functions for audio signal processing.
+
 - [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
     - [Inverse STFT](#istft-inverse-short-time-fourier-transform-istft)
@@ -9,7 +11,7 @@
 
 ## z Matlab class
 
-This class implements few basic methods for audio signal processing.
+This class implements several basic methods for audio signal processing.
 
 z Methods:
 - stft - Short-time Fourier transform (STFT)
