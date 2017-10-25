@@ -1,6 +1,6 @@
 # Z Library
 
-This library implements several basic functions for audio signal processing.
+This library includes a Matlab class and a Python module with several basic functions for audio signal processing.
 
 - [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
