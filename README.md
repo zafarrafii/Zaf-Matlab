@@ -1,18 +1,20 @@
 # Z
 
-[Z Matlab class](#)
-- [stft Short-time Fourier transform (STFT)](#)
-- [istft Inverse short-time Fourier transform (STFT)](#)
-- [cqtkernel Constant-Q transform (CQT) kernel](#)
-- [cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel](#)
-- [cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel](#)
-- [mfcc Mel frequency cepstrum coefficients (MFCCs)](#)
-- [dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#)
-- [dst Discrete sine transform (DST) using the fast Fourier transform (FFT)](#)
-- [mdct Modified discrete cosine transform (MDCT) using the DCT-IV](#)
-- [imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV](#)
-[Z Python module](#)
-- [stft Short-time Fourier transform (STFT)](#)
+- [Z](#)
+	- [Z Matlab class](#)
+		- [stft Short-time Fourier transform (STFT)](#)
+		- [istft Inverse short-time Fourier transform (STFT)](#)
+		- [cqtkernel Constant-Q transform (CQT) kernel](#)
+		- [cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel](#)
+		- [cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel](#)
+		- [mfcc Mel frequency cepstrum coefficients (MFCCs)](#)
+		- [dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#)
+		- [dst Discrete sine transform (DST) using the fast Fourier transform (FFT)](#)
+		- [mdct Modified discrete cosine transform (MDCT) using the DCT-IV](#)
+		- [imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV](#)
+	- [Z Python module](#)
+		- [stft Short-time Fourier transform (STFT)](#)
+- [Author](#)
 
 ## Z Matlab class
 
