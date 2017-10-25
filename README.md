@@ -2,9 +2,6 @@
 
 ##### Table of Contents  
 [Z Matlab class](#headers)  
-...snip...    
-<a name="headers"/>
-## Headers
 
 ## Z Matlab class
 
