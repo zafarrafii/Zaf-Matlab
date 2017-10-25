@@ -1,7 +1,7 @@
 # Z
 
 - [z Matlab class](#z-matlab-class)
-    - [stft Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
+    - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
 - [z Python module](#z-python-module)
 
 
