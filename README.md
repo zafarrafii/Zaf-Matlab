@@ -477,7 +477,10 @@ axis tight
 ## Z Python module
 
 ### stft Short-time Fourier transform (STFT)
-`audio_stft = z.stft(audio_signal, window_function, step_length)`
+```
+import z
+audio_stft = z.stft(audio_signal, window_function, step_length)
+```
     
 Arguments:
 ```
