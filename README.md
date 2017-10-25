@@ -1,7 +1,9 @@
-# Z
+# Z Library
 
-- [z Matlab class](#z-matlab-class)
+- [Matlab class](#z-matlab-class)
     - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
+    - [Inverse STFT](#istft-inverse-short-time-fourier-transform-istft)
+    - [cqtkernel Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
 - [z Python module](#z-python-module)
 
 
