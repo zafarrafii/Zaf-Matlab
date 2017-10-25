@@ -1,7 +1,7 @@
 # Z
 
 ##### Table of Contents  
-[Headers](#headers)  
+[Z Matlab class](#headers)  
 ...snip...    
 <a name="headers"/>
 ## Headers
