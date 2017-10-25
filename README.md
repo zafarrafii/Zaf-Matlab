@@ -13,7 +13,7 @@ This library includes a Matlab class and a Python module with several basic meth
     - [Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft)
     - [Modified discrete cosine transform (MDCT)](#mdct-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
     - [Inverse MDCT using the DCT-IV](#imdct-inverse-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
-- [z Python module](#z-python-module)
+- [Python module](#z-python-module)
     - [STFT](#stft-short-time-fourier-transform-stft-1)
 
 
