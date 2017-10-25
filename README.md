@@ -531,9 +531,3 @@ plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_leng
 plt.ylabel('Frequency (kHz)')
 plt.show()
 ```
-
-# Author
-
-    Zafar Rafii
-    zafarrafii@gmail.com
-    http://zafarrafii.com
