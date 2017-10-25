@@ -1,6 +1,8 @@
 # Z
 
-- [Z Python module](z-python-module)
+- [Z Matlab class](#z-matlab-class)
+- [Z Python module](#z-python-module)
+
 
 ## Z Matlab class
 
