@@ -11,7 +11,10 @@ This library includes a Matlab class and a Python module with several basic meth
     - [Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs)
     - [Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft)
     - [Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft)
+    - [Modified discrete cosine transform (MDCT)](#mdct-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
+    - [Inverse MDCT using the DCT-IV](#imdct-inverse-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
 - [z Python module](#z-python-module)
+    - [STFT](#stft-short-time-fourier-transform-stft-1)
 
 
 ## z Matlab class
