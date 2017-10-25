@@ -14,7 +14,7 @@ This library includes a Matlab class and a Python module with several basic func
 
 ## z Matlab class
 
-### stft Short-time Fourier transform (STFT)
+### stft [Short-time Fourier transform (STFT)](https://en.wikipedia.org/wiki/Short-time_Fourier_transform)
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
     
 Arguments:
