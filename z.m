@@ -16,7 +16,7 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   10/20/17
+    %   10/25/17
     %   
     % See also http://zafarrafii.com
     
@@ -514,7 +514,7 @@ classdef z
             %       
             %       % Audio signal for a given window length, and one frame
             %       window_length = 1024;
-            %       audio_signal = audio_signal(1*sample_rate+1:1*sample_rate+window_length);
+            %       audio_signal = audio_signal(1:window_length);
             %       
             %       % DCT-I, II, III, and IV
             %       audio_dct1 = z.dct(audio_signal,1);
@@ -636,7 +636,7 @@ classdef z
             %       
             %       % Audio signal for a given window length, and one frame
             %       window_length = 1024;
-            %       audio_signal = audio_signal(1*sample_rate+1:1*sample_rate+window_length);
+            %       audio_signal = audio_signal(1:window_length);
             %       
             %       % DST-I, II, III, and IV
             %       audio_dst1 = z.dst(audio_signal,1);

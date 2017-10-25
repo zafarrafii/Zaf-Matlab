@@ -1,22 +1,13 @@
 """
-Z This module implements few basic methods for audio signal processing
+Z This module implements few basic methods for audio signal processing.
 
     Z Functions:
         stft - Short-time Fourier transform (STFT)
-        istft - Inverse STFT
-        cqtkernel - Constant-Q transform (CQT) kernel
-        cqtspectrogram - CQT spectrogram using a CQT kernel
-        cqtchromagram - CQT chromagram using a CQT kernel
-        mfcc - Mel frequency cepstrum coefficients (MFCCs)
-        dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
-        dst - Discrete sine transform (DST) using the FFT
-        mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
-        imdct - Inverse MDCT using the DCT-IV
 
     Author
         Zafar Rafii
         zafarrafii@gmail.com
-        10/20/17
+        10/25/17
 
     See also http://zafarrafii.com
 """
@@ -38,40 +29,41 @@ def stft(audio_signal, window_function, step_length):
         Example: Compute and display the spectrogram of an audio file
             # Import modules
             import scipy.io.wavfile
+            import numpy as np
+            import scipy.signal
+            import matplotlib.pyplot as plt
 
-            # Audio signal averaged over its channels and sample rate in Hz
+            # Audio signal (normalized) averaged over its channels and sample rate in Hz
             sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
-
-            audio_signal = mean(audio_signal,2);
+            audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize*8 - 1))
+            audio_signal = np.mean(audio_signal, 1)
 
             # Window duration in seconds (audio is stationary around 40 milliseconds)
-            window_duration = 0.04;
+            window_duration = 0.04
 
             # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-            window_length = 2^nextpow2(window_duration*sample_rate);
+            window_length = int(np.power(2, np.ceil(np.log2(window_duration * sample_rate))))
 
             # Window function (periodic Hamming window for COLA)
-            window_function = hamming(window_length,'periodic');
+            window_function = scipy.signal.hamming(window_length, False)
 
-            # Step length in samples (half the window length for COLA)
-            step_length = window_length/2;
+            # Step length in samples(half the window length for COLA)
+            step_length = int(window_length/2)
 
             # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-            audio_stft = z.stft(audio_signal,window_function,step_length);
-            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+            audio_stft = z.stft(audio_signal, window_function, step_length)
+            audio_spectrogram = np.absolute(audio_stft[1:int(window_length/2+1), :])
 
             # Spectrogram displayed in dB, s, and kHz
-            figure
-            imagesc(db(audio_spectrogram))
-            axis xy
-            colormap(jet)
-            title('Spectrogram (dB)')
-            xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-            xticklabels(1:floor(length(audio_signal)/sample_rate))
-            xlabel('Time (s)')
-            yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
-            yticklabels(1:sample_rate/2*1e-3)
-            ylabel('Frequency (kHz)')
+            plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+            plt.title('Spectrogram (dB)')
+            plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
+                       np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+            plt.xlabel('Time (s)')
+            plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_length),
+                       np.arange(1, int(sample_rate/2*1e3)+1))
+            plt.ylabel('Frequency (kHz)')
+            plt.show()
     """
 
     # Number of samples
@@ -104,33 +96,4 @@ def stft(audio_signal, window_function, step_length):
 
 
 def test():
-
-    # Import modules
-    import scipy.io.wavfile
-    import scipy.signal
-    import matplotlib.pyplot as plt
-
-    # Audio signal averaged over its channels and sample rate in Hz
-    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
-    audio_signal = np.mean(audio_signal, 1)
-
-    # Window duration in seconds (audio is stationary around 40 milliseconds)
-    window_duration = 0.04
-
-    # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-    window_length = int(np.power(2, np.ceil(np.log2(window_duration * sample_rate))))
-
-    # Window function (periodic Hamming window for COLA)
-    window_function = scipy.signal.hamming(window_length, False)
-
-    # Step length in samples(half the window length for COLA)
-    step_length = int(window_length/2)
-
-    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-    audio_stft = stft(audio_signal, window_function, step_length)
-    audio_spectrogram = np.absolute(audio_stft[1:int(window_length/2+1), :])
-
-    plt.imshow(audio_spectrogram, extent=[0, 1, 0, 1])
-    plt.show()
     return 0
-
