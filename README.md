@@ -1,8 +1,5 @@
 # Z
 
-##### Table of Contents  
-[Z Matlab class](#headers)  
-
 ## Z Matlab class
 
 This class implements few basic methods for audio signal processing.
