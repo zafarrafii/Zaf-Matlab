@@ -481,8 +481,8 @@ axis tight
 z This module implements several functions for audio signal processing.
 
 z Functions:
-- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft1)
-- [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft1)
+- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-1)
+- [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
