@@ -4,15 +4,12 @@ This library includes a Matlab class and a Python module with several methods/fu
 
 - [Matlab class](#z-matlab-class)
 - [Python module](#z-python-module)
-    - [STFT](#stft-short-time-fourier-transform-stft-1)
-
 
 ## z Matlab class
 
 z This class implements several methods for audio signal processing.
 
 z Methods:
-
 - [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
 - [Inverse STFT](#istft-inverse-short-time-fourier-transform-stft)
 - [Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
@@ -480,6 +477,11 @@ axis tight
 ```
 
 ## z Python module
+
+z This module implements several functions for audio signal processing.
+
+z Functions:
+- [Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
 
 ### stft Short-time Fourier transform (STFT)
 ```
