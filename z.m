@@ -1,7 +1,7 @@
 classdef z
-    % Z This class implements few basic methods for audio signal processing
+    % z This class implements several methods for audio signal processing.
     %
-    % Z Methods:
+    % z Methods:
     %   stft - Short-time Fourier transform (STFT)
     %   istft - Inverse STFT
     %   cqtkernel - Constant-Q transform (CQT) kernel
@@ -16,7 +16,7 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   10/25/17
+    %   10/26/17
     %   
     % See also http://zafarrafii.com
     
@@ -110,7 +110,7 @@ classdef z
             %       audio_signal: audio signal [number_samples,1]
             %   
             %   Example: Estimate the center and sides signals of a stereo audio file
-            %       % Stereo signal and sample rate in Hz
+            %       % Stereo audio signal and sample rate in Hz
             %       [audio_signal,sample_rate] = audioread('audio_file.wav');
             %       
             %       % Parameters for the STFT
@@ -127,19 +127,19 @@ classdef z
             %       audio_spectrogram1 = abs(audio_stft1(1:window_length/2+1,:));
             %       audio_spectrogram2 = abs(audio_stft2(1:window_length/2+1,:));
             %       
-            %       % Time-frequency mask of the left and right channels of the center signal
+            %       % Time-frequency masks of the left and right channels for the center signal
             %       center_mask1 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram1;
             %       center_mask2 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram2;
             %       
-            %       % STFT of the left and right channels of the center signal (with extension to mirrored frequencies)
-            %       center_stft1 = cat(1,center_mask1,flipud(center_mask1(2:end-1,:))).*audio_stft1;
-            %       center_stft2 = cat(1,center_mask2,flipud(center_mask2(2:end-1,:))).*audio_stft2;
+            %       % STFT of the left and right channels for the center signal (with extension to mirrored frequencies)
+            %       center_stft1 = cat(1,center_mask1,center_mask1(window_length/2:-1:2,:)).*audio_stft1;
+            %       center_stft2 = cat(1,center_mask2,center_mask2(window_length/2:-1:2,:)).*audio_stft2;
             %       
-            %       % Synthesized signals of the left and right channels of the center signal
+            %       % Synthesized signals of the left and right channels for the center signal
             %       center_signal1 = z.istft(center_stft1,window_function,step_length);
             %       center_signal2 = z.istft(center_stft2,window_function,step_length);
             %       
-            %       % Finalized stereo center and sides signals
+            %       % Final stereo center and sides signals
             %       center_signal = cat(2,center_signal1,center_signal2);
             %       center_signal = center_signal(1:length(audio_signal),:);
             %       sides_signal = audio_signal-center_signal;
@@ -150,11 +150,8 @@ classdef z
             %
             %   See also ifft, z.stft
             
-            % Number of time frames
-            [~,number_times] = size(audio_stft);
-            
-            % Window length in samples
-            window_length = length(window_function);
+            % Window length in samples and number of time frames
+            [window_length,number_times] = size(audio_stft);
             
             % Number of samples for the signal
             number_samples = (number_times-1)*step_length+window_length;
@@ -169,8 +166,7 @@ classdef z
             % Loop over the time frames
             for time_index = 1:number_times
                 
-                % Inverse Fourier transform of the signal (normalized
-                % overlap-add if proper window and step)
+                % Constant overlap-add (if proper window and step)
                 sample_index = step_length*(time_index-1);
                 audio_signal(1+sample_index:window_length+sample_index) ...
                     = audio_signal(1+sample_index:window_length+sample_index)+audio_stft(:,time_index);
@@ -179,7 +175,7 @@ classdef z
             % Remove the zero-padding at the start and end
             audio_signal = audio_signal(window_length-step_length+1:number_samples-(window_length-step_length));
             
-            % Un-window the signal (just in case)
+            % Un-apply window (just in case)
             audio_signal = audio_signal/sum(window_function(1:step_length:window_length));
             
         end
