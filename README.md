@@ -481,7 +481,8 @@ axis tight
 z This module implements several functions for audio signal processing.
 
 z Functions:
-- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
+- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft1)
+- [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -537,4 +538,68 @@ plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_leng
            np.arange(1, int(sample_rate/2*1e3)+1))
 plt.ylabel('Frequency (kHz)')
 plt.show()
+```
+
+### istft Inverse short-time Fourier transform (STFT)
+```
+import z
+audio_signal = z.istft(audio_stft, window_function, step_length)
+```
+
+Arguments:
+```
+audio_stft: audio STFT [window_length,number_frames]
+window_function: window function [window_length,1]
+step_length: step length in samples
+audio_signal: audio signal [number_samples,1]
+```
+
+Example: Estimate the center and sides signals of a stereo audio file
+```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import scipy.signal
+import z
+
+# Stereo audio signal (normalized) and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize * 8 - 1))
+
+# Parameters for the STFT
+window_duration = 0.04
+window_length = int(np.power(2, np.ceil(np.log2(window_duration * sample_rate))))
+window_function = scipy.signal.hamming(window_length, False)
+step_length = int(window_length / 2)
+
+# STFT of the left and right channels
+audio_stft1 = z.stft(audio_signal[:, 0], window_function, step_length)
+audio_stft2 = z.stft(audio_signal[:, 1], window_function, step_length)
+
+# Magnitude spectrogram (with DC component) of the left and right channels
+audio_spectrogram1 = np.absolute(audio_stft1[0:int(window_length/2)+1, :])
+audio_spectrogram2 = np.absolute(audio_stft2[0:int(window_length/2)+1, :])
+
+# Time-frequency masks of the left and right channels for the center signal
+center_mask1 = np.minimum(audio_spectrogram1, audio_spectrogram2)/audio_spectrogram1
+center_mask2 = np.minimum(audio_spectrogram1, audio_spectrogram2)/audio_spectrogram2
+
+# STFT of the left and right channels for the center signal (with extension to mirrored frequencies)
+center_stft1 = np.multiply(np.concatenate((center_mask1, center_mask1[int(window_length/2)-1:0:-1, :])),
+                           audio_stft1)
+center_stft2 = np.multiply(np.concatenate((center_mask2, center_mask2[int(window_length/2)-1:0:-1, :])),
+                           audio_stft2)
+
+# Synthesized signals of the left and right channels for the center signal
+center_signal1 = z.istft(center_stft1, window_function, step_length)
+center_signal2 = z.istft(center_stft2, window_function, step_length)
+
+# Final stereo center and sides signals
+center_signal = np.concatenate((center_signal1, center_signal2), 1)
+center_signal = center_signal[0:len(audio_signal), :]
+sides_signal = audio_signal-center_signal
+
+# Synthesized center and side signals (un-normalized)
+scipy.io.wavfile.write('center_signal.wav', sample_rate, center_signal)
+scipy.io.wavfile.write('sides_signal.wav', sample_rate, sides_signal)
 ```
