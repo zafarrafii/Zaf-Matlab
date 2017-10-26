@@ -509,7 +509,7 @@ import matplotlib.pyplot as plt
 
 # Audio signal (normalized) averaged over its channels and sample rate in Hz
 sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
-audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize*8 - 1))
+audio_signal = audio_signal/(2.0**(audio_signal.itemsize*8-1))
 audio_signal = np.mean(audio_signal, 1)
 
 # Window duration in seconds (audio is stationary around 40 milliseconds)
@@ -568,7 +568,7 @@ audio_signal = audio_signal/(2.0**(audio_signal.itemsize*8-1))
 
 # Parameters for the STFT
 window_duration = 0.04
-window_length = int(np.power(2, np.ceil(np.log2(window_duration * sample_rate))))
+window_length = int(np.power(2, np.ceil(np.log2(window_duration*sample_rate))))
 window_function = scipy.signal.hamming(window_length, False)
 step_length = int(window_length/2)
 
