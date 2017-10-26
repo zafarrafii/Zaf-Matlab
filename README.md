@@ -22,16 +22,17 @@ This library includes a Matlab class and a Python module with several methods/fu
 z This class implements several methods for audio signal processing.
 
 z Methods:
-    - stft - Short-time Fourier transform (STFT)
-    - istft - Inverse STFT
-    - cqtkernel - Constant-Q transform (CQT) kernel
-    - cqtspectrogram - CQT spectrogram using a CQT kernel
-    - cqtchromagram - CQT chromagram using a CQT kernel
-    - mfcc - Mel frequency cepstrum coefficients (MFCCs)
-    - dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
-    - dst - Discrete sine transform (DST) using the FFT
-    - mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
-    - imdct - Inverse MDCT using the DCT-IV
+
+- stft - Short-time Fourier transform (STFT)
+- istft - Inverse STFT
+- cqtkernel - Constant-Q transform (CQT) kernel
+- cqtspectrogram - CQT spectrogram using a CQT kernel
+- cqtchromagram - CQT chromagram using a CQT kernel
+- mfcc - Mel frequency cepstrum coefficients (MFCCs)
+- dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+- dst - Discrete sine transform (DST) using the FFT
+- mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
+- imdct - Inverse MDCT using the DCT-IV
 
 ### stft [Short-time Fourier transform (STFT)](https://en.wikipedia.org/wiki/Short-time_Fourier_transform)
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
