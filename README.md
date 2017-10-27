@@ -650,5 +650,10 @@ plt.show()
 ```
 Zafar Rafii
 zafarrafii@gmail.com
-http://zafarrafii.com/
+[http://zafarrafii.com/](http://zafarrafii.com/)
+[CV](http://zafarrafii.com/Zafar%20Rafii%20-%20C.V..pdf)
+[Google Scholar](https://scholar.google.com/citations?user=8wbS2EsAAAAJ&hl=en)
+[LinkedIn](https://www.linkedin.com/in/zafar-rafii-b44b59123/)
+
+
 ```
