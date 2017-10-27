@@ -4,6 +4,7 @@ This library includes a Matlab class and a Python module with several methods/fu
 
 - [z Matlab class](#z-matlab-class)
 - [z Python module](#z-python-module)
+- [Author](#author)
 
 ## z Matlab class
 
@@ -643,4 +644,11 @@ plt.title('Magnitude CQT kernel')
 plt.xlabel('FFT length')
 plt.ylabel('CQT frequency')
 plt.show()
+```
+
+# Author
+```
+Zafar Rafii
+zafarrafii@gmail.com
+http://zafarrafii.com/
 ```
