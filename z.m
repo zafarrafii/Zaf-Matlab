@@ -204,6 +204,7 @@ classdef z
             %       % Magnitude CQT kernel displayed
             %       figure
             %       imagesc(abs(cqt_kernel))
+            %       axis xy
             %       colormap(jet)
             %       title('Magnitude CQT kernel')
             %       xlabel('FFT length')
@@ -220,8 +221,8 @@ classdef z
             % Number of frequency channels for the CQT
             number_frequencies = round(octave_resolution*log2(maximum_frequency/minimum_frequency));
             
-            % Window length for the FFT (= window length of the mininim 
-            % frequency = longuest window)
+            % Window length for the FFT (= window length of the minimum 
+            % frequency = longest window)
             fft_length = 2^nextpow2(quality_factor*sample_rate/minimum_frequency);
             
             % Initialize the kernel
@@ -241,7 +242,7 @@ classdef z
                 temporal_kernel = hamming(window_length,'symmetric')' ... 
                     .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
                 
-                % Pre zero-padding to center the FFT's (FFT does post zero-
+                % Pre zero-padding to center FFTs (fft does post zero-
                 % padding; temporal kernel still odd but almost symmetric)
                 temporal_kernel = cat(2,zeros(1,(fft_length-window_length+1)/2),temporal_kernel);
                 
