@@ -146,6 +146,7 @@ cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maxi
 % Magnitude CQT kernel displayed
 figure
 imagesc(abs(cqt_kernel))
+axis xy
 colormap(jet)
 title('Magnitude CQT kernel')
 xlabel('FFT length')
