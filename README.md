@@ -484,6 +484,7 @@ z This module implements several functions for audio signal processing.
 z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-1)
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-1)
+- [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -603,4 +604,43 @@ sides_signal = audio_signal-center_signal
 # Synthesized center and side signals (un-normalized)
 scipy.io.wavfile.write('center_signal.wav', sample_rate, center_signal)
 scipy.io.wavfile.write('sides_signal.wav', sample_rate, sides_signal)
+```
+
+### cqtkernel Constant-Q transform (CQT) kernel
+```
+import z
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+```
+
+Arguments:
+```
+sample_rate: sample rate in Hz
+frequency_resolution: frequency resolution in number of frequency channels per semitone
+minimum_frequency: minimum frequency in Hz
+maximum_frequency: maximum frequency in Hz
+CQT kernel [number_frequencies,fft_length]
+```
+
+Example: Compute and display the CQT kernel
+```
+# Import modules
+import z
+import numpy as np
+import matplotlib.pyplot as plt
+
+# CQT kernel parameters
+sample_rate = 44100
+frequency_resolution = 2
+minimum_frequency = 55
+maximum_frequency = sample_rate/2
+
+# CQT kernel
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+# Magnitude CQT kernel displayed
+plt.imshow(np.absolute(cqt_kernel).toarray(), aspect='auto', cmap='jet', origin='lower')
+plt.title('Magnitude CQT kernel')
+plt.xlabel('FFT length')
+plt.ylabel('CQT frequency')
+plt.show()
 ```
