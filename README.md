@@ -2,8 +2,8 @@
 
 This library includes a Matlab class and a Python module with several methods/functions for audio signal processing.
 
-- [Matlab class](#z-matlab-class)
-- [Python module](#z-python-module)
+- [z Matlab class](#z-matlab-class)
+- [z Python module](#z-python-module)
 
 ## z Matlab class
 
