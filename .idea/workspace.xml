@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92ef3f00-290b-47dc-b877-3f47f780b56b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/z.m" afterPath="$PROJECT_DIR$/z.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/z.py" afterPath="$PROJECT_DIR$/z.py" />
-    </list>
+    <list default="true" id="92ef3f00-290b-47dc-b877-3f47f780b56b" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +14,8 @@
       <file leaf-file-name="z.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/z.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="29" lean-forward="true" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+            <state relative-caret-position="493">
+              <caret line="276" column="75" lean-forward="false" selection-start-line="276" selection-start-column="75" selection-end-line="276" selection-end-column="75" />
               <folding>
                 <element signature="e#352#370#0" expanded="true" />
                 <element signature="e#451#3437#0" expanded="false" />
@@ -50,7 +46,8 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
+    <option name="x" value="1280" />
     <option name="width" value="1280" />
     <option name="height" value="1560" />
   </component>
@@ -119,8 +116,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="1560" extended-state="1" />
-    <editor active="true" />
+    <frame x="1280" y="0" width="1280" height="1560" extended-state="0" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11885246" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32983193" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -268,8 +264,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/z.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="29" lean-forward="true" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+        <state relative-caret-position="493">
+          <caret line="276" column="75" lean-forward="false" selection-start-line="276" selection-start-column="75" selection-end-line="276" selection-end-column="75" />
           <folding>
             <element signature="e#352#370#0" expanded="true" />
             <element signature="e#451#3437#0" expanded="false" />
