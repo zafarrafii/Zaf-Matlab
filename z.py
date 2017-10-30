@@ -4,12 +4,14 @@ z This module implements several functions for audio signal processing.
 z Functions:
 stft - Short-time Fourier transform (STFT)
 istft - inverse STFT
+cqtkernel - Constant-Q transform (CQT) kernel
+cqtspectrogram - CQT spectrogram using a CQT kernel
 
 Zafar Rafii
 zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
-10/27/17
+10/30/17
 """
 
 import numpy as np
@@ -43,7 +45,7 @@ def stft(audio_signal, window_function, step_length):
     window_duration = 0.04
 
     # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-    window_length = int(np.power(2, np.ceil(np.log2(window_duration*sample_rate))))
+    window_length = int(2**np.ceil(np.log2(window_duration*sample_rate)))
 
     # Window function (periodic Hamming window for COLA)
     window_function = scipy.signal.hamming(window_length, False)
@@ -53,7 +55,7 @@ def stft(audio_signal, window_function, step_length):
 
     # Magnitude spectrogram (without the DC component and the mirrored frequencies)
     audio_stft = z.stft(audio_signal, window_function, step_length)
-    audio_spectrogram = np.absolute(audio_stft[1:int(window_length/2+1), :])
+    audio_spectrogram = abs(audio_stft[1:int(window_length/2+1), :])
 
     # Spectrogram displayed in dB, s, and kHz
     plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
@@ -118,7 +120,7 @@ def istft(audio_stft, window_function, step_length):
 
     # Parameters for the STFT
     window_duration = 0.04
-    window_length = int(np.power(2, np.ceil(np.log2(window_duration*sample_rate))))
+    window_length = int(2**np.ceil(np.log2(window_duration*sample_rate)))
     window_function = scipy.signal.hamming(window_length, False)
     step_length = int(window_length/2)
 
@@ -127,8 +129,8 @@ def istft(audio_stft, window_function, step_length):
     audio_stft2 = z.stft(audio_signal[:, 1], window_function, step_length)
 
     # Magnitude spectrogram (with DC component) of the left and right channels
-    audio_spectrogram1 = np.absolute(audio_stft1[0:int(window_length/2)+1, :])
-    audio_spectrogram2 = np.absolute(audio_stft2[0:int(window_length/2)+1, :])
+    audio_spectrogram1 = abs(audio_stft1[0:int(window_length/2)+1, :])
+    audio_spectrogram2 = abs(audio_stft2[0:int(window_length/2)+1, :])
 
     # Time-frequency masks of the left and right channels for the center signal
     center_mask1 = np.minimum(audio_spectrogram1, audio_spectrogram2)/audio_spectrogram1
@@ -155,7 +157,7 @@ def istft(audio_stft, window_function, step_length):
     """
 
     # Window length in samples and number of time frames
-    [window_length, number_times] = np.shape(audio_stft)
+    window_length, number_times = np.shape(audio_stft)
 
     # Number of samples for the signal
     number_samples = (number_times-1)*step_length + window_length
@@ -177,7 +179,7 @@ def istft(audio_stft, window_function, step_length):
     audio_signal = audio_signal[window_length-step_length:number_samples-(window_length-step_length)]
 
     # Un-apply window (just in case)
-    audio_signal = audio_signal / np.sum(window_function[0:window_length:step_length])
+    audio_signal = audio_signal / sum(window_function[0:window_length:step_length])
 
     # Expand the shape from (number_samples,) to (number_samples, 1)
     audio_signal = np.expand_dims(audio_signal, 1)
@@ -228,7 +230,7 @@ def cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_freq
     number_frequencies = int(round(octave_resolution*np.log2(maximum_frequency/minimum_frequency)))
 
     # Window length for the FFT (= window length of the minimum frequency = longest window)
-    fft_length = int(np.power(2, np.ceil(np.log2(quality_factor*sample_rate/minimum_frequency))))
+    fft_length = int(2**np.ceil(np.log2(quality_factor*sample_rate/minimum_frequency)))
 
     # Initialize the kernel
     cqt_kernel = np.zeros((number_frequencies, fft_length), dtype=complex)
@@ -272,5 +274,76 @@ def cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_freq
     return cqt_kernel
 
 
+def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
+    """
+    Constant-Q transform (CQT) spectrogram using a kernel
+
+    :param audio_signal: audio signal [number_samples,1]
+    :param sample_rate: sample rate in Hz
+    :param time_resolution: time resolution in number of time frames per second
+    :param cqt_kernel: CQT kernel [number_frequencies,fft_length]
+    :return: audio_spectrogram: audio spectrogram in magnitude [number_frequencies,number_times]
+
+    Example: Compute and display the CQT spectrogram
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import matplotlib.pyplot as plt
+
+    # Audio file (normalized) averaged over the channels and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / ( 2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+
+    # CQT kernel
+    frequency_resolution = 2
+    minimum_frequency = 55
+    maximum_frequency = 3520
+    cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+    # CQT spectrogram
+    time_resolution = 25
+    audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
+
+    # CQT spectrogram displayed in dB, s, and semitones
+    plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+    plt.title('CQT spectrogram (dB)')
+    plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
+               np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+    plt.xlabel('Time (s)')
+    plt.yticks(np.arange(1, 6*12*frequency_resolution+1, 12*frequency_resolution),
+               ('A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'))
+    plt.ylabel('Frequency (semitones)')
+    plt.show()
+    """
+
+    # Number of time samples per time frame
+    step_length = round(sample_rate/time_resolution)
+
+    # Number of time frames
+    number_times = int(np.floor(len(audio_signal)/step_length))
+
+    # Number of frequency channels and FFT length
+    number_frequencies, fft_length = np.shape(cqt_kernel)
+
+    # Zero-padding to center the CQT
+    audio_signal = np.pad(audio_signal, (int(np.ceil((fft_length-step_length)/2)),
+                                         int(np.floor((fft_length-step_length)/2))), 'constant', constant_values=(0, 0))
+
+    # Initialize the spectrogram
+    audio_spectrogram = np.zeros((number_frequencies, number_times))
+
+    # Loop over the time frames
+    for time_index in range(0, number_times):
+
+        # Magnitude CQT using the kernel
+        sample_index = step_length*time_index
+        audio_spectrogram[:, time_index] = abs(cqt_kernel*np.fft.fft(audio_signal[sample_index:sample_index+fft_length]))
+
+    return audio_spectrogram
+
+
 def test():
+
     return 0
