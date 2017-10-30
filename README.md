@@ -1,6 +1,6 @@
 # Z Library
 
-This library includes a Matlab class and a Python module with several methods/functions for audio signal processing.
+This library includes a Matlab class and a Python module which implement several methods/functions for audio signal processing.
 
 - [z Matlab class](#z-matlab-class)
 - [z Python module](#z-python-module)
@@ -187,7 +187,7 @@ imagesc(db(audio_spectrogram))
 axis xy
 colormap(jet)
 title('CQT spectrogram (dB)')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/time_resolution))
+xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
 yticks(1:12*frequency_resolution:6*12*frequency_resolution)
@@ -486,6 +486,7 @@ z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-1)
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-1)
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
+- [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -643,6 +644,53 @@ plt.imshow(np.absolute(cqt_kernel).toarray(), aspect='auto', cmap='jet', origin=
 plt.title('Magnitude CQT kernel')
 plt.xlabel('FFT length')
 plt.ylabel('CQT frequency')
+plt.show()
+```
+
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
+`audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
+
+Arguments:
+```
+audio_signal: audio signal [number_samples,1]
+sample_rate: sample rate in Hz
+time_resolution: time resolution in number of time frames per second
+cqt_kernel: CQT kernel [number_frequencies,fft_length]
+audio_spectrogram: audio spectrogram in magnitude [number_frequencies,number_times]
+```
+
+Example: Compute and display the CQT spectrogram
+```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import matplotlib.pyplot as plt
+
+# Audio file (normalized) averaged over the channels and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / ( 2.0**(audio_signal.itemsize*8-1))
+audio_signal = np.mean(audio_signal, 1)
+
+# CQT kernel
+frequency_resolution = 2
+minimum_frequency = 55
+maximum_frequency = 3520
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+# CQT spectrogram
+time_resolution = 25
+audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
+
+# CQT spectrogram displayed in dB, s, and semitones
+plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+plt.title('CQT spectrogram (dB)')
+plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
+           np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+plt.xlabel('Time (s)')
+plt.yticks(np.arange(1, 6*12*frequency_resolution+1, 12*frequency_resolution),
+           ('A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'))
+plt.ylabel('Frequency (semitones)')
 plt.show()
 ```
 
