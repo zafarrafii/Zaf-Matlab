@@ -7,6 +7,7 @@ istft - inverse STFT
 cqtkernel - Constant-Q transform (CQT) kernel
 cqtspectrogram - CQT spectrogram using a CQT kernel
 cqtchromagram - CQT chromagram using a CQT kernel
+mfcc - Mel frequency cepstrum coefficients (MFCCs)
 
 Zafar Rafii
 zafarrafii@gmail.com
@@ -17,6 +18,8 @@ https://github.com/zafarrafii
 
 import numpy as np
 import scipy.sparse
+import scipy.signal
+import scipy.fftpack
 
 
 def stft(audio_signal, window_function, step_length):
@@ -412,6 +415,86 @@ def cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resoluti
     return audio_chromagram
 
 
+def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
+    """
+    Mel frequency cepstrum coefficients (MFFCs)
+
+    :param audio_signal: audio signal [number_samples,1]
+    :param sample_rate: sample rate in Hz
+    :param number_filters: number of filters
+    :param number_coefficients: number of coefficients (without the 0th coefficient)
+    :return: audio_mfcc: audio MFCCs [number_times,number_coefficients]
+
+    Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+    """
+
+    # Window duration in seconds, length in samples, and function, and step length in samples
+    window_duration = 0.04
+    window_length = int(2**np.ceil(np.log2(window_duration*sample_rate)))
+    window_function = scipy.signal.hamming(window_length, False)
+    step_length = int(window_length/2)
+
+    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
+    audio_stft = stft(audio_signal, window_function, step_length)
+    audio_spectrogram = abs(audio_stft[1:int(window_length/2)+1, :])
+
+    # Minimum and maximum mel frequencies
+    mininum_melfrequency = 2595 * np.log10(1+(sample_rate/window_length)/700)
+    maximum_melfrequency = 2595 * np.log10(1+(sample_rate/2)/700)
+
+    # Indices of the overlapping filters (linearly spaced in the  mel scale and logarithmically spaced in the linear scale)
+    filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1)
+    filter_indices = np.arange(mininum_melfrequency, maximum_melfrequency+1, filter_width/2)
+    filter_indices = np.round(700*(np.power(10, filter_indices/2595)-1)*window_length/sample_rate).astype(int)
+
+    # Initialize the filter bank
+    filter_bank = np.zeros((number_filters, int(window_length/2)))
+
+    # Loop over the filters
+    for filter_index in range(0, number_filters):
+
+        # Left and right sides of the triangular overlapping filters (linspace more accurate than triang or bartlett!)
+        filter_bank[filter_index, filter_indices[filter_index]:filter_indices[filter_index+1]] \
+            = np.linspace(0, 1, num=filter_indices[filter_index+1]-filter_indices[filter_index])
+        filter_bank[filter_index, filter_indices[filter_index+1]:filter_indices[filter_index+2]] \
+            = np.linspace(1, 0, num=filter_indices[filter_index+2]-filter_indices[filter_index+1])
+
+    # Discrete cosine transform (DCT) of the log of the magnitude spectrogram mapped onto the mel scale using the filter bank
+    audio_mfcc = scipy.fftpack.dct(np.log(np.dot(filter_bank, audio_spectrogram)+np.spacing(1)))
+
+    # The first coefficients (without the 0th) represent the MFCCs
+    audio_mfcc = audio_mfcc[1:number_coefficients, :]
+
+    return audio_mfcc
+
+
 def test():
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import matplotlib.pyplot as plt
+
+    # Audio signal (normalized) averaged over its channels and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+
+    # MFCCs for a given number of filters and coefficients
+    number_filters = 40
+    number_coefficients = 20
+    audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
+
+    # Delta and delta-delta MFCCs
+    audio_deltamfcc = np.diff(audio_mfcc, n=1, axis=1)
+    audio_deltadeltamfcc = np.diff(audio_deltamfcc, n=1, axis=1)
+
+    # MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
+    step_length = 2**np.ceil(np.log2(0.04*sample_rate)) / 2
+    plt.subplots(3, 1)
+    plt.plot(audio_mfcc)
+    plt.title('MFCCs')
+    plt.subplots(3, 1)
+    plt.plot(audio_deltamfcc)
 
     return 0

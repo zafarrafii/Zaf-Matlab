@@ -16,9 +16,9 @@ classdef z
     % Author
     %   Zafar Rafii
     %   zafarrafii@gmail.com
-    %   10/26/17
-    %   
-    % See also http://zafarrafii.com
+    %   http://zafarrafii.com
+    %   https://github.com/zafarrafii
+    %   10/31/17
     
     methods (Static = true)
         
@@ -470,7 +470,7 @@ classdef z
             % mel scale and logarithmically spaced in the linear scale)
             filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
             filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
-            filter_indices = round((700*(10.^(filter_indices/2595)-1))*window_length/sample_rate);
+            filter_indices = round(700*(10.^(filter_indices/2595)-1)*window_length/sample_rate);
             
             % Initialize the filter bank
             filter_bank = zeros(number_filters,window_length/2);
