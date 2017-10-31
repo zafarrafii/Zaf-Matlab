@@ -394,7 +394,7 @@ classdef z
             for chroma_index = 1:number_chromas
                 
                 % Sum the energy of the frequency channels for every chroma
-                audio_chromagram(chroma_index,:) = sum(audio_spectrogram(chroma_index:number_chromas:number_frequencies,:));
+                audio_chromagram(chroma_index,:) = sum(audio_spectrogram(chroma_index:number_chromas:number_frequencies,:),1);
             end
         end
         

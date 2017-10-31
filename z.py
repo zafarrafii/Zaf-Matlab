@@ -6,12 +6,13 @@ stft - Short-time Fourier transform (STFT)
 istft - inverse STFT
 cqtkernel - Constant-Q transform (CQT) kernel
 cqtspectrogram - CQT spectrogram using a CQT kernel
+cqtchromagram - CQT chromagram using a CQT kernel
 
 Zafar Rafii
 zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
-10/30/17
+10/31/17
 """
 
 import numpy as np
@@ -38,7 +39,7 @@ def stft(audio_signal, window_function, step_length):
 
     # Audio signal (normalized) averaged over its channels and sample rate in Hz
     sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
-    audio_signal = audio_signal / ( 2.0**(audio_signal.itemsize*8-1))
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
     audio_signal = np.mean(audio_signal, 1)
 
     # Window duration in seconds (audio is stationary around 40 milliseconds)
@@ -58,7 +59,7 @@ def stft(audio_signal, window_function, step_length):
     audio_spectrogram = abs(audio_stft[1:int(window_length/2+1), :])
 
     # Spectrogram displayed in dB, s, and kHz
-    plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+    plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
     plt.title('Spectrogram (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
@@ -195,7 +196,7 @@ def cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_freq
     :param frequency_resolution: frequency resolution in number of frequency channels per semitone
     :param minimum_frequency: minimum frequency in Hz
     :param maximum_frequency: maximum frequency in Hz
-    :return: CQT kernel [number_frequencies,fft_length]
+    :return: cqt_kernel: CQT kernel [number_frequencies,fft_length]
 
     Example: Compute and display the CQT kernel
     # Import modules
@@ -307,7 +308,7 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
     audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
     # CQT spectrogram displayed in dB, s, and semitones
-    plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+    plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
     plt.title('CQT spectrogram (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
@@ -342,6 +343,73 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
         audio_spectrogram[:, time_index] = abs(cqt_kernel*np.fft.fft(audio_signal[sample_index:sample_index+fft_length]))
 
     return audio_spectrogram
+
+
+def cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel):
+    """
+    Constant-Q transform (CQT) chromagram using a kernel
+
+    :param audio_signal: audio signal [number_samples,1]
+    :param sample_rate: sample rate in Hz
+    :param time_resolution: time resolution in number of time frames per second
+    :param frequency_resolution: frequency resolution in number of frequency channels per semitones
+    :param cqt_kernel: CQT kernel [number_frequencies,fft_length]
+    :return: audio_chromagram: audio chromagram [number_chromas,number_times]
+
+    Example: Compute and display the CQT chromagram
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import matplotlib.pyplot as plt
+
+    # Audio signal (normalized) averaged over its channels and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+
+    # CQT kernel
+    frequency_resolution = 2
+    minimum_frequency = 55
+    maximum_frequency = 3520
+    cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+    # CQT chromagram
+    time_resolution = 25
+    audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel)
+
+    # CQT chromagram displayed in dB, s, and chromas
+    plt.imshow(20*np.log10(audio_chromagram), aspect='auto', cmap='jet', origin='lower')
+    plt.title('CQT chromagram (dB)')
+    plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
+               np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+    plt.xlabel('Time (s)')
+    plt.yticks(np.arange(1, 12*frequency_resolution+1, frequency_resolution),
+               ('A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'))
+    plt.ylabel('Chroma')
+    plt.show()
+    """
+
+    # CQT spectrogram
+    audio_spectrogram = cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
+
+    # Number of frequency channels and time frames
+    number_frequencies, number_times = np.shape(audio_spectrogram)
+
+    # Number of chroma bins
+    number_chromas = 12*frequency_resolution
+
+    # Initialize the chromagram
+    audio_chromagram = np.zeros((number_chromas, number_times))
+
+    # Loop over the chroma bins
+    for chroma_index in range(0,number_chromas):
+
+        # Sum the energy of the frequency channels for every chroma
+        audio_chromagram[chroma_index, :] \
+            = np.sum(audio_spectrogram[chroma_index:number_frequencies:number_chromas, :], 0)
+
+    return audio_chromagram
 
 
 def test():
