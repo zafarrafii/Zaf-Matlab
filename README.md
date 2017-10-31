@@ -487,6 +487,7 @@ z Functions:
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-1)
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-1)
+- [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -533,7 +534,7 @@ audio_stft = z.stft(audio_signal, window_function, step_length)
 audio_spectrogram = np.absolute(audio_stft[1:int(window_length/2+1), :])
 
 # Spectrogram displayed in dB, s, and kHz
-plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
 plt.title('Spectrogram (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
@@ -686,7 +687,7 @@ time_resolution = 25
 audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
 # CQT spectrogram displayed in dB, s, and semitones
-plt.imshow(20*np.log10(audio_spectrogram), cmap='jet', origin='lower')
+plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
 plt.title('CQT spectrogram (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
@@ -694,6 +695,57 @@ plt.xlabel('Time (s)')
 plt.yticks(np.arange(1, 6*12*frequency_resolution+1, 12*frequency_resolution),
            ('A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'))
 plt.ylabel('Frequency (semitones)')
+plt.show()
+```
+
+### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
+```
+import z
+audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel);
+```
+
+Arguments:
+```
+audio_signal: audio signal [number_samples,1]
+sample_rate: sample rate in Hz
+time_resolution: time resolution in number of time frames per second
+frequency_resolution: frequency resolution in number of frequency channels per semitones
+cqt_kernel: CQT kernel [number_frequencies,fft_length]
+audio_chromagram: audio chromagram [number_chromas,number_times]
+```
+
+Example: Compute and display the CQT chromagram
+```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import matplotlib.pyplot as plt
+
+# Audio signal (normalized) averaged over its channels and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+audio_signal = np.mean(audio_signal, 1)
+
+# CQT kernel
+frequency_resolution = 2
+minimum_frequency = 55
+maximum_frequency = 3520
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+# CQT chromagram
+time_resolution = 25
+audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel)
+
+# CQT chromagram displayed in dB, s, and chromas
+plt.imshow(20*np.log10(audio_chromagram), aspect='auto', cmap='jet', origin='lower')
+plt.title('CQT chromagram (dB)')
+plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
+           np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+plt.xlabel('Time (s)')
+plt.yticks(np.arange(1, 12*frequency_resolution+1, frequency_resolution),
+           ('A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'))
+plt.ylabel('Chroma')
 plt.show()
 ```
 
