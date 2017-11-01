@@ -2,6 +2,7 @@
   <dictionary name="zrafii">
     <words>
       <w>chromagram</w>
+      <w>mfcc</w>
     </words>
   </dictionary>
 </component>
