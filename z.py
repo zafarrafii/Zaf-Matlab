@@ -32,7 +32,6 @@ def stft(audio_signal, window_function, step_length):
     :return: audio STFT [window_length,number_frames]
 
     Example: Compute and display the spectrogram of an audio file:
-
     # Import modules
     import scipy.io.wavfile
     import numpy as np
