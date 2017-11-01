@@ -488,6 +488,7 @@ z Functions:
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-1)
 - [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-1)
+- [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -748,6 +749,67 @@ plt.yticks(np.arange(1, 12*frequency_resolution+1, frequency_resolution),
 plt.ylabel('Chroma')
 plt.show()
 ```
+
+### mfcc Mel frequency cepstrum coefficients (MFCCs)
+```
+import z
+audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
+```
+Arguments:
+```
+audio_signal: audio signal [number_samples,1]
+sample_rate: sample rate in Hz
+number_filters: number of filters
+number_coefficients: number of coefficients (without the 0th coefficient)
+audio_mfcc: audio MFCCs [number_times,number_coefficients]
+```
+
+Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import matplotlib.pyplot as plt
+
+# Audio signal (normalized) averaged over its channels and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+audio_signal = np.mean(audio_signal, 1)
+
+# MFCCs for a given number of filters and coefficients
+number_filters = 40
+number_coefficients = 20
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
+
+# Delta and delta-delta MFCCs
+audio_deltamfcc = np.diff(audio_mfcc, n=1, axis=1)
+audio_deltadeltamfcc = np.diff(audio_deltamfcc, n=1, axis=1)
+
+# MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
+step_length = 2**np.ceil(np.log2(0.04*sample_rate)) / 2
+plt.subplot(3, 1, 1)
+plt.plot(np.transpose(audio_mfcc))
+plt.title('MFCCs')
+plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
+           np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
+plt.subplot(3, 1, 2)
+plt.plot(np.transpose(audio_deltamfcc))
+plt.title('Delta MFCCs')
+plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
+           np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
+plt.subplot(3, 1, 3)
+plt.plot(np.transpose(audio_deltadeltamfcc))
+plt.title('Delta-delta MFCCs')
+plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
+           np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
+"""
 
 # Author
 
