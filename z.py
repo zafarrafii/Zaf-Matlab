@@ -463,7 +463,7 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
     audio_mfcc = scipy.fftpack.dct(np.log(np.dot(filter_bank, audio_spectrogram)+np.spacing(1)))
 
     # The first coefficients (without the 0th) represent the MFCCs
-    audio_mfcc = audio_mfcc[1:number_coefficients, :]
+    audio_mfcc = audio_mfcc[1:number_coefficients+1, :]
 
     return audio_mfcc
 
@@ -491,10 +491,14 @@ def test():
 
     # MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
     step_length = 2**np.ceil(np.log2(0.04*sample_rate)) / 2
-    plt.subplots(3, 1)
-    plt.plot(audio_mfcc)
+    plt.subplot(3, 1, 1)
+    plt.plot(np.transpose(audio_mfcc))
     plt.title('MFCCs')
-    plt.subplots(3, 1)
-    plt.plot(audio_deltamfcc)
+    plt.subplot(3, 1, 2)
+    plt.plot(np.transpose(audio_deltamfcc))
+    plt.title('Delta MFCCs')
+    plt.subplot(3, 1, 3)
+    plt.plot(np.transpose(audio_deltamfcc))
+    plt.title('Delta-delta MFCCs')
 
-    return 0
+    return audio_mfcc
