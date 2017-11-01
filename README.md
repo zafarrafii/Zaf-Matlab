@@ -809,7 +809,7 @@ plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*samp
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
 plt.xlabel('Time (s)')
 plt.autoscale(tight=True)
-"""
+```
 
 # Author
 
