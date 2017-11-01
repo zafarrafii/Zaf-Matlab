@@ -1,13 +1,14 @@
 """
-z This module implements several functions for audio signal processing.
+This module implements several functions for audio signal processing.
 
-z Functions:
+Functions:
 stft - Short-time Fourier transform (STFT)
 istft - inverse STFT
 cqtkernel - Constant-Q transform (CQT) kernel
 cqtspectrogram - CQT spectrogram using a CQT kernel
 cqtchromagram - CQT chromagram using a CQT kernel
 mfcc - Mel frequency cepstrum coefficients (MFCCs)
+dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 
 Zafar Rafii
 zafarrafii@gmail.com
@@ -96,7 +97,7 @@ def stft(audio_signal, window_function, step_length):
         audio_stft[:, time_index] = audio_signal[sample_index:window_length+sample_index] * window_function
 
     # Fourier transform of the frames
-    audio_stft = np.fft.fft(audio_stft, window_length, 0)
+    audio_stft = np.fft.fft(audio_stft, axis=0)
 
     return audio_stft
 
@@ -169,7 +170,7 @@ def istft(audio_stft, window_function, step_length):
     audio_signal = np.zeros(number_samples)
 
     # Inverse Fourier transform of the frames and real part to ensure real values
-    audio_stft = np.real(np.fft.ifft(audio_stft, window_length, 0))
+    audio_stft = np.real(np.fft.ifft(audio_stft, axis=0))
 
     # Loop over the time frames
     for time_index in range(0, number_times):
@@ -342,7 +343,8 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
 
         # Magnitude CQT using the kernel
         sample_index = step_length*time_index
-        audio_spectrogram[:, time_index] = abs(cqt_kernel*np.fft.fft(audio_signal[sample_index:sample_index+fft_length]))
+        audio_spectrogram[:, time_index] \
+            = abs(cqt_kernel*np.fft.fft(audio_signal[sample_index:sample_index+fft_length]))
 
     return audio_spectrogram
 
@@ -510,7 +512,60 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
     return audio_mfcc
 
 
-def test():
+def dct(audio_signal, dct_type):
+    """
+    Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 
+    :param audio_signal: audio signal [number_samples,number_frames]
+    :param dct_type: DCT type (1, 2, 3, or 4)
+    :return: audio_dct: audio DCT [number_frequencies,number_frames]
+
+    Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+    """
+
+    if dct_type == 1:
+
+        # Number of samples per frame
+        window_length = np.size(audio_signal, 0)
+
+        # Pre-processing to make the DCT-I matrix orthogonal (concatenate instead of modifying elements to avoid side-effects!)
+        audio_signal = np.concatenate((audio_signal[0]*np.sqrt(2),
+                                       audio_signal[1:window_length-1], audio_signal[window_length-1]*np.sqrt(2)))
+
+        # Compute the DCT-I using the FFT
+        audio_dct = np.concatenate((audio_signal, audio_signal[window_length-2:0:-1, :]))
+        audio_dct = np.fft.fft(audio_dct, axis=0)
+        audio_dct = np.real(audio_dct[0:window_length, :])/2
+
+        # Post-processing to make the DCT-I matrix orthogonal
+        audio_dct[[0, window_length-1], :] = audio_dct[[0, window_length-1], :]/np.sqrt(2)
+        audio_dct = audio_dct*np.sqrt(2/(window_length-1))
+
+    elif dct_type == 2:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Compute the DCT-II using the FFT
+        audio_dct = np.zeros((4*window_length, number_frames))
+        audio_dct[1:2*window_length:2, :] = audio_signal
+        audio_dct[2*window_length+1:4*window_length:2, :] = audio_signal[window_length-1::-1, :]
+        audio_dct = np.fft.fft(audio_dct, axis=0)
+        audio_dct = np.real(audio_dct[0:window_length, :])/2
+
+        # Post-processing to make the DCT-II matrix orthogonal
+        audio_dct[0, :] = audio_dct[0, :]/np.sqrt(2)
+        audio_dct = audio_dct*np.sqrt(2/window_length)
+
+    #elif dct_type == 3:
+    #elif dct_type == 4:
+
+    return audio_dct
+
+
+def test(x,y):
+
+    x = np.concatenate((x, x), 0)
+    y[0] = 1
 
     return 0
