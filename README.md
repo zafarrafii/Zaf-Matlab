@@ -270,25 +270,25 @@ step_length = (2^nextpow2(0.04*sample_rate))/2;
 figure
 subplot(3,1,1)
 plot(audio_mfcc')
+axis tight
 title('MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
-axis tight
 subplot(3,1,2)
 plot(audio_deltamfcc')
+axis tight
 title('Delta MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
-axis tight
 subplot(3,1,3)
 plot(audio_deltadeltamfcc')
+axis tight
 title('Delta-delta MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
-axis tight
 ```
 
 ### dct [Discrete cosine transform (DCT)](https://en.wikipedia.org/wiki/Discrete_cosine_transform) using the fast Fourier transform (FFT)
@@ -489,6 +489,7 @@ z Functions:
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-1)
 - [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-1)
 - [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-1)
+- [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-1)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -753,7 +754,7 @@ plt.show()
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 ```
 import z
-audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
 ```
 Arguments:
 ```
@@ -809,6 +810,72 @@ plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*samp
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
 plt.xlabel('Time (s)')
 plt.autoscale(tight=True)
+plt.show()
+```
+
+### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+```
+import z
+audio_dct = z.dct(audio_signal, dct_type);
+```
+
+Arguments:
+```
+audio_signal: audio signal [number_samples,number_frames]
+dct_type: dct type (1, 2, 3, or 4)
+audio_dct: audio DCT [number_frequencies,number_frames]
+```
+
+Example: Compute the 4 different DCTs and compare them to SciPy's DCTs
+```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import scipy.fftpack
+import matplotlib.pyplot as plt
+
+# Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+audio_signal = np.mean(audio_signal, 1)
+audio_signal = np.expand_dims(audio_signal, axis=1)
+
+# Audio signal for a given window length, and one frame
+window_length = 1024
+audio_signal = audio_signal[0:window_length, :]
+
+# DCT-I, II, III, and IV
+audio_dct1 = z.dct(audio_signal, 1)
+audio_dct2 = z.dct(audio_signal, 2)
+audio_dct3 = z.dct(audio_signal, 3)
+audio_dct4 = z.dct(audio_signal, 4)
+
+# SciPy's DCT-I (orthogonalized), II, and III (SciPy does not have a DCT-IV!)
+audio_signal1 = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:window_length-1, :],
+                               audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
+scipy_dct1 = scipy.fftpack.dct(audio_signal1, axis=0, type=1)
+scipy_dct1[[0, window_length-1], :] = scipy_dct1[[0, window_length-1], :]/np.sqrt(2)
+scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
+
+scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
+scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
+scipy_dct4 = np.zeros((window_length, 1))
+
+# DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
+plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
+plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 4), plt.plot(audio_dct2), plt.autoscale(tight=True), plt.title("DCT-II")
+plt.subplot(4, 3, 5), plt.plot(scipy_dct2), plt.autoscale(tight=True), plt.title("SciPy's DCT-II")
+plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 7), plt.plot(audio_dct3), plt.autoscale(tight=True), plt.title("DCT-III")
+plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
+plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
+plt.subplot(4, 3, 11), plt.plot(scipy_dct4), plt.autoscale(tight=True), plt.title("SciPy's DCT-IV (none!)")
+plt.subplot(4, 3, 12), plt.plot(audio_dct4-scipy_dct4), plt.autoscale(tight=True), plt.title("Differences")
+plt.show()
 ```
 
 # Author
