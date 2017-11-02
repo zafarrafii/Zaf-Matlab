@@ -653,7 +653,7 @@ plt.show()
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 ```
 import z
-audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel);
+audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 ```
 
 Arguments:
@@ -703,7 +703,7 @@ plt.show()
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 ```
 import z
-audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel);
+audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel)
 ```
 
 Arguments:
@@ -754,7 +754,7 @@ plt.show()
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 ```
 import z
-audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
 ```
 Arguments:
 ```
@@ -816,7 +816,7 @@ plt.show()
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 ```
 import z
-audio_dct = z.dct(audio_signal, dct_type);
+audio_dct = z.dct(audio_signal, dct_type)
 ```
 
 Arguments:
