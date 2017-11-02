@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92ef3f00-290b-47dc-b877-3f47f780b56b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/zrafii.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/zrafii.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/z.m" afterPath="$PROJECT_DIR$/z.m" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/z.py" afterPath="$PROJECT_DIR$/z.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +16,8 @@
       <file leaf-file-name="z.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/z.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="982">
-              <caret line="659" column="0" lean-forward="true" selection-start-line="659" selection-start-column="0" selection-end-line="659" selection-end-column="0" />
+            <state relative-caret-position="608">
+              <caret line="547" column="56" lean-forward="false" selection-start-line="547" selection-start-column="56" selection-end-line="547" selection-end-column="56" />
               <folding>
                 <element signature="e#526#544#0" expanded="true" />
                 <element signature="e#666#3655#0" expanded="false" />
@@ -356,8 +354,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/z.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="982">
-          <caret line="659" column="0" lean-forward="true" selection-start-line="659" selection-start-column="0" selection-end-line="659" selection-end-column="0" />
+        <state relative-caret-position="608">
+          <caret line="547" column="56" lean-forward="false" selection-start-line="547" selection-start-column="56" selection-end-line="547" selection-end-column="56" />
           <folding>
             <element signature="e#526#544#0" expanded="true" />
             <element signature="e#666#3655#0" expanded="false" />

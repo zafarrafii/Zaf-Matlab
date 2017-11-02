@@ -521,7 +521,7 @@ def dct(audio_signal, dct_type):
     :param dct_type: DCT type (1, 2, 3, or 4)
     :return: audio_dct: audio DCT [number_frequencies,number_frames]
 
-    Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+    Example: Compute the 4 different DCTs and compare them to SciPy's DCTs
     # Import modules
     import scipy.io.wavfile
     import numpy as np
@@ -545,7 +545,7 @@ def dct(audio_signal, dct_type):
     audio_dct3 = z.dct(audio_signal, 3)
     audio_dct4 = z.dct(audio_signal, 4)
 
-    # SciPy's DCT-I (orthogonalized), II, and III (Scipy does not have a DCT-IV!)
+    # SciPy's DCT-I (orthogonalized), II, and III (SciPy does not have a DCT-IV!)
     audio_signal1 = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:window_length-1, :],
                                    audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
     scipy_dct1 = scipy.fftpack.dct(audio_signal1, axis=0, type=1)
