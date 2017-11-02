@@ -14,7 +14,7 @@ Zafar Rafii
 zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
-11/01/17
+11/02/17
 """
 
 import numpy as np
@@ -470,6 +470,7 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
     plt.xlabel('Time (s)')
     plt.autoscale(tight=True)
+    plt.show()
     """
 
     # Window duration in seconds, length in samples, and function, and step length in samples
@@ -486,7 +487,7 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
     mininum_melfrequency = 2595*np.log10(1+(sample_rate/window_length)/700)
     maximum_melfrequency = 2595*np.log10(1+(sample_rate/2)/700)
 
-    # Indices of the overlapping filters (linearly spaced in the  mel scale and logarithmically spaced in the linear scale)
+    # Indices of the overlapping filters (linearly spaced in the mel scale and log spaced in the linear scale)
     filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1)
     filter_indices = np.arange(mininum_melfrequency, maximum_melfrequency+1, filter_width/2)
     filter_indices = np.round(700*(np.power(10, filter_indices/2595)-1)*window_length/sample_rate).astype(int)
@@ -503,7 +504,7 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
         filter_bank[filter_index, filter_indices[filter_index+1]-1:filter_indices[filter_index+2]] \
             = np.linspace(1, 0, num=filter_indices[filter_index+2]-filter_indices[filter_index+1]+1)
 
-    # Discrete cosine transform (DCT) of the log of the magnitude spectrogram mapped onto the mel scale using the filter bank
+    # Discrete cosine transform of the log of the magnitude spectrogram mapped onto the mel scale using the filter bank
     audio_mfcc = scipy.fftpack.dct(np.log(np.dot(filter_bank, audio_spectrogram)+np.spacing(1)), axis=0, norm='ortho')
 
     # The first coefficients (without the 0th) represent the MFCCs
@@ -521,6 +522,54 @@ def dct(audio_signal, dct_type):
     :return: audio_dct: audio DCT [number_frequencies,number_frames]
 
     Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import scipy.fftpack
+    import matplotlib.pyplot as plt
+
+    # Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+    audio_signal = np.expand_dims(audio_signal, axis=1)
+
+    # Audio signal for a given window length, and one frame
+    window_length = 1024
+    audio_signal = audio_signal[0:window_length, :]
+
+    # DCT-I, II, III, and IV
+    audio_dct1 = z.dct(audio_signal, 1)
+    audio_dct2 = z.dct(audio_signal, 2)
+    audio_dct3 = z.dct(audio_signal, 3)
+    audio_dct4 = z.dct(audio_signal, 4)
+
+    # SciPy's DCT-I (orthogonalized), II, and III (Scipy does not have a DCT-IV!)
+    audio_signal1 = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:window_length-1, :],
+                                   audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
+    scipy_dct1 = scipy.fftpack.dct(audio_signal1, axis=0, type=1)
+    scipy_dct1[[0, window_length-1], :] = scipy_dct1[[0, window_length-1], :]/np.sqrt(2)
+    scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
+
+    scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
+    scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
+    scipy_dct4 = np.zeros((window_length, 1))
+
+    # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+    plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
+    plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
+    plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
+    plt.subplot(4, 3, 4), plt.plot(audio_dct2), plt.autoscale(tight=True), plt.title("DCT-II")
+    plt.subplot(4, 3, 5), plt.plot(scipy_dct2), plt.autoscale(tight=True), plt.title("SciPy's DCT-II")
+    plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Differences")
+    plt.subplot(4, 3, 7), plt.plot(audio_dct3), plt.autoscale(tight=True), plt.title("DCT-III")
+    plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
+    plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
+    plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
+    plt.subplot(4, 3, 11), plt.plot(scipy_dct4), plt.autoscale(tight=True), plt.title("SciPy's DCT-IV (none!)")
+    plt.subplot(4, 3, 12), plt.plot(audio_dct4-scipy_dct4), plt.autoscale(tight=True), plt.title("Differences")
+    plt.show()
     """
 
     if dct_type == 1:
@@ -528,18 +577,21 @@ def dct(audio_signal, dct_type):
         # Number of samples per frame
         window_length = np.size(audio_signal, 0)
 
-        # Pre-processing to make the DCT-I matrix orthogonal (concatenate instead of modifying elements to avoid side-effects!)
-        audio_signal = np.concatenate((audio_signal[0]*np.sqrt(2),
-                                       audio_signal[1:window_length-1], audio_signal[window_length-1]*np.sqrt(2)))
+        # Pre-processing to make the DCT-I matrix orthogonal (concatenate to avoid side-effects!)
+        audio_signal = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:window_length-1, :],
+                                       audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
 
         # Compute the DCT-I using the FFT
         audio_dct = np.concatenate((audio_signal, audio_signal[window_length-2:0:-1, :]))
+        print(np.shape(audio_dct))
         audio_dct = np.fft.fft(audio_dct, axis=0)
         audio_dct = np.real(audio_dct[0:window_length, :])/2
 
         # Post-processing to make the DCT-I matrix orthogonal
         audio_dct[[0, window_length-1], :] = audio_dct[[0, window_length-1], :]/np.sqrt(2)
         audio_dct = audio_dct*np.sqrt(2/(window_length-1))
+
+        return audio_dct
 
     elif dct_type == 2:
 
@@ -557,15 +609,51 @@ def dct(audio_signal, dct_type):
         audio_dct[0, :] = audio_dct[0, :]/np.sqrt(2)
         audio_dct = audio_dct*np.sqrt(2/window_length)
 
-    #elif dct_type == 3:
-    #elif dct_type == 4:
+        return audio_dct
 
-    return audio_dct
+    elif dct_type == 3:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Pre-processing to make the DCT-III matrix orthogonal (concatenate to avoid side-effects!)
+        audio_signal = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:window_length, :]))
+
+        # Compute the DCT-III using the FFT
+        audio_dct = np.zeros((4*window_length, number_frames))
+        audio_dct[0:window_length, :] = audio_signal
+        audio_dct[window_length+1:2*window_length+1, :] = -audio_signal[window_length-1::-1, :]
+        audio_dct[2*window_length+1:3*window_length, :] = -audio_signal[1:window_length, :]
+        audio_dct[3*window_length+1:4*window_length, :] = audio_signal[window_length-1:0:-1, :]
+        audio_dct = np.fft.fft(audio_dct, axis=0)
+        audio_dct = np.real(audio_dct[1:2*window_length:2, :])/4
+
+        # Post-processing to make the DCT-III matrix orthogonal
+        audio_dct = audio_dct*np.sqrt(2/window_length)
+
+        return audio_dct
+
+    elif dct_type == 4:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Compute the DCT-IV using the FFT
+        audio_dct = np.zeros((8*window_length, number_frames))
+        audio_dct[1:2*window_length:2, :] = audio_signal
+        audio_dct[2*window_length+1:4*window_length:2, :] = -audio_signal[window_length-1::-1, :]
+        audio_dct[4*window_length+1:6*window_length:2, :] = -audio_signal
+        audio_dct[6*window_length+1:8*window_length:2, :] = audio_signal[window_length-1::-1, :]
+        audio_dct = np.fft.fft(audio_dct, axis=0)
+        audio_dct = np.real(audio_dct[1:2*window_length:2, :])/4
+
+        # Post-processing to make the DCT-IV matrix orthogonal
+        audio_dct = np.sqrt(2/window_length)*audio_dct
+
+        return audio_dct
 
 
-def test(x,y):
-
-    x = np.concatenate((x, x), 0)
-    y[0] = 1
+def test():
 
     return 0
+

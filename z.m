@@ -18,7 +18,7 @@ classdef z
     %   zafarrafii@gmail.com
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
-    %   10/31/17
+    %   11/02/17
     
     methods (Static = true)
         
@@ -428,25 +428,25 @@ classdef z
             %       figure
             %       subplot(3,1,1)
             %       plot(audio_mfcc')
+            %       axis tight
             %       title('MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)')
-            %       axis tight
             %       subplot(3,1,2)
             %       plot(audio_deltamfcc')
+            %       axis tight
             %       title('Delta MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)')
-            %       axis tight
             %       subplot(3,1,3)
             %       plot(audio_deltadeltamfcc')
+            %       axis tight
             %       title('Delta-delta MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)')
-            %       axis tight
             %   
             %   See also z.stft, dct
             
@@ -486,7 +486,7 @@ classdef z
                     = linspace(1,0,filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);
             end
             
-            % Discrete cosine transform (DCT) of the log of the magnitude 
+            % Discrete cosine transform of the log of the magnitude 
             % spectrogram mapped onto the mel scale using the filter bank
             audio_mfcc = dct(log(filter_bank*audio_spectrogram+eps));
             
@@ -511,7 +511,7 @@ classdef z
             %       
             %       % Audio signal for a given window length, and one frame
             %       window_length = 1024;
-            %       audio_signal = audio_signal(1:window_length);
+            %       audio_signal = audio_signal(1:window_length,:);
             %       
             %       % DCT-I, II, III, and IV
             %       audio_dct1 = z.dct(audio_signal,1);
