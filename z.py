@@ -9,12 +9,13 @@ cqtspectrogram - CQT spectrogram using a CQT kernel
 cqtchromagram - CQT chromagram using a CQT kernel
 mfcc - Mel frequency cepstrum coefficients (MFCCs)
 dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+dst - Discrete sine transform (DST) using the FFT
 
 Zafar Rafii
 zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
-11/02/17
+11/03/17
 """
 
 import numpy as np
@@ -550,11 +551,9 @@ def dct(audio_signal, dct_type):
                                    audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
     scipy_dct1 = scipy.fftpack.dct(audio_signal1, axis=0, type=1)
     scipy_dct1[[0, window_length-1], :] = scipy_dct1[[0, window_length-1], :]/np.sqrt(2)
-    scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
-
+    scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1))/2
     scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
     scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
-    scipy_dct4 = np.zeros((window_length, 1))
 
     # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
     plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
@@ -567,8 +566,6 @@ def dct(audio_signal, dct_type):
     plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
     plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
     plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
-    plt.subplot(4, 3, 11), plt.plot(scipy_dct4), plt.autoscale(tight=True), plt.title("SciPy's DCT-IV (none!)")
-    plt.subplot(4, 3, 12), plt.plot(audio_dct4-scipy_dct4), plt.autoscale(tight=True), plt.title("Differences")
     plt.show()
     """
 
@@ -583,7 +580,6 @@ def dct(audio_signal, dct_type):
 
         # Compute the DCT-I using the FFT
         audio_dct = np.concatenate((audio_signal, audio_signal[window_length-2:0:-1, :]))
-        print(np.shape(audio_dct))
         audio_dct = np.fft.fft(audio_dct, axis=0)
         audio_dct = np.real(audio_dct[0:window_length, :])/2
 
@@ -651,6 +647,136 @@ def dct(audio_signal, dct_type):
         audio_dct = np.sqrt(2/window_length)*audio_dct
 
         return audio_dct
+
+
+def dst(audio_signal, dst_type):
+    """
+    Discrete sine transform (DST) using the fast Fourier transform (FFT)
+
+    :param audio_signal: audio signal [number_samples,number_frames]
+    :param dst_type: DST type (1, 2, 3, or 4)
+    :return: audio_dst: audio DST [number_frequencies,number_frames]
+
+    Example: Compute the 4 different DSTs and compare them to their respective inverses
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import scipy.fftpack
+    import matplotlib.pyplot as plt
+
+    # Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+    audio_signal = np.expand_dims(audio_signal, axis=1)
+
+    # Audio signal for a given window length, and one frame
+    window_length = 1024
+    audio_signal = audio_signal[0:window_length, :]
+
+    # DST-I, II, III, and IV
+    audio_dst1 = z.dst(audio_signal, 1)
+    audio_dst2 = z.dst(audio_signal, 2)
+    audio_dst3 = z.dst(audio_signal, 3)
+    audio_dst4 = z.dst(audio_signal, 4)
+
+    # Respective inverses, i.e., DST-I, II, III, and IV
+    audio_idst1 = z.dst(audio_dst1, 1)
+    audio_idst2 = z.dst(audio_dst2, 3)
+    audio_idst3 = z.dst(audio_dst3, 2)
+    audio_idst4 = z.dst(audio_dst4, 4)
+
+    # DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+    plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
+    plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
+    plt.subplot(4, 3, 3), plt.plot(audio_signal-audio_idst1), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+    plt.subplot(4, 3, 4), plt.plot(audio_dst2), plt.autoscale(tight=True), plt.title("DST-II")
+    plt.subplot(4, 3, 5), plt.plot(audio_idst2), plt.autoscale(tight=True), plt.title("Inverse DST-II = DST-III")
+    plt.subplot(4, 3, 6), plt.plot(audio_signal-audio_idst2), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+    plt.subplot(4, 3, 7), plt.plot(audio_dst3), plt.autoscale(tight=True), plt.title("DST-III")
+    plt.subplot(4, 3, 8), plt.plot(audio_idst3), plt.autoscale(tight=True), plt.title("Inverse DST-III = DST-II")
+    plt.subplot(4, 3, 9), plt.plot(audio_signal-audio_idst3), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+    plt.subplot(4, 3, 10), plt.plot(audio_dst4), plt.autoscale(tight=True), plt.title("DST-IV")
+    plt.subplot(4, 3, 11), plt.plot(audio_idst4), plt.autoscale(tight=True), plt.title("Inverse DST-IV = DST-IV")
+    plt.subplot(4, 3, 12), plt.plot(audio_signal-audio_idst4), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+    plt.show()
+    """
+    if dst_type == 1:
+
+        # Number of samples per frame
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Compute the DST-I using the FFT
+        audio_dst = np.concatenate((np.zeros((1, number_frames)), audio_signal, np.zeros((1, number_frames)),
+                                    -audio_signal[window_length-1::-1, :]))
+        audio_dst = np.fft.fft(audio_dst, axis=0)
+        audio_dst = -np.imag(audio_dst[1:window_length+1, :])/2
+
+        # Post-processing to make the DST-I matrix orthogonal
+        audio_dst = audio_dst*np.sqrt(2/(window_length+1))
+
+        return audio_dst
+
+    elif dst_type == 2:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Compute the DST-II using the FFT
+        audio_dst = np.zeros((4*window_length, number_frames))
+        audio_dst[1:2*window_length:2, :] = audio_signal
+        audio_dst[2*window_length+1:4*window_length:2, :] = -audio_signal[window_length-1::-1, :]
+        audio_dst = np.fft.fft(audio_dst, axis=0)
+        audio_dst = -np.imag(audio_dst[1:window_length+1, :])/2
+
+        # Post-processing to make the DST-II matrix orthogonal
+        audio_dst[window_length-1, :] = audio_dst[window_length-1, :]/np.sqrt(2)
+        audio_dst = audio_dst*np.sqrt(2/window_length)
+
+        return audio_dst
+
+    elif dst_type == 3:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Pre-processing to make the DST-III matrix orthogonal (concatenate to avoid side-effects!)
+        audio_signal = np.concatenate((audio_signal[0:window_length-1, :],
+                                       audio_signal[window_length-1:window_length, :]*np.sqrt(2)))
+
+        # Compute the DST-III using the FFT
+        audio_dst = np.zeros((4*window_length, number_frames))
+        audio_dst[1:window_length+1, :] = audio_signal
+        audio_dst[window_length+1:2*window_length, :] = audio_signal[window_length-2::-1, :]
+        audio_dst[2*window_length+1:3*window_length+1, :] = -audio_signal
+        audio_dst[3*window_length+1:4*window_length, :] = -audio_signal[window_length-2::-1, :]
+        audio_dst = np.fft.fft(audio_dst, axis=0)
+        audio_dst = -np.imag(audio_dst[1:2*window_length:2, :])/4
+
+        # Post-processing to make the DST-III matrix orthogonal
+        audio_dst = audio_dst*np.sqrt(2/window_length)
+
+        return audio_dst
+
+    elif dst_type == 4:
+
+        # Number of samples and frames
+        window_length, number_frames = np.shape(audio_signal)
+
+        # Compute the DST-IV using the FFT
+        audio_dst = np.zeros((8*window_length, number_frames))
+        audio_dst[1:2*window_length:2, :] = audio_signal
+        audio_dst[2*window_length+1:4*window_length:2, :] = audio_signal[window_length-1::-1, :]
+        audio_dst[4*window_length+1:6*window_length:2, :] = -audio_signal
+        audio_dst[6*window_length+1:8*window_length:2, :] = -audio_signal[window_length-1::-1, :]
+        audio_dst = np.fft.fft(audio_dst, axis=0)
+        audio_dst = -np.imag(audio_dst[1:2*window_length:2, :])/4
+
+        # Post-processing to make the DST-IV matrix orthogonal
+        audio_dst = audio_dst*np.sqrt(2/window_length)
+
+        return audio_dst
 
 
 def test():

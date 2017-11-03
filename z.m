@@ -18,7 +18,7 @@ classdef z
     %   zafarrafii@gmail.com
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
-    %   11/02/17
+    %   11/03/17
     
     methods (Static = true)
         
@@ -611,7 +611,7 @@ classdef z
                     audio_dct = real(audio_dct(2:2:2*window_length,:))/4;
                     
                     % Post-processing to make the DCT-IV matrix orthogonal
-                    audio_dct = sqrt(2/window_length)*audio_dct;
+                    audio_dct = audio_dct*sqrt(2/window_length);
                     
             end
             
@@ -651,16 +651,16 @@ classdef z
             %       figure
             %       subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I')
             %       subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I')
-            %       subplot(4,3,3), plot(audio_idst1-audio_signal), axis tight, title('Differences with signal')
+            %       subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Reconstruction differences')
             %       subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II')
             %       subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III')
-            %       subplot(4,3,6), plot(audio_idst2-audio_signal), axis tight, title('Differences with signal')
+            %       subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Reconstruction differences')
             %       subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III')
             %       subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II')
-            %       subplot(4,3,9), plot(audio_idst3-audio_signal), axis tight, title('Differences with signal')
+            %       subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Reconstruction differences')
             %       subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV')
             %       subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
-            %       subplot(4,3,12), plot(audio_idst4-audio_signal), axis tight, title('Differences with signal')
+            %       subplot(4,3,12), plot(audio_signal-audio_idst4), axis tight, title('Reconstruction differences')
             %   
             %   See also dct, fft
             
@@ -693,7 +693,7 @@ classdef z
                     
                     % Post-processing to make the DST-II matrix orthogonal
                     audio_dst(window_length,:) = audio_dst(window_length,:)/sqrt(2);
-                    audio_dst = sqrt(2/window_length)*audio_dst;
+                    audio_dst = audio_dst*sqrt(2/window_length);
                     
                 case 3
                     
