@@ -858,10 +858,8 @@ audio_signal1 = np.concatenate((audio_signal[0:1, :]*np.sqrt(2), audio_signal[1:
 scipy_dct1 = scipy.fftpack.dct(audio_signal1, axis=0, type=1)
 scipy_dct1[[0, window_length-1], :] = scipy_dct1[[0, window_length-1], :]/np.sqrt(2)
 scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
-
 scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
-scipy_dct4 = np.zeros((window_length, 1))
 
 # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
@@ -874,8 +872,6 @@ plt.subplot(4, 3, 7), plt.plot(audio_dct3), plt.autoscale(tight=True), plt.title
 plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
 plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
 plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
-plt.subplot(4, 3, 11), plt.plot(scipy_dct4), plt.autoscale(tight=True), plt.title("SciPy's DCT-IV (none!)")
-plt.subplot(4, 3, 12), plt.plot(audio_dct4-scipy_dct4), plt.autoscale(tight=True), plt.title("Differences")
 plt.show()
 ```
 
