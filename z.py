@@ -10,12 +10,14 @@ cqtchromagram - CQT chromagram using a CQT kernel
 mfcc - Mel frequency cepstrum coefficients (MFCCs)
 dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 dst - Discrete sine transform (DST) using the FFT
+mdct - Modified discrete cosine transform (MDCT) using the FFT
 
 Zafar Rafii
 zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
-11/03/17
+https://www.linkedin.com/in/zafarrafii/
+01/11/18
 """
 
 import numpy as np
@@ -29,7 +31,7 @@ def stft(audio_signal, window_function, step_length):
     Short-time Fourier transform (STFT)
 
     :param audio_signal: audio signal [number_samples,1]
-    :param window_function: window function [window_length,1]
+    :param window_function: window function [window_length,0]
     :param step_length: step length in samples
     :return: audio STFT [window_length,number_frames]
 
@@ -85,7 +87,7 @@ def stft(audio_signal, window_function, step_length):
 
     # Zero-padding at the start and end to center the windows
     audio_signal = np.pad(audio_signal, (window_length-step_length, number_times*step_length-number_samples),
-                          'constant', constant_values=(0, 0))
+                          'constant', constant_values=0)
 
     # Initialize the STFT
     audio_stft = np.zeros((window_length, number_times))
@@ -110,7 +112,7 @@ def istft(audio_stft, window_function, step_length):
     :param audio_stft: audio STFT [window_length,number_frames]
     :param window_function: window function [window_length,1]
     :param step_length: step length in samples
-    :return: audio_signal: audio signal [number_samples,1]
+    :return: audio_signal: audio signal [number_samples,0]
 
     Example: Estimate the center and sides signals of a stereo audio file
     # Import modules
@@ -152,7 +154,7 @@ def istft(audio_stft, window_function, step_length):
     center_signal2 = z.istft(center_stft2, window_function, step_length)
 
     # Final stereo center and sides signals
-    center_signal = np.concatenate((center_signal1, center_signal2), 1)
+    center_signal = np.stack((center_signal1, center_signal2), 1)
     center_signal = center_signal[0:len(audio_signal), :]
     sides_signal = audio_signal-center_signal
 
@@ -185,9 +187,6 @@ def istft(audio_stft, window_function, step_length):
 
     # Un-apply window (just in case)
     audio_signal = audio_signal / sum(window_function[0:window_length:step_length])
-
-    # Expand the shape from (number_samples,) to (number_samples, 1)
-    audio_signal = np.expand_dims(audio_signal, 1)
 
     return audio_signal
 
@@ -283,7 +282,7 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
     """
     Constant-Q transform (CQT) spectrogram using a kernel
 
-    :param audio_signal: audio signal [number_samples,1]
+    :param audio_signal: audio signal [number_samples,0]
     :param sample_rate: sample rate in Hz
     :param time_resolution: time resolution in number of time frames per second
     :param cqt_kernel: CQT kernel [number_frequencies,fft_length]
@@ -354,7 +353,7 @@ def cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resoluti
     """
     Constant-Q transform (CQT) chromagram using a kernel
 
-    :param audio_signal: audio signal [number_samples,1]
+    :param audio_signal: audio signal [number_samples,0]
     :param sample_rate: sample rate in Hz
     :param time_resolution: time resolution in number of time frames per second
     :param frequency_resolution: frequency resolution in number of frequency channels per semitones
@@ -421,7 +420,7 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
     """
     Mel frequency cepstrum coefficients (MFFCs)
 
-    :param audio_signal: audio signal [number_samples,1]
+    :param audio_signal: audio signal [number_samples,0]
     :param sample_rate: sample rate in Hz
     :param number_filters: number of filters
     :param number_coefficients: number of coefficients (without the 0th coefficient)
@@ -518,7 +517,7 @@ def dct(audio_signal, dct_type):
     """
     Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 
-    :param audio_signal: audio signal [number_samples,number_frames]
+    :param audio_signal: audio signal [number_samples,number_frames] (number_frames>0)
     :param dct_type: DCT type (1, 2, 3, or 4)
     :return: audio_dct: audio DCT [number_frequencies,number_frames]
 
@@ -653,7 +652,7 @@ def dst(audio_signal, dst_type):
     """
     Discrete sine transform (DST) using the fast Fourier transform (FFT)
 
-    :param audio_signal: audio signal [number_samples,number_frames]
+    :param audio_signal: audio signal [number_samples,number_frames] (number_frames>0)
     :param dst_type: DST type (1, 2, 3, or 4)
     :return: audio_dst: audio DST [number_frequencies,number_frames]
 
@@ -777,6 +776,85 @@ def dst(audio_signal, dst_type):
         audio_dst = audio_dst*np.sqrt(2/window_length)
 
         return audio_dst
+
+
+def mdct(audio_signal, window_function):
+    """
+    Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+
+    :param audio_signal: audio signal [number_samples,0]
+    :param window_function: window function [window_length,1]
+    :return: audio_mdct: audio MDCT [number_frequencies,number_times]
+
+    Example: Compute and display the MDCT as used in the AC-3 audio coding format
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import matplotlib.pyplot as plt
+
+    # Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
+    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
+    audio_signal = np.mean(audio_signal, 1)
+
+    # Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
+    window_length = 512
+    alpha_value = 5
+    window_function = np.kaiser(int(window_length/2)+1, alpha_value*np.pi)
+    window_function2 = np.cumsum(window_function[1:int(window_length/2)])
+    window_function = np.sqrt(np.concatenate((window_function2, window_function2[int(window_length/2)::-1]))
+                              / np.sum(window_function))
+
+    # MDCT
+    audio_mdct = z.mdct(audio_signal, window_function)
+
+    # MDCT displayed in dB, s, and kHz
+    plt.imshow(20*np.log10(np.abs(audio_mdct)), aspect='auto', cmap='jet', origin='lower')
+    plt.title('MDCT (dB)')
+    plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/(window_length/2)),
+               np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
+    plt.xlabel('Time (s)')
+    plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_length),
+               np.arange(1, int(sample_rate/2*1e3)+1))
+    plt.ylabel('Frequency (kHz)')
+    plt.show()
+    """
+
+    # Number of samples
+    number_samples = len(audio_signal)
+
+    # Window length in samples
+    window_length = len(window_function)
+
+    # Number of time frames
+    number_times = int(np.floor(2*number_samples/window_length)+1)
+
+    # Pre and post zero-padding of the signal
+    audio_signal = np.pad(audio_signal, (int(window_length/2), int(window_length/2)),
+                          'constant', constant_values=0)
+
+    # Initialize the MDCT
+    audio_mdct = np.zeros((int(window_length/2), number_times))
+
+    # Arrays for pre and post processing
+    preprocessing_array = np.exp(-1j*np.pi/window_length*np.arange(0, window_length, 1))
+    postprocessing_array = np.exp(-1j*np.pi/window_length*(window_length/2+1)*np.arange(0.5, window_length/2+0.5, 1))
+
+    # Loop over the time frames
+    for time_index in range(0, number_times):
+
+        # Window the signal
+        sample_index = int(window_length/2)*time_index
+        audio_segment = audio_signal[sample_index:window_length+sample_index] * window_function
+
+        # FFT of the audio segment after pre-processing
+        audio_segment = np.fft.fft(audio_segment * preprocessing_array)
+
+        # Truncate to the first half before post-processing (the real part represents the MDCT)
+        audio_mdct[:, time_index] = np.real(audio_segment[0:int(window_length/2)] * postprocessing_array)
+
+    return audio_mdct
 
 
 def test():

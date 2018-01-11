@@ -18,7 +18,8 @@ classdef z
     %   zafarrafii@gmail.com
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
-    %   11/03/17
+    %   https://www.linkedin.com/in/zafarrafii/
+    %   01/11/18
     
     methods (Static = true)
         
@@ -751,7 +752,7 @@ classdef z
             %       audio_signal = mean(audio_signal,2);
             %       
             %       % Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
-            %       window_length = 2048;
+            %       window_length = 512;
             %       alpha_value = 5;
             %       window_function = kaiser(window_length/2+1,alpha_value*pi);
             %       window_function2 = cumsum(window_function(1:window_length/2));
@@ -775,25 +776,35 @@ classdef z
             %
             %   See also dct, z.imdct
             
-            % Window length in number of samples
+            % Number of samples
+            number_samples = length(audio_signal);
+            
+            % Window length in samples
             window_length = length(window_function);
+            
+            % Number of time frames
+            number_times = floor(2*number_samples/window_length)+1;
             
             % Pre and post zero-padding of the signal
             audio_signal = [zeros(window_length/2,1);audio_signal;zeros(window_length/2,1)];
             
-            % Transform the vector of samples into a matrix of frames, with 
-            % half-overlapping
-            audio_signal = buffer(audio_signal,window_length,window_length/2,'nodelay');
+            % Initialize the MDCT
+            audio_mdct = zeros(window_length/2,number_times);
             
-            % Apply window to every frame
-            audio_signal = window_function.*audio_signal;
-            
-            % Time-domain aliasing cancellation (TDAC) principle
-            audio_signal = [-audio_signal(3*window_length/4:-1:window_length/2+1,:)-audio_signal(3*window_length/4+1:window_length,:); ...
-                audio_signal(1:window_length/4,:)-audio_signal(window_length/2:-1:window_length/4+1,:)];
+            % Loop over the time frames
+            for time_index = 1:number_times
+                
+                % Window the signal
+                sample_index = window_length/2*(time_index-1);
+                audio_segment = audio_signal(1+sample_index:window_length+sample_index).*window_function;
+                
+                % Time-domain aliasing cancellation (TDAC) principle
+                audio_mdct(:,time_index) = [-audio_segment(3*window_length/4:-1:window_length/2+1)-audio_segment(3*window_length/4+1:window_length); ...
+                    audio_segment(1:window_length/4)-audio_segment(window_length/2:-1:window_length/4+1)];
+            end
             
             % DCT-IV
-            audio_mdct = dct(audio_signal,'Type',4);
+            audio_mdct = dct(audio_mdct,'Type',4);
             
         end
         
