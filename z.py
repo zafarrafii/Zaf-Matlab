@@ -30,7 +30,7 @@ def stft(audio_signal, window_function, step_length):
     """
     Short-time Fourier transform (STFT)
 
-    :param audio_signal: audio signal [number_samples,1]
+    :param audio_signal: audio signal [number_samples,0]
     :param window_function: window function [window_length,0]
     :param step_length: step length in samples
     :return: audio STFT [window_length,number_frames]
@@ -110,7 +110,7 @@ def istft(audio_stft, window_function, step_length):
     Inverse short-time Fourier transform (STFT)
 
     :param audio_stft: audio STFT [window_length,number_frames]
-    :param window_function: window function [window_length,1]
+    :param window_function: window function [window_length,0]
     :param step_length: step length in samples
     :return: audio_signal: audio signal [number_samples,0]
 
@@ -783,7 +783,7 @@ def mdct(audio_signal, window_function):
     Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
 
     :param audio_signal: audio signal [number_samples,0]
-    :param window_function: window function [window_length,1]
+    :param window_function: window function [window_length,0]
     :return: audio_mdct: audio MDCT [number_frequencies,number_times]
 
     Example: Compute and display the MDCT as used in the AC-3 audio coding format
@@ -810,7 +810,7 @@ def mdct(audio_signal, window_function):
     audio_mdct = z.mdct(audio_signal, window_function)
 
     # MDCT displayed in dB, s, and kHz
-    plt.imshow(20*np.log10(np.abs(audio_mdct)), aspect='auto', cmap='jet', origin='lower')
+    plt.imshow(20*np.log10(np.absolute(audio_mdct)), aspect='auto', cmap='jet', origin='lower')
     plt.title('MDCT (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/(window_length/2)),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
