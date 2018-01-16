@@ -19,7 +19,7 @@ classdef z
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   01/11/18
+    %   01/16/18
     
     methods (Static = true)
         
@@ -813,8 +813,8 @@ classdef z
             %   audio_signal = z.imdct(audio_mdct,window_function);
             %   
             %   Arguments:
-            %       window_function: window function [window_length,1]
             %       audio_mdct: audio MDCT [number_frequencies,number_times]
+            %       window_function: window function [window_length,1]
             %       audio_signal: audio signal [number_samples,1]
             %   
             %   Example: Verify that the MDCT is perfectly invertible
@@ -824,7 +824,7 @@ classdef z
             %       
             %       % MDCT with a slope function as used in the Vorbis audio coding format
             %       window_length = 2048;
-            %       window_function = sin((pi/2)*sin((pi/window_length)*(1/2:(window_length-1/2))).^2)';
+            %       window_function = sin((pi/2)*sin((pi/window_length)*(0.5:(window_length-0.5))).^2)';
             %       audio_mdct = z.mdct(audio_signal,window_function);
             %       
             %       % Inverse MDCT and error signal
