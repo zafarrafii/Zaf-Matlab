@@ -19,7 +19,7 @@ classdef z
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   01/16/18
+    %   01/17/18
     
     methods (Static = true)
         
@@ -69,10 +69,8 @@ classdef z
             %
             %   See also fft, z.istft, spectrogram
             
-            % Number of samples
+            % Number of samples and window length
             number_samples = length(audio_signal);
-            
-            % Window length in samples
             window_length = length(window_function);
             
             % Number of time frames
@@ -776,17 +774,15 @@ classdef z
             %
             %   See also dct, z.imdct
             
-            % Number of samples
+            % Number of samples and window length
             number_samples = length(audio_signal);
-            
-            % Window length in samples
             window_length = length(window_function);
             
             % Number of time frames
-            number_times = floor(2*number_samples/window_length)+1;
+            number_times = ceil(2*number_samples/window_length)+1;
             
             % Pre and post zero-padding of the signal
-            audio_signal = [zeros(window_length/2,1);audio_signal;zeros(window_length/2,1)];
+            audio_signal = [zeros(window_length/2,1);audio_signal;zeros((number_times+1)*window_length/2-number_samples,1)];
             
             % Initialize the MDCT
             audio_mdct = zeros(window_length/2,number_times);
@@ -861,29 +857,31 @@ classdef z
             % Number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_mdct);
             
+            % Number of samples for the signal
+            number_samples = number_frequencies*(number_times+1);
+            
+            % Initialize the audio signal
+            audio_signal = zeros(number_samples,1);
+            
             % DCT-IV (which is its own inverse)
             audio_mdct = dct(audio_mdct,'Type',4);
             
-            % Time-domain aliasing cancellation (TDAC) principe
+            % Time-domain aliasing cancellation (TDAC) principle
             audio_mdct = [audio_mdct(number_frequencies/2+1:number_frequencies,:); ...
                 -audio_mdct(number_frequencies:-1:number_frequencies/2+1,:); ...
                 -audio_mdct(number_frequencies/2:-1:1,:); ...
                 -audio_mdct(1:number_frequencies/2,:)];
             
-            % Apply window function to every frame
+            % Apply the window to the frames
             audio_mdct = window_function.*audio_mdct;
-            
-            % Initialize audio signal
-            audio_signal = zeros(number_frequencies*(number_times+1),1);
-            
-            % Loop over the frames
-            frame_index = 1;
-            for sample_index = 1:number_frequencies:number_frequencies*number_times
+
+            % Loop over the time frames
+            for time_index = 1:number_times
                 
                 % Recover the signal thanks to the TDAC principle
+                sample_index = (time_index-1)*number_frequencies+1;
                 audio_signal(sample_index:sample_index+2*number_frequencies-1,1) ...
-                    = audio_signal(sample_index:sample_index+2*number_frequencies-1,1)+audio_mdct(:,frame_index);
-                frame_index = frame_index+1;
+                    = audio_signal(sample_index:sample_index+2*number_frequencies-1,1)+audio_mdct(:,time_index);
             end
             
             % Remove the pre and post zero-padding

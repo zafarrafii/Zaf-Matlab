@@ -3,9 +3,11 @@
     <words>
       <w>chromagram</w>
       <w>istft</w>
+      <w>mdct</w>
       <w>mfcc</w>
       <w>orthogonalized</w>
       <w>parseval</w>
+      <w>preprocessing</w>
       <w>xlabel</w>
       <w>ylabel</w>
     </words>
