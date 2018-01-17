@@ -492,6 +492,7 @@ z Functions:
 - [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-1)
 - [dst - Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft-1)
 - [mdct - Modified discrete cosine transform (MDCT)](#mdct-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft)
+- [imdct - Inverse MDCT using the DCT-IV](#imdct-inverse-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft)
 
 ### stft Short-time Fourier transform (STFT)
 ```
@@ -501,10 +502,10 @@ audio_stft = z.stft(audio_signal, window_function, step_length)
     
 Arguments:
 ```
-audio_signal: audio signal [number_samples,0]
-window_function: window function [window_length,0]
+audio_signal: audio signal [number_samples, 0]
+window_function: window function [window_length, 0]
 step_length: step length in samples
-audio_stft: audio stft [window_length,number_frames]
+audio_stft: audio stft [window_length, number_frames]
 ```
 
 Example: Compute and display the spectrogram of an audio file
@@ -557,10 +558,10 @@ audio_signal = z.istft(audio_stft, window_function, step_length)
 
 Arguments:
 ```
-audio_stft: audio STFT [window_length,number_frames]
-window_function: window function [window_length,0]
+audio_stft: audio STFT [window_length, number_frames]
+window_function: window function [window_length, 0]
 step_length: step length in samples
-audio_signal: audio signal [number_samples,0]
+audio_signal: audio signal [number_samples, 0]
 ```
 
 Example: Estimate the center and sides signals of a stereo audio file
@@ -625,7 +626,7 @@ sample_rate: sample rate in Hz
 frequency_resolution: frequency resolution in number of frequency channels per semitone
 minimum_frequency: minimum frequency in Hz
 maximum_frequency: maximum frequency in Hz
-CQT kernel [number_frequencies,fft_length]
+CQT kernel [number_frequencies, fft_length]
 ```
 
 Example: Compute and display the CQT kernel
@@ -660,11 +661,11 @@ audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution,
 
 Arguments:
 ```
-audio_signal: audio signal [number_samples,0]
+audio_signal: audio signal [number_samples, 0]
 sample_rate: sample rate in Hz
 time_resolution: time resolution in number of time frames per second
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
-audio_spectrogram: audio spectrogram in magnitude [number_frequencies,number_times]
+cqt_kernel: CQT kernel [number_frequencies, fft_length]
+audio_spectrogram: audio spectrogram in magnitude [number_frequencies, number_times]
 ```
 
 Example: Compute and display the CQT spectrogram
@@ -710,12 +711,12 @@ audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, f
 
 Arguments:
 ```
-audio_signal: audio signal [number_samples,0]
+audio_signal: audio signal [number_samples, 0]
 sample_rate: sample rate in Hz
 time_resolution: time resolution in number of time frames per second
 frequency_resolution: frequency resolution in number of frequency channels per semitones
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
-audio_chromagram: audio chromagram [number_chromas,number_times]
+cqt_kernel: CQT kernel [number_frequencies, fft_length]
+audio_chromagram: audio chromagram [number_chromas, number_times]
 ```
 
 Example: Compute and display the CQT chromagram
@@ -760,11 +761,11 @@ audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficien
 ```
 Arguments:
 ```
-audio_signal: audio signal [number_samples,0]
+audio_signal: audio signal [number_samples, 0]
 sample_rate: sample rate in Hz
 number_filters: number of filters
 number_coefficients: number of coefficients (without the 0th coefficient)
-audio_mfcc: audio MFCCs [number_times,number_coefficients]
+audio_mfcc: audio MFCCs [number_times, number_coefficients]
 ```
 
 Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
@@ -823,9 +824,9 @@ audio_dct = z.dct(audio_signal, dct_type)
 
 Arguments:
 ```
-audio_signal: audio signal [number_samples,number_frames] (number_frames>0)
+audio_signal: audio signal [number_samples, number_frames] (number_frames>0)
 dct_type: dct type (1, 2, 3, or 4)
-audio_dct: audio DCT [number_frequencies,number_frames]
+audio_dct: audio DCT [number_frequencies, number_frames]
 ```
 
 Example: Compute the 4 different DCTs and compare them to SciPy's DCTs
@@ -884,9 +885,9 @@ audio_dst = z.dst(audio_signal, dst_type)
 
 Arguments:
 ```
-audio_signal: audio signal [number_samples,number_frames] (number_frames>0)
+audio_signal: audio signal [number_samples, number_frames] (number_frames>0)
 dst_type: DST type (1, 2, 3, or 4)
-audio_dst: audio DST [number_frequencies,number_frames]
+audio_dst: audio DST [number_frequencies, number_frames]
 ```
 
 Example: Compute the 4 different DSTs and compare them to their respective inverses
@@ -936,9 +937,9 @@ audio_mdct = z.mdct(audio_signal, window_function)
 
 Arguments:
 ```
-audio_signal: audio signal [number_samples,0]
-window_function: window function [window_length,0]
-audio_mdct: audio MDCT [number_frequencies,number_times]
+audio_signal: audio signal [number_samples, 0]
+window_function: window function [window_length, 0]
+audio_mdct: audio MDCT [number_frequencies, number_times]
 ```
 
 Example: Compute and display the MDCT as used in the AC-3 audio coding format
@@ -975,6 +976,61 @@ plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_leng
            np.arange(1, int(sample_rate/2*1e3)+1))
 plt.ylabel('Frequency (kHz)')
 plt.show()
+```
+
+### imdct Inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+```
+import z
+audio_signal = z.imdct(audio_mdct, window_function)
+```
+
+Arguments:
+```
+audio_mdct: audio MDCT [number_frequencies, number_times]
+window_function: window function [window_length, 0]
+audio_signal: audio signal [number_samples, 0]
+```
+
+Example: Verify that the MDCT is perfectly invertible
+```
+# Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
+sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
+audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize * 8 - 1))
+audio_signal = np.mean(audio_signal, 1)
+
+# MDCT with a slope function as used in the Vorbis audio coding format
+window_length = 2048
+window_function = np.sin(np.pi / 2
+                         * np.power(np.sin(np.pi / window_length * np.arange(0.5, window_length + 0.5)), 2))
+audio_mdct = z.mdct(audio_signal, window_function)
+
+# Inverse MDCT and error signal
+audio_signal2 = z.imdct(audio_mdct, window_function)
+audio_signal2 = audio_signal2[0:len(audio_signal)]
+error_signal = audio_signal - audio_signal2
+
+# Original, resynthesized, and error signals
+plt.subplot(3, 1, 1)
+plt.plot(audio_signal)
+plt.title("Original Signal")
+plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+           np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
+plt.subplot(3, 1, 2)
+plt.plot(audio_signal2)
+plt.title("Resynthesized Signal")
+plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+           np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
+plt.subplot(3, 1, 3)
+plt.plot(error_signal)
+plt.title("Error Signal")
+plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+           np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+plt.xlabel('Time (s)')
+plt.autoscale(tight=True)
 ```
 
 # Author
