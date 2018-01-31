@@ -155,6 +155,7 @@ colormap(jet)
 title('Magnitude CQT kernel')
 xlabel('FFT length')
 ylabel('CQT frequency')
+set(gca,'FontSize',30)
 ```
 
 <img src="images/cqtkernel.png" width="1000">
@@ -198,6 +199,7 @@ xlabel('Time (s)')
 yticks(1:12*frequency_resolution:6*12*frequency_resolution)
 yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'})
 ylabel('Frequency (semitones)')
+set(gca,'FontSize',30)
 ```
 
 <img src="images/cqtspectrogram.png" width="1000">
@@ -243,6 +245,7 @@ xlabel('Time (s)')
 yticks(1:frequency_resolution:12*frequency_resolution)
 yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
 ylabel('Chroma')
+set(gca,'FontSize',30)
 ```
 
 <img src="images/cqtchromagram.png" width="1000">
@@ -277,27 +280,18 @@ audio_deltadeltamfcc = diff(audio_deltamfcc,1,2);
 % MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
 step_length = (2^nextpow2(0.04*sample_rate))/2;
 figure
-subplot(3,1,1)
-plot(audio_mfcc')
-axis tight
-title('MFCCs')
+subplot(3,1,1), plot(audio_mfcc'), axis tight, title('MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-subplot(3,1,2)
-plot(audio_deltamfcc')
-axis tight
-title('Delta MFCCs')
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,2), plot(audio_deltamfcc'), axis tight, title('Delta MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-subplot(3,1,3)
-plot(audio_deltadeltamfcc')
-axis tight
-title('Delta-delta MFCCs')
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,3), plot(audio_deltadeltamfcc'), axis tight, title('Delta-delta MFCCs')
 xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
+xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
 <img src="images/mfcc.png" width="1000">
@@ -337,18 +331,18 @@ matlab_dct4 = dct(audio_signal,'Type',4);
 
 % DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
 figure
-subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I')
-subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I')
-subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences')
-subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II')
-subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II')
-subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences')
-subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III')
-subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III')
-subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences')
-subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV')
-subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV')
-subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
+subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I'), set(gca,'FontSize',30)
+subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I'), set(gca,'FontSize',30)
+subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II'), set(gca,'FontSize',30)
+subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II'), set(gca,'FontSize',30)
+subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III'), set(gca,'FontSize',30)
+subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III'), set(gca,'FontSize',30)
+subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV'), set(gca,'FontSize',30)
+subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(gca,'FontSize',30)
+subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences'), set(gca,'FontSize',30)
 ```
 
 <img src="images/dct.png" width="1000">
@@ -387,18 +381,18 @@ audio_idst4 = z.dst(audio_dst4,4);
 
 % DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
 figure
-subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I')
-subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I')
-subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Reconstruction differences')
-subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II')
-subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III')
-subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Reconstruction differences')
-subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III')
-subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II')
-subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Reconstruction differences')
-subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV')
-subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
-subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Reconstruction differences')
+subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I'), set(gca,'FontSize',30)
+subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I'), set(gca,'FontSize',30)
+subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II'), set(gca,'FontSize',30)
+subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III'), set(gca,'FontSize',30)
+subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III'), set(gca,'FontSize',30)
+subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II'), set(gca,'FontSize',30)
+subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV'), set(gca,'FontSize',30)
+subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV'), set(gca,'FontSize',30)
+subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
 ```
 
 <img src="images/dst.png" width="1000">
@@ -441,6 +435,7 @@ xlabel('Time (s)')
 yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
 yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
+set(gca,'FontSize',30)
 ```
 
 <img src="images/mdct.png" width="1000">
@@ -473,27 +468,18 @@ error_signal = audio_signal-audio_signal2;
 
 % Original, resynthesized, and error signals
 figure
-subplot(3,1,1)
-plot(audio_signal)
-title('Original Signal')
+subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-axis tight
-subplot(3,1,2)
-plot(audio_signal2)
-title('Resynthesized Signal')
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,2), plot(audio_signal2), axis tight, title('Resynthesized Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-axis tight
-subplot(3,1,3)
-plot(error_signal)
-title('Error Signal')
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,3), plot(error_signal), axis tight, title('Error Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-axis tight
+xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
 <img src="images/imdct.png" width="1000">
