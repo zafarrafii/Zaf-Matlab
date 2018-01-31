@@ -71,7 +71,6 @@ ylabel('Frequency (kHz)')
 
 <img src="images/stft.png" width="1000">
 
-
 ### istft Inverse short-time Fourier transform (STFT)
 `audio_signal = z.istft(audio_stft,window_function,step_length);`
 
@@ -159,7 +158,6 @@ ylabel('CQT frequency')
 
 <img src="images/cqtkernel.png" width="1000">
 
-
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
@@ -200,6 +198,8 @@ yticks(1:12*frequency_resolution:6*12*frequency_resolution)
 yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'})
 ylabel('Frequency (semitones)')
 ```
+
+<img src="images/cqtspectrogram.png" width="1000">
 
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
@@ -243,6 +243,8 @@ yticks(1:frequency_resolution:12*frequency_resolution)
 yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
 ylabel('Chroma')
 ```
+
+<img src="images/cqtchromagram.png" width="1000">
 
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
@@ -297,6 +299,9 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
 ```
 
+<img src="images/mfcc.png" width="1000">
+
+
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 `audio_dct = z.dct(audio_signal,dct_type);`
 
@@ -344,6 +349,8 @@ subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV')
 subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV')
 subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
 ```
+
+<img src="images/dct.png" width="1000">
 
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 `audio_dst = z.dst(audio_signal,dst_type);`
@@ -393,6 +400,8 @@ subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
 subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Reconstruction differences')
 ```
 
+<img src="images/dst.png" width="1000">
+
 ### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
@@ -432,6 +441,8 @@ yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
 yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
 ```
+
+<img src="images/mdct.png" width="1000">
 
 ### imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_signal = z.imdct(audio_mdct,window_function);`
@@ -483,6 +494,8 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
 axis tight
 ```
+
+<img src="images/imdct.png" width="1000">
 
 ## z Python module
 
