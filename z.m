@@ -66,7 +66,7 @@
             %       yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
             %       yticklabels(1:sample_rate/2*1e-3)
             %       ylabel('Frequency (kHz)')
-            %       set(gca,'FontSize',20)
+            %       set(gca,'FontSize',30)
             %
             %   See also fft, z.istft, spectrogram
             
