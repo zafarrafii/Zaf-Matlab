@@ -377,7 +377,6 @@
             %       yticks(1:frequency_resolution:12*frequency_resolution)
             %       yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
             %       ylabel('Chroma')
-            %       set(gca,'FontSize',30)
             %
             %   See also z.cqtkernel, z.cqtspectrogram
             
@@ -450,7 +449,6 @@
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)')
-            %       set(gca,'FontSize',30)
             %   
             %   See also z.stft, dct
             
@@ -543,7 +541,6 @@
             %       subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV')
             %       subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV')
             %       subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences')
-            %       set(gca,'FontSize',30)
             %   
             %   See also dct, fft
             
@@ -667,7 +664,6 @@
             %       subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
             %       subplot(4,3,12), plot(audio_signal-audio_idst4), axis tight, title('Reconstruction differences')
             %       set(gca,'FontSize',30)
-            %
             %   See also dct, fft
             
             switch dst_type
