@@ -569,6 +569,9 @@ plt.ylabel('Frequency (kHz)')
 plt.show()
 ```
 
+<img src="images/stft_python.png" width="1000">
+
+
 ### istft Inverse short-time Fourier transform (STFT)
 ```
 import z
