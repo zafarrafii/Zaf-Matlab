@@ -157,6 +157,9 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
+<img src="images/cqtkernel.png" width="500">
+
+
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
