@@ -432,18 +432,15 @@
             %       subplot(3,1,1), plot(audio_mfcc'), axis tight, title('MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       set(gca,'FontSize',30)
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %       subplot(3,1,2), plot(audio_deltamfcc'), axis tight, title('Delta MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       set(gca,'FontSize',30)
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %       subplot(3,1,3), plot(audio_deltadeltamfcc'), axis tight, title('Delta-delta MFCCs')
             %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       set(gca,'FontSize',30)
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %   
             %   See also z.stft, dct
             
@@ -829,21 +826,18 @@
             %       
             %       % Original, resynthesized, and error signals
             %       figure
-            %       subplot(3,1,1), plot(audio_signal), title('Original Signal')
+            %       subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
             %       xticks(sample_rate:sample_rate:length(audio_signal))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       axis tight, set(gca,'FontSize',30)
-            %       subplot(3,1,2), plot(audio_signal2), title('Resynthesized Signal')
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
+            %       subplot(3,1,2), plot(audio_signal2), axis tight, title('Resynthesized Signal')
             %       xticks(sample_rate:sample_rate:length(audio_signal))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       axis tight, set(gca,'FontSize',30)
-            %       subplot(3,1,3), plot(error_signal), title('Error Signal')
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
+            %       subplot(3,1,3), plot(error_signal), axis tight, title('Error Signal')
             %       xticks(sample_rate:sample_rate:length(audio_signal))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       axis tight, set(gca,'FontSize',30)
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %
             %   See also dct, z.mdct
             
