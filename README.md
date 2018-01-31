@@ -69,9 +69,7 @@ yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
 ```
 
-
-
-![alt text](stft_figure.png)
+<img src="images/stft.png" width="500">
 
 
 ### istft Inverse short-time Fourier transform (STFT)
