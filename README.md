@@ -69,7 +69,7 @@ yticklabels(1:sample_rate/2*1e-3)
 ylabel('Frequency (kHz)')
 ```
 
-<img src="images/stft.png" width="750">
+<img src="images/stft.png" width="1000">
 
 
 ### istft Inverse short-time Fourier transform (STFT)
@@ -157,7 +157,7 @@ xlabel('FFT length')
 ylabel('CQT frequency')
 ```
 
-<img src="images/cqtkernel.png" width="750">
+<img src="images/cqtkernel.png" width="1000">
 
 
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
