@@ -545,6 +545,7 @@ audio_stft = z.stft(audio_signal, window_function, step_length)
 audio_spectrogram = np.absolute(audio_stft[1:int(window_length/2+1), :])
 
 # Spectrogram displayed in dB, s, and kHz
+plt.rc('font', size=30)
 plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
 plt.title('Spectrogram (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
@@ -655,12 +656,15 @@ maximum_frequency = sample_rate/2
 cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
 
 # Magnitude CQT kernel displayed
+plt.rc('font', size=30)
 plt.imshow(np.absolute(cqt_kernel).toarray(), aspect='auto', cmap='jet', origin='lower')
 plt.title('Magnitude CQT kernel')
 plt.xlabel('FFT length')
 plt.ylabel('CQT frequency')
 plt.show()
 ```
+
+<img src="images/cqtkernel_python.png" width="1000">
 
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 ```
@@ -701,6 +705,7 @@ time_resolution = 25
 audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
 # CQT spectrogram displayed in dB, s, and semitones
+plt.rc('font', size=30)
 plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
 plt.title('CQT spectrogram (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
@@ -711,6 +716,8 @@ plt.yticks(np.arange(1, 6*12*frequency_resolution+1, 12*frequency_resolution),
 plt.ylabel('Frequency (semitones)')
 plt.show()
 ```
+
+<img src="images/cqtspectrogram_python.png" width="1000">
 
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 ```
@@ -752,6 +759,7 @@ time_resolution = 25
 audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel)
 
 # CQT chromagram displayed in dB, s, and chromas
+plt.rc('font', size=30)
 plt.imshow(20*np.log10(audio_chromagram), aspect='auto', cmap='jet', origin='lower')
 plt.title('CQT chromagram (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
@@ -762,6 +770,8 @@ plt.yticks(np.arange(1, 12*frequency_resolution+1, frequency_resolution),
 plt.ylabel('Chroma')
 plt.show()
 ```
+
+<img src="images/cqtchromagram_python.png" width="1000">
 
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 ```
@@ -801,29 +811,23 @@ audio_deltadeltamfcc = np.diff(audio_deltamfcc, n=1, axis=1)
 
 # MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
 step_length = 2**np.ceil(np.log2(0.04*sample_rate)) / 2
-plt.subplot(3, 1, 1)
-plt.plot(np.transpose(audio_mfcc))
-plt.title('MFCCs')
+plt.rc('font', size=30)
+plt.subplot(3, 1, 1), plt.plot(np.transpose(audio_mfcc)), plt.autoscale(tight=True), plt.title('MFCCs')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
-plt.subplot(3, 1, 2)
-plt.plot(np.transpose(audio_deltamfcc))
-plt.title('Delta MFCCs')
+plt.subplot(3, 1, 2), plt.plot(np.transpose(audio_deltamfcc)), plt.autoscale(tight=True), plt.title('Delta MFCCs')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
-plt.subplot(3, 1, 3)
-plt.plot(np.transpose(audio_deltadeltamfcc))
-plt.title('Delta-delta MFCCs')
+plt.subplot(3, 1, 3), plt.plot(np.transpose(audio_deltadeltamfcc)), plt.autoscale(tight=True), plt.title('Delta-delta MFCCs')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
            np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
 plt.show()
 ```
+
+<img src="images/mfcc_python.png" width="1000">
 
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 ```
@@ -873,6 +877,7 @@ scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
 # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
 plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
@@ -885,6 +890,8 @@ plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True)
 plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
 plt.show()
 ```
+
+<img src="images/dct_python.png" width="1000">
 
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 ```
@@ -901,6 +908,14 @@ audio_dst: audio DST [number_frequencies, number_frames]
 
 Example: Compute the 4 different DSTs and compare them to their respective inverses
 ```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import scipy.fftpack
+import matplotlib.pyplot as plt
+
+# Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
 sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
 audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
 audio_signal = np.mean(audio_signal, 1)
@@ -923,6 +938,7 @@ audio_idst3 = z.dst(audio_dst3, 2)
 audio_idst4 = z.dst(audio_dst4, 4)
 
 # DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
 plt.subplot(4, 3, 3), plt.plot(audio_signal-audio_idst1), plt.autoscale(tight=True), plt.title("Reconstruction differences")
@@ -937,6 +953,8 @@ plt.subplot(4, 3, 11), plt.plot(audio_idst4), plt.autoscale(tight=True), plt.tit
 plt.subplot(4, 3, 12), plt.plot(audio_signal-audio_idst4), plt.autoscale(tight=True), plt.title("Reconstruction differences")
 plt.show()
 ```
+
+<img src="images/dst_python.png" width="1000">
 
 ### mdct Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
 ```
@@ -976,6 +994,7 @@ window_function = np.sqrt(np.concatenate((window_function2, window_function2[int
 audio_mdct = z.mdct(audio_signal, window_function)
 
 # MDCT displayed in dB, s, and kHz
+plt.rc('font', size=30)
 plt.imshow(20*np.log10(np.absolute(audio_mdct)), aspect='auto', cmap='jet', origin='lower')
 plt.title('MDCT (dB)')
 plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/(window_length/2)),
@@ -986,6 +1005,8 @@ plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_leng
 plt.ylabel('Frequency (kHz)')
 plt.show()
 ```
+
+<img src="images/mdct_python.png" width="1000">
 
 ### imdct Inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
 ```
@@ -1002,6 +1023,12 @@ audio_signal: audio signal [number_samples, 0]
 
 Example: Verify that the MDCT is perfectly invertible
 ```
+# Import modules
+import scipy.io.wavfile
+import numpy as np
+import z
+import matplotlib.pyplot as plt
+
 # Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
 sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
 audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize * 8 - 1))
@@ -1019,28 +1046,23 @@ audio_signal2 = audio_signal2[0:len(audio_signal)]
 error_signal = audio_signal - audio_signal2
 
 # Original, resynthesized, and error signals
-plt.subplot(3, 1, 1)
-plt.plot(audio_signal)
-plt.title("Original Signal")
+plt.rc('font', size=30)
+plt.subplot(3, 1, 1), plt.plot(audio_signal), plt.autoscale(tight=True), plt.title("Original Signal")
 plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
            np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
-plt.subplot(3, 1, 2)
-plt.plot(audio_signal2)
-plt.title("Resynthesized Signal")
+plt.subplot(3, 1, 2), plt.plot(audio_signal2), plt.autoscale(tight=True), plt.title("Resynthesized Signal")
 plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
            np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
-plt.subplot(3, 1, 3)
-plt.plot(error_signal)
-plt.title("Error Signal")
+plt.subplot(3, 1, 3), plt.plot(error_signal), plt.autoscale(tight=True), plt.title("Error Signal")
 plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
            np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
 plt.xlabel('Time (s)')
-plt.autoscale(tight=True)
+plt.show()
 ```
+
+<img src="images/imdct_python.png" width="1000">
 
 # Author
 
