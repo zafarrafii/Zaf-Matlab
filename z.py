@@ -18,7 +18,7 @@ zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
 https://www.linkedin.com/in/zafarrafii/
-01/17/18
+02/01/18
 """
 
 import numpy as np
@@ -66,6 +66,7 @@ def stft(audio_signal, window_function, step_length):
     audio_spectrogram = abs(audio_stft[1:int(window_length/2+1), :])
 
     # Spectrogram displayed in dB, s, and kHz
+    plt.rc('font', size=30)
     plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
     plt.title('Spectrogram (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
@@ -217,6 +218,7 @@ def cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_freq
     cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
 
     # Magnitude CQT kernel displayed
+    plt.rc('font', size=30)
     plt.imshow(np.absolute(cqt_kernel).toarray(), aspect='auto', cmap='jet', origin='lower')
     plt.title('Magnitude CQT kernel')
     plt.xlabel('FFT length')
@@ -311,6 +313,7 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
     audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
     # CQT spectrogram displayed in dB, s, and semitones
+    plt.rc('font', size=30)
     plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
     plt.title('CQT spectrogram (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
@@ -384,6 +387,7 @@ def cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resoluti
     audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel)
 
     # CQT chromagram displayed in dB, s, and chromas
+    plt.rc('font', size=30)
     plt.imshow(20*np.log10(audio_chromagram), aspect='auto', cmap='jet', origin='lower')
     plt.title('CQT chromagram (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*time_resolution),
@@ -450,27 +454,19 @@ def mfcc(audio_signal, sample_rate, number_filters, number_coefficients):
 
     # MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
     step_length = 2**np.ceil(np.log2(0.04*sample_rate)) / 2
-    plt.subplot(3, 1, 1)
-    plt.plot(np.transpose(audio_mfcc))
-    plt.title('MFCCs')
+    plt.rc('font', size=30)
+    plt.subplot(3, 1, 1), plt.plot(np.transpose(audio_mfcc)), plt.autoscale(tight=True), plt.title('MFCCs')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
-    plt.subplot(3, 1, 2)
-    plt.plot(np.transpose(audio_deltamfcc))
-    plt.title('Delta MFCCs')
+    plt.subplot(3, 1, 2), plt.plot(np.transpose(audio_deltamfcc)), plt.autoscale(tight=True), plt.title('Delta MFCCs')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
-    plt.subplot(3, 1, 3)
-    plt.plot(np.transpose(audio_deltadeltamfcc))
-    plt.title('Delta-delta MFCCs')
+    plt.subplot(3, 1, 3), plt.plot(np.transpose(audio_deltadeltamfcc)), plt.autoscale(tight=True), plt.title('Delta-delta MFCCs')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
                np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
     plt.show()
     """
 
@@ -556,6 +552,7 @@ def dct(audio_signal, dct_type):
     scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
     # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+    plt.rc('font', size=30)
     plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
     plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
     plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
@@ -688,6 +685,7 @@ def dst(audio_signal, dst_type):
     audio_idst4 = z.dst(audio_dst4, 4)
 
     # DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+    plt.rc('font', size=30)
     plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
     plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
     plt.subplot(4, 3, 3), plt.plot(audio_signal-audio_idst1), plt.autoscale(tight=True), plt.title("Reconstruction differences")
@@ -811,6 +809,7 @@ def mdct(audio_signal, window_function):
     audio_mdct = z.mdct(audio_signal, window_function)
 
     # MDCT displayed in dB, s, and kHz
+    plt.rc('font', size=30)
     plt.imshow(20*np.log10(np.absolute(audio_mdct)), aspect='auto', cmap='jet', origin='lower')
     plt.title('MDCT (dB)')
     plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/(window_length/2)),
@@ -867,6 +866,12 @@ def imdct(audio_mdct, window_function):
     :return: audio_signal: audio signal [number_samples, 0]
 
     Example: Verify that the MDCT is perfectly invertible
+    # Import modules
+    import scipy.io.wavfile
+    import numpy as np
+    import z
+    import matplotlib.pyplot as plt
+
     # Audio signal (normalized) averaged over its channels (expanded) and sample rate in Hz
     sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
     audio_signal = audio_signal / (2.0 ** (audio_signal.itemsize * 8 - 1))
@@ -884,27 +889,19 @@ def imdct(audio_mdct, window_function):
     error_signal = audio_signal - audio_signal2
 
     # Original, resynthesized, and error signals
-    plt.subplot(3, 1, 1)
-    plt.plot(audio_signal)
-    plt.title("Original Signal")
+    plt.rc('font', size=30)
+    plt.subplot(3, 1, 1), plt.plot(audio_signal), plt.autoscale(tight=True), plt.title("Original Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
-    plt.subplot(3, 1, 2)
-    plt.plot(audio_signal2)
-    plt.title("Resynthesized Signal")
+    plt.subplot(3, 1, 2), plt.plot(audio_signal2), plt.autoscale(tight=True), plt.title("Resynthesized Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
-    plt.subplot(3, 1, 3)
-    plt.plot(error_signal)
-    plt.title("Error Signal")
+    plt.subplot(3, 1, 3), plt.plot(error_signal), plt.autoscale(tight=True), plt.title("Error Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.autoscale(tight=True)
     plt.show()
     """
 
@@ -946,44 +943,5 @@ def imdct(audio_mdct, window_function):
 
 
 def test():
-
-    # Import modules
-    import scipy.io.wavfile
-    import numpy as np
-    import scipy.signal
-    import z
-    import matplotlib.pyplot as plt
-
-    # Audio signal (normalized) averaged over its channels and sample rate in Hz
-    sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
-    audio_signal = audio_signal / (2.0**(audio_signal.itemsize*8-1))
-    audio_signal = np.mean(audio_signal, 1)
-
-    # Window duration in seconds (audio is stationary around 40 milliseconds)
-    window_duration = 0.04
-
-    # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-    window_length = int(2**np.ceil(np.log2(window_duration*sample_rate)))
-
-    # Window function (periodic Hamming window for COLA)
-    window_function = scipy.signal.hamming(window_length, False)
-
-    # Step length in samples (half the window length for COLA)
-    step_length = int(window_length/2)
-
-    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-    audio_stft = z.stft(audio_signal, window_function, step_length)
-    audio_spectrogram = abs(audio_stft[1:int(window_length/2+1), :])
-
-    # Spectrogram displayed in dB, s, and kHz
-    plt.imshow(20*np.log10(audio_spectrogram), aspect='auto', cmap='jet', origin='lower')
-    plt.title('Spectrogram (dB)')
-    plt.xticks(np.round(np.arange(1, np.floor(len(audio_signal)/sample_rate)+1)*sample_rate/step_length),
-               np.arange(1, int(np.floor(len(audio_signal)/sample_rate))+1))
-    plt.xlabel('Time (s)')
-    plt.yticks(np.round(np.arange(1e3, sample_rate/2+1, 1e3)/sample_rate*window_length),
-               np.arange(1, int(sample_rate/2*1e3)+1))
-    plt.ylabel('Frequency (kHz)')
-    plt.show()
 
     return 0
