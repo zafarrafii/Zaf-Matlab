@@ -239,7 +239,7 @@ imagesc(db(audio_chromagram))
 axis xy
 colormap(jet)
 title('CQT chromagram (dB)')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/time_resolution))
+xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
 xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)')
 yticks(1:frequency_resolution:12*frequency_resolution)
