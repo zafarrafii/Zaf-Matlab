@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   01/31/18
+    %   02/19/18
     
     methods (Static = true)
         
@@ -371,7 +371,7 @@
             %       axis xy
             %       colormap(jet)
             %       title('CQT chromagram (dB)')
-            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/time_resolution))
+            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)')
             %       yticks(1:frequency_resolution:12*frequency_resolution)
