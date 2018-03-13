@@ -4,6 +4,7 @@ This repository includes a Matlab class and a Python module which implement seve
 
 - [z Matlab class](#z-matlab-class)
 - [z Python module](#z-python-module)
+- [z Jupyter notebook](#z-jupyter-notebook)
 - [Author](#author)
 
 ## z Matlab class
@@ -1063,6 +1064,9 @@ plt.show()
 ```
 
 <img src="images/imdct_python.png" width="1000">
+
+## z Jupyter notebook
+https://github.com/zafarrafii/Z/blob/master/z.ipynb
 
 # Author
 
