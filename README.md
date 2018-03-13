@@ -1,6 +1,6 @@
 # Z
 
-This repository includes a Matlab class and a Python module which implement several methods/functions for audio signal processing.
+This repository includes a Matlab class, a Python module, and a Jupyter notebook which implement/illustrate several methods/functions for audio signal processing.
 
 - [z Matlab class](#z-matlab-class)
 - [z Python module](#z-python-module)
