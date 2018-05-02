@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   02/19/18
+    %   05/02/18
     
     methods (Static = true)
         
@@ -147,7 +147,22 @@
             %       % Synthesized center and side signals
             %       audiowrite('center_signal.wav',center_signal,sample_rate);
             %       audiowrite('sides_signal.wav',sides_signal,sample_rate);
-            %
+            %       
+            %       % Original, center, and sides signals
+            %       figure
+            %       subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
+            %       xticks(sample_rate:sample_rate:length(audio_signal))
+            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
+            %       subplot(3,1,2), plot(center_signal), axis tight, title('Center Signal')
+            %       xticks(sample_rate:sample_rate:length(audio_signal))
+            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
+            %       subplot(3,1,3), plot(sides_signal), axis tight, title('Sides Signal')
+            %       xticks(sample_rate:sample_rate:length(audio_signal))
+            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
+            %       xlabel('Time (s)'), set(gca,'FontSize',30)
+            %   
             %   See also ifft, z.stft
             
             % Window length in samples and number of time frames
