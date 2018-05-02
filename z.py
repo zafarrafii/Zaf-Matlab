@@ -169,13 +169,13 @@ def istft(audio_stft, window_function, step_length):
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.subplot(3, 1, 2), plt.plot(audio_signal2), plt.autoscale(tight=True), plt.title("Center Signal")
+    plt.subplot(3, 1, 2), plt.plot(center_signal), plt.autoscale(tight=True), plt.title("Center Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.subplot(3, 1, 3), plt.plot(center_signal), plt.autoscale(tight=True), plt.title("Sides Signal")
+    plt.subplot(3, 1, 3), plt.plot(sides_signal), plt.autoscale(tight=True), plt.title("Sides Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
-               np.arange(1, int(np.floor(len(sides_signal) / sample_rate)) + 1))
+               np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
     plt.show()
     """
