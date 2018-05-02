@@ -124,7 +124,7 @@ sides_signal = audio_signal-center_signal;
 audiowrite('center_signal.wav',center_signal,sample_rate);
 audiowrite('sides_signal.wav',sides_signal,sample_rate);
 
-% Original, center, and sides signals
+% Original, center, and sides signals displayed in s
 figure
 subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
