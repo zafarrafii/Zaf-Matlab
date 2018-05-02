@@ -18,7 +18,7 @@ zafarrafii@gmail.com
 http://zafarrafii.com
 https://github.com/zafarrafii
 https://www.linkedin.com/in/zafarrafii/
-02/01/18
+05/02/18
 """
 
 import numpy as np
@@ -161,6 +161,22 @@ def istft(audio_stft, window_function, step_length):
     # Synthesized center and side signals (un-normalized)
     scipy.io.wavfile.write('center_signal.wav', sample_rate, center_signal)
     scipy.io.wavfile.write('sides_signal.wav', sample_rate, sides_signal)
+
+    # Original, center, and sides signals displayed in s
+    plt.rc('font', size=30)
+    plt.subplot(3, 1, 1), plt.plot(audio_signal), plt.autoscale(tight=True), plt.title("Original Signal")
+    plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+               np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+    plt.xlabel('Time (s)')
+    plt.subplot(3, 1, 2), plt.plot(audio_signal2), plt.autoscale(tight=True), plt.title("Center Signal")
+    plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+               np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+    plt.xlabel('Time (s)')
+    plt.subplot(3, 1, 3), plt.plot(error_signal), plt.autoscale(tight=True), plt.title("Sides Signal")
+    plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
+               np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+    plt.xlabel('Time (s)')
+    plt.show()
     """
 
     # Window length in samples and number of time frames
@@ -888,7 +904,7 @@ def imdct(audio_mdct, window_function):
     audio_signal2 = audio_signal2[0:len(audio_signal)]
     error_signal = audio_signal - audio_signal2
 
-    # Original, resynthesized, and error signals
+    # Original, resynthesized, and error signals displayed in s
     plt.rc('font', size=30)
     plt.subplot(3, 1, 1), plt.plot(audio_signal), plt.autoscale(tight=True), plt.title("Original Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
