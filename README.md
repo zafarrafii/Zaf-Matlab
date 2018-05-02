@@ -124,7 +124,7 @@ sides_signal = audio_signal-center_signal;
 audiowrite('center_signal.wav',center_signal,sample_rate);
 audiowrite('sides_signal.wav',sides_signal,sample_rate);
 
-% Original, center, and sides signals
+% Original, center, and sides signals displayed in s
 figure
 subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
@@ -484,7 +484,7 @@ audio_signal2 = z.imdct(audio_mdct,window_function);
 audio_signal2 = audio_signal2(1:length(audio_signal));
 error_signal = audio_signal-audio_signal2;
 
-% Original, resynthesized, and error signals
+% Original, resynthesized, and error signals displayed in
 figure
 subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
 xticks(sample_rate:sample_rate:length(audio_signal))
