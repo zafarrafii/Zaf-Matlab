@@ -123,7 +123,24 @@ sides_signal = audio_signal-center_signal;
 % Synthesized center and side signals
 audiowrite('center_signal.wav',center_signal,sample_rate);
 audiowrite('sides_signal.wav',sides_signal,sample_rate);
+
+% Original, center, and sides signals
+figure
+subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
+xticks(sample_rate:sample_rate:length(audio_signal))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,2), plot(center_signal), axis tight, title('Center Signal')
+xticks(sample_rate:sample_rate:length(audio_signal))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,3), plot(sides_signal), axis tight, title('Sides Signal')
+xticks(sample_rate:sample_rate:length(audio_signal))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
+
+<img src="images/istft.png" width="1000">
 
 ### cqtkernel Constant-Q transform (CQT) kernel
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
