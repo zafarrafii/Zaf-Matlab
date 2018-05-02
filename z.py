@@ -120,6 +120,7 @@ def istft(audio_stft, window_function, step_length):
     import numpy as np
     import scipy.signal
     import z
+    import matplotlib.pyplot as plt
 
     # Stereo audio signal (normalized) and sample rate in Hz
     sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
@@ -172,9 +173,9 @@ def istft(audio_stft, window_function, step_length):
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
                np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
-    plt.subplot(3, 1, 3), plt.plot(error_signal), plt.autoscale(tight=True), plt.title("Sides Signal")
+    plt.subplot(3, 1, 3), plt.plot(center_signal), plt.autoscale(tight=True), plt.title("Sides Signal")
     plt.xticks(np.arange(sample_rate, len(audio_signal), sample_rate),
-               np.arange(1, int(np.floor(len(audio_signal) / sample_rate)) + 1))
+               np.arange(1, int(np.floor(len(sides_signal) / sample_rate)) + 1))
     plt.xlabel('Time (s)')
     plt.show()
     """
