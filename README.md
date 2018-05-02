@@ -659,6 +659,8 @@ plt.xlabel('Time (s)')
 plt.show()
 ```
 
+<img src="images/istft_python.png" width="1000">
+
 ### cqtkernel Constant-Q transform (CQT) kernel
 ```
 import z
