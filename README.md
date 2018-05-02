@@ -599,6 +599,7 @@ import scipy.io.wavfile
 import numpy as np
 import scipy.signal
 import z
+import matplotlib.pyplot as plt
 
 # Stereo audio signal (normalized) and sample rate in Hz
 sample_rate, audio_signal = scipy.io.wavfile.read('audio_file.wav')
