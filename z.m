@@ -13,13 +13,13 @@
     %   mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
     %   imdct - Inverse MDCT using the DCT-IV
     %
-    % Author
+    % Author:
     %   Zafar Rafii
     %   zafarrafii@gmail.com
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   05/02/18
+    %   05/10/18
     
     methods (Static = true)
         
