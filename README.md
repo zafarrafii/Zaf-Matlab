@@ -5,6 +5,7 @@ This repository includes a Matlab class, a Python module, and a Jupyter notebook
 - [z Matlab class](#z-matlab-class)
 - [z Python module](#z-python-module)
 - [z Jupyter notebook](#z-jupyter-notebook)
+- [z Julia module](#z-julia-module)
 - [Author](#author)
 
 ## z Matlab class
@@ -1103,6 +1104,17 @@ plt.show()
 
 ## z Jupyter notebook
 https://github.com/zafarrafii/Z/blob/master/z.ipynb
+
+## z Julia module
+
+z This module implements several functions for audio signal processing.
+
+z Functions:
+- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-2)
+
+### stft Short-time Fourier transform (STFT)
+
+
 
 # Author
 
