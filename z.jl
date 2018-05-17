@@ -19,12 +19,12 @@ Author:
 - http://zafarrafii.com
 - https://github.com/zafarrafii
 - https://www.linkedin.com/in/zafarrafii/
-- 05/16/18
+- 05/17/18
 """
 module z
 
 # Public
-export stft, istft, test, hamming
+export stft, istft, test
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length)
@@ -32,10 +32,10 @@ export stft, istft, test, hamming
 Compute the short-time Fourier transform (STFT)
 
 # Arguments
-- `audio_signal`: the audio signal [number_samples, 1]
+- `audio_signal::Float`: the audio signal [number_samples, 1]
 - `window_function::Integer`: the window function [window_length, 1]
-- `step_length`: the step length in samples
-- `audio_stft`: the audio STFT [window_length, number_frames]
+- `step_length::Integer`: the step length in samples
+- `audio_stft::Float`: the audio STFT [window_length, number_frames]
 
 # Example
 
@@ -46,14 +46,14 @@ julia> a = [1 2; 3 4]
  3  4
 ```
 """
-function stft(audio_signal,window_funciton,step_length)
+function stft(audio_signal,window_function,step_length)
 
     # Number of samples and window length
     number_samples = length(audio_signal)
     window_length = length(window_function)
 
     # Number of time number_frames
-    number_times = ceil((window_length-step_length+number_samples)/step_length)
+    number_times = ceil(Int64,(window_length-step_length+number_samples)/step_length)
 
     # Zero-padding at the start and end to center the windows
     audio_signal = [zeros(window_length-step_length,1);audio_signal;
@@ -69,10 +69,10 @@ function stft(audio_signal,window_funciton,step_length)
         sample_index = step_length*(time_index-1)
         audio_stft[:,time_index] = audio_signal[1+sample_index:window_length+sample_index].*window_function
 
-        end
+    end
 
     # Fourier transform of the frames
-    audio_stft = fft(audio_stft)
+    audio_stft = fft(audio_stft,1)
 
 end
 
@@ -94,14 +94,19 @@ function hamming(window_length,window_sampling="symmetric")
 
 end
 
+
+#Pkg.add("WAV")
+using WAV
+
 function test()
 
-    # Pkg.add("WAV")
-    using WAV
     audio_signal, sample_rate = wavread("audio_file.wav")
+    audio_signal = mean(audio_signal,2)
 
-    using z
-    audio_signal = stft()
+    window_length = 2048
+    step_length = convert(Int64,window_length/2)
+    window_function = hamming(window_length,"periodic")
+    audio_stft = stft(audio_signal,window_function,step_length)
 
 end
 
