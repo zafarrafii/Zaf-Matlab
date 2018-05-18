@@ -39,11 +39,9 @@ Compute the short-time Fourier transform (STFT)
 
 # Example: Compute the spectrogram of an audio file
 ```
-# Use Julia package for working with WAV files
-Pkg.add("WAV")
-using WAV
-
 # Audio signal averaged over its channels and sample rate in Hz
+#Pkg.add("WAV")
+using WAV
 audio_signal, sample_rate = wavread("audio_file.wav");
 audio_signal = mean(audio_signal,2);
 
@@ -54,14 +52,24 @@ window_duration = 0.04;
 window_length = nextpow2(convert(Int64,window_duration*sample_rate));
 
 # Window function (periodic Hamming window for COLA)
-window_function = hamming(window_length,"periodic");
+window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
 
 # Step length in samples (half the window length for COLA)
 step_length = convert(Int64,window_length/2);
 
 # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-audio_stft = z.stft(audio_signal,window_function,step_length);
+include("z.jl")
+using z
+audio_stft = stft(audio_signal,window_function,step_length);
 audio_spectrogram = abs.(audio_stft[2:convert(Int64,window_length/2)+1,:]);
+
+# Spectrogram displayed in dB, s, and kHz
+#Pkg.add("PyPlot")
+using Plots
+plotly()
+x_labels = [string(round(i*step_length/sample_rate,2)) for i = 1:size(audio_spectrogram,2)];
+y_labels = [string(round(i*sample_rate/window_length/1000,2)) for i = 1:size(audio_spectrogram,1)];
+heatmap(x_labels,y_labels,20*log10.(audio_spectrogram))
 ```
 """
 function stft(audio_signal,window_function,step_length)
@@ -99,44 +107,12 @@ function istft()
    println("this is istft")
 end
 
-"Compute the Hamming window"
-function hamming(window_length,window_sampling="symmetric")
-
-    if window_sampling == "symmetric"
-        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/(window_length-1))
-    elseif window_sampling == "periodic"
-        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length)
-    else
-        error("Window sampling must be either 'symmetric or 'periodic'.")
-    end
-
-end
-
 
 #Pkg.add("WAV")
 using WAV
 
 function test()
 
-    # Audio signal averaged over its channels and sample rate in Hz
-    audio_signal, sample_rate = wavread("audio_file.wav");
-    audio_signal = mean(audio_signal,2);
-
-    # Window duration in seconds (audio is stationary around 40 milliseconds)
-    window_duration = 0.04;
-
-    # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-    window_length = nextpow2(convert(Int64,window_duration*sample_rate));
-
-    # Window function (periodic Hamming window for COLA)
-    window_function = hamming(window_length,"periodic");
-
-    # Step length in samples (half the window length for COLA)
-    step_length = convert(Int64,window_length/2);
-
-    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-    audio_stft = z.stft(audio_signal,window_function,step_length);
-    audio_spectrogram = abs.(audio_stft[2:convert(Int64,window_length/2)+1,:]);
 
 end
 
