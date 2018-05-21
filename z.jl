@@ -29,48 +29,48 @@ export stft, istft, test
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
 
-Compute the short-time Fourier transform (STFT)
+    Compute the short-time Fourier transform (STFT)
 
-# Arguments:
-- `audio_signal::Float`: the audio signal [number_samples, 1]
-- `window_function::Integer`: the window function [window_length, 1]
-- `step_length::Integer`: the step length in samples
-- `audio_stft::Float`: the audio STFT [window_length, number_frames]
+    # Arguments:
+    - `audio_signal::Float`: the audio signal [number_samples, 1]
+    - `window_function::Integer`: the window function [window_length, 1]
+    - `step_length::Integer`: the step length in samples
+    - `audio_stft::Float`: the audio STFT [window_length, number_frames]
 
-# Example: Compute the spectrogram of an audio file
-```
-# Audio signal averaged over its channels and sample rate in Hz
-Pkg.add("WAV")
-using WAV
-audio_signal, sample_rate = wavread("audio_file.wav");
-audio_signal = mean(audio_signal, 2);
+    # Example: Compute the spectrogram of an audio file
+    ```
+    # Audio signal averaged over its channels and sample rate in Hz
+    Pkg.add("WAV")
+    using WAV
+    audio_signal, sample_rate = wavread("audio_file.wav");
+    audio_signal = mean(audio_signal, 2);
 
-# Window duration in seconds (audio is stationary around 40 milliseconds)
-window_duration = 0.04;
+    # Window duration in seconds (audio is stationary around 40 milliseconds)
+    window_duration = 0.04;
 
-# Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-window_length = nextpow2(convert(Int64, window_duration*sample_rate));
+    # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
+    window_length = nextpow2(convert(Int64, window_duration*sample_rate));
 
-# Window function (periodic Hamming window for COLA)
-window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
+    # Window function (periodic Hamming window for COLA)
+    window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
 
-# Step length in samples (half the window length for COLA)
-step_length = convert(Int64, window_length/2);
+    # Step length in samples (half the window length for COLA)
+    step_length = convert(Int64, window_length/2);
 
-# Magnitude spectrogram (without the DC component and the mirrored frequencies)
-include("z.jl")
-using z
-audio_stft = stft(audio_signal, window_function, step_length);
-audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
+    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
+    include("z.jl")
+    using z
+    audio_stft = stft(audio_signal, window_function, step_length);
+    audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
 
-# Spectrogram displayed in dB, s, and kHz
-Pkg.add("PyPlot")
-using Plots
-plotly()
-x_labels = [string(round(i*step_length/sample_rate, 2)) for i = 1:size(audio_spectrogram, 2)];
-y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_spectrogram, 1)];
-heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
-```
+    # Spectrogram displayed in dB, s, and kHz
+    Pkg.add("PyPlot")
+    using Plots
+    plotly()
+    x_labels = [string(round(i*step_length/sample_rate, 2)) for i = 1:size(audio_spectrogram, 2)];
+    y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_spectrogram, 1)];
+    heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
+    ```
 """
 function stft(audio_signal, window_function, step_length)
 
@@ -186,8 +186,7 @@ function istft()
 
         # Constant overlap-add (if proper window and step)
         sample_index = step_length*(time_index-1);
-        audio_signal[1+sample_index:window_length+sample_index]
-        = audio_signal[1+sample_index:window_length+sample_index] + audio_stft[:,time_index];
+        audio_signal[1+sample_index:window_length+sample_index] = audio_signal[1+sample_index:window_length+sample_index] + audio_stft[:,time_index];
 
     end
 
@@ -233,7 +232,7 @@ ylabel('CQT frequency')
 set(gca,'FontSize',30)
 ```
 """
-
+"""=
 function cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
 
     % Number of frequency channels per octave
@@ -291,6 +290,7 @@ function cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_fr
     cqt_kernel = conj(cqt_kernel)/fft_length;
 
 end
+"""
 
 function test()
 
