@@ -29,48 +29,48 @@ export stft, istft, test
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
 
-    Compute the short-time Fourier transform (STFT)
+Compute the short-time Fourier transform (STFT)
 
-    # Arguments:
-    - `audio_signal::Float`: the audio signal [number_samples, 1]
-    - `window_function::Integer`: the window function [window_length, 1]
-    - `step_length::Integer`: the step length in samples
-    - `audio_stft::Float`: the audio STFT [window_length, number_frames]
+# Arguments:
+- `audio_signal::Float`: the audio signal [number_samples, 1]
+- `window_function::Integer`: the window function [window_length, 1]
+- `step_length::Integer`: the step length in samples
+- `audio_stft::Float`: the audio STFT [window_length, number_frames]
 
-    # Example: Compute the spectrogram of an audio file
-    ```
-    # Audio signal averaged over its channels and sample rate in Hz
-    Pkg.add("WAV")
-    using WAV
-    audio_signal, sample_rate = wavread("audio_file.wav");
-    audio_signal = mean(audio_signal, 2);
+# Example: Compute the spectrogram of an audio file
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
 
-    # Window duration in seconds (audio is stationary around 40 milliseconds)
-    window_duration = 0.04;
+# Window duration in seconds (audio is stationary around 40 milliseconds)
+window_duration = 0.04;
 
-    # Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-    window_length = nextpow2(convert(Int64, window_duration*sample_rate));
+# Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
+window_length = nextpow2(convert(Int64, window_duration*sample_rate));
 
-    # Window function (periodic Hamming window for COLA)
-    window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
+# Window function (periodic Hamming window for COLA)
+window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
 
-    # Step length in samples (half the window length for COLA)
-    step_length = convert(Int64, window_length/2);
+# Step length in samples (half the window length for COLA)
+step_length = convert(Int64, window_length/2);
 
-    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-    include("z.jl")
-    using z
-    audio_stft = stft(audio_signal, window_function, step_length);
-    audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
+# Magnitude spectrogram (without the DC component and the mirrored frequencies)
+include("z.jl")
+using z
+audio_stft = stft(audio_signal, window_function, step_length);
+audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
 
-    # Spectrogram displayed in dB, s, and kHz
-    Pkg.add("PyPlot")
-    using Plots
-    plotly()
-    x_labels = [string(round(i*step_length/sample_rate, 2)) for i = 1:size(audio_spectrogram, 2)];
-    y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_spectrogram, 1)];
-    heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
-    ```
+# Spectrogram displayed in dB, s, and kHz
+Pkg.add("Plots")
+using Plots
+plotly()
+x_labels = [string(round(i*step_length/sample_rate, 2)) for i = 1:size(audio_spectrogram, 2)];
+y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_spectrogram, 1)];
+heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
+```
 """
 function stft(audio_signal, window_function, step_length)
 
@@ -198,99 +198,6 @@ function istft()
 
 end
 
-"""
-    cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
-
-Compute the onstant-Q transform (CQT) kernel
-
-# Arguments:
-sample_rate: sample rate in Hz
-frequency_resolution: frequency resolution in number of frequency channels per semitone
-minimum_frequency: minimum frequency in Hz
-maximum_frequency: maximum frequency in Hz
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
-
-Example: Compute and display the CQT kernel
-```
-# CQT kernel parameters
-sample_rate = 44100;
-frequency_resolution = 2;
-minimum_frequency = 55;
-maximum_frequency = sample_rate/2;
-
-# CQT kernel
-cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
-
-# Magnitude CQT kernel displayed
-figure
-imagesc(abs(cqt_kernel))
-axis xy
-colormap(jet)
-title('Magnitude CQT kernel')
-xlabel('FFT length')
-ylabel('CQT frequency')
-set(gca,'FontSize',30)
-```
-"""
-"""=
-function cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
-
-    % Number of frequency channels per octave
-    octave_resolution = 12*frequency_resolution;
-
-    % Constant ratio of frequency to resolution (= fk/(fk+1-fk))
-    quality_factor = 1/(2^(1/octave_resolution)-1);
-
-    % Number of frequency channels for the CQT
-    number_frequencies = round(octave_resolution*log2(maximum_frequency/minimum_frequency));
-
-    % Window length for the FFT (= window length of the minimum
-    % frequency = longest window)
-    fft_length = 2^nextpow2(quality_factor*sample_rate/minimum_frequency);
-
-    % Initialize the kernel
-    cqt_kernel = zeros(number_frequencies,fft_length);
-
-    % Loop over the frequency channels
-    for frequency_index = 1:number_frequencies
-
-        % Frequency value (in Hz)
-        frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
-
-        % Window length (nearest odd value because the complex
-        % exponential will have an odd length, in samples)
-        window_length = 2*round(quality_factor*sample_rate/frequency_value/2)+1;
-
-        % Temporal kernel (without zero-padding, odd and symmetric)
-        temporal_kernel = hamming(window_length,'symmetric')' ...
-            .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
-
-        % Pre zero-padding to center FFTs (fft does post zero-
-        % padding; temporal kernel still odd but almost symmetric)
-        temporal_kernel = cat(2,zeros(1,(fft_length-window_length+1)/2),temporal_kernel);
-
-        % Spectral kernel (mostly real because temporal kernel
-        % almost symmetric)
-        spectral_kernel = fft(temporal_kernel,fft_length);
-
-        % Save the spectral kernels
-        cqt_kernel(frequency_index,:) = spectral_kernel;
-    end
-
-    % Energy threshold for making the kernel sparse
-    energy_threshold = 0.01;
-
-    % Make the CQT kernel sparser
-    cqt_kernel(abs(cqt_kernel)<energy_threshold) = 0;
-
-    % Make the CQT kernel sparse
-    cqt_kernel = sparse(cqt_kernel);
-
-    % From Parseval's theorem
-    cqt_kernel = conj(cqt_kernel)/fft_length;
-
-end
-"""
 
 function test()
 
