@@ -116,7 +116,7 @@ Compute the inverse short-time Fourier transform (STFT)
 # Example: Estimate the center and sides signals of a stereo audio file
 ```
 # Stereo audio signal and sample rate in Hz
-Pkg.add("WAV")
+#Pkg.add("WAV")
 using WAV
 audio_signal, sample_rate = wavread("audio_file.wav");
 
@@ -133,16 +133,16 @@ audio_stft1 = z.stft(audio_signal[:,1], window_function, step_length);
 audio_stft2 = z.stft(audio_signal[:,2], window_function, step_length);
 
 # Magnitude spectrogram (with DC component) of the left and right channels
-audio_spectrogram1 = abs(audio_stft1[1:window_length/2+1, :]);
-audio_spectrogram2 = abs(audio_stft2[1:window_length/2+1, :]);
+audio_spectrogram1 = abs.(audio_stft1[1:Int(window_length/2)+1, :]);
+audio_spectrogram2 = abs.(audio_stft2[1:Int(window_length/2)+1, :]);
 
 # Time-frequency masks of the left and right channels for the center signal
 center_mask1 = min(audio_spectrogram1, audio_spectrogram2)./audio_spectrogram1;
 center_mask2 = min(audio_spectrogram1, audio_spectrogram2)./audio_spectrogram2;
 
 # STFT of the left and right channels for the center signal (with extension to mirrored frequencies)
-center_stft1 = cat(1, center_mask1, center_mask1[window_length/2:-1:2,:]).*audio_stft1;
-center_stft2 = cat(1, center_mask2, center_mask2[window_length/2:-1:2,:]).*audio_stft2;
+center_stft1 = cat(1, center_mask1, center_mask1[Int(window_length/2):-1:2,:]).*audio_stft1;
+center_stft2 = cat(1, center_mask2, center_mask2[Int(window_length/2):-1:2,:]).*audio_stft2;
 
 # Synthesized signals of the left and right channels for the center signal
 center_signal1 = z.istft(center_stft1, window_function, step_length);
@@ -150,15 +150,15 @@ center_signal2 = z.istft(center_stft2, window_function, step_length);
 
 # Final stereo center and sides signals
 center_signal = cat(2, center_signal1, center_signal2);
-center_signal = center_signal(1:length(audio_signal), :);
+center_signal = center_signal[1:size(audio_signal, 1), :];
 sides_signal = audio_signal-center_signal;
 
 # Synthesized center and side signals
-wavwrite("center_signal.wav", center_signal, sample_rate);
-wavwrite("sides_signal.wav", sides_signal, sample_rate);
+wavwrite(center_signal, "center_signal.wav", Fs=sample_rate);
+wavwrite(sides_signal, "sides_signal.wav", Fs=sample_rate);
 
 # Spectrogram displayed in dB, s, and kHz
-Pkg.add("PyPlot")
+#Pkg.add("Plots")
 using Plots
 plotly()
 p1 = plot(audio_signal, xlabel="Time (s)", title="Original Signal");
@@ -167,7 +167,7 @@ p3 = plot(sides_signal, xlabel="Time (s)", title="Sides Signal");
 plot(p1, p2, p3,layout=(3,1))
 ```
 """
-function istft()
+function istft(audio_stft, window_function, step_length)
 
     # Window length in samples and number of time frames
     window_length, number_times = size(audio_stft);
@@ -195,12 +195,6 @@ function istft()
 
     # Un-apply window (just in case)
     audio_signal = audio_signal/sum(window_function[1:step_length:window_length]);
-
-end
-
-
-function test()
-
 
 end
 
