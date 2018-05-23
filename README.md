@@ -1111,10 +1111,11 @@ z This module implements several functions for audio signal processing.
 
 z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-2)
+- [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
 
 ### stft Short-time Fourier transform (STFT)
 
-
+### istft Inverse short-time Fourier transform (STFT)
 
 # Author
 
