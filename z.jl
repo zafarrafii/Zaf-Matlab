@@ -24,7 +24,7 @@ Author:
 module z
 
 # Public
-#export stft, istft, cqtkernel
+export stft, istft, cqtkernel
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
@@ -210,7 +210,7 @@ Compute the constant-Q transform (CQT) kernel
 - `frequency_resolution::Float` frequency resolution in number of frequency channels per semitone
 - `minimum_frequency::Float`: minimum frequency in Hz
 - `maximum_frequency::Float`: maximum frequency in Hz
-- `cqt_kernel::Float`: CQT kernel [number_frequencies, fft_length]
+- `cqt_kernel::Complex`: CQT kernel [number_frequencies, fft_length]
 
 # Example: Compute and display the CQT kernel
 ```
@@ -221,17 +221,13 @@ minimum_frequency = 55;
 maximum_frequency = sample_rate/2;
 
 # CQT kernel
-cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
 
 # Magnitude CQT kernel displayed
-figure
-imagesc(abs(cqt_kernel))
-axis xy
-colormap(jet)
-title('Magnitude CQT kernel')
-xlabel('FFT length')
-ylabel('CQT frequency')
-set(gca,'FontSize',30)
+Pkg.add("Plots")
+using Plots
+plotly()
+heatmap(abs.(cqt_kernel))
 ```
 """
 function cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
@@ -249,42 +245,45 @@ function cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum
     fft_length = nextpow2(ceil(Int64, quality_factor*sample_rate/minimum_frequency));
 
     # Initialize the kernel
-    cqt_kernel = zeros(Complex128,number_frequencies, fft_length);
+    cqt_kernel = zeros(Complex64, number_frequencies, fft_length);
 
     # Loop over the frequency channels
-    #for frequency_index = 1:number_frequencies
+    for frequency_index = 1:number_frequencies
 
         # Frequency value (in Hz)
-        #frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
+        frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
 
         # Window length (nearest odd value because the complex exponential will have an odd length, in samples)
-        #window_length = 2*round(Int64, quality_factor*sample_rate/frequency_value/2)+1;
+        window_length = 2*round(Int64, quality_factor*sample_rate/frequency_value/2)+1;
 
         # Temporal kernel (without zero-padding, odd and symmetric)
-        #temporal_kernel = hamming(window_length, "symmetric").*exp.(2*pi*im*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
+        temporal_kernel = hamming(window_length, "symmetric").*
+        exp.(2*pi*im*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
 
         # Pre and post zero-padding to center FFTs
-        #temporal_kernel = cat(2, zeros(1, convert(Int64, (fft_length-window_length+1)/2)), temporal_kernel', zeros(1, convert(Int64, (fft_length-window_length-1)/2)));
+        temporal_kernel = cat(2, zeros(1, convert(Int64, (fft_length-window_length+1)/2)),
+        temporal_kernel', zeros(1, convert(Int64, (fft_length-window_length-1)/2)));
 
         # Spectral kernel (mostly real because temporal kernel almost symmetric)
-        #spectral_kernel = fft(temporal_kernel, 1);
+        # (Note that Julia's fft equals the complex conjugate of Matlab's fft!)
+        spectral_kernel = fft(temporal_kernel);
 
         # Save the spectral kernels
-        #cqt_kernel[frequency_index, :] = spectral_kernel;
+        cqt_kernel[frequency_index, :] = spectral_kernel;
 
-    #end
+    end
 
     # Energy threshold for making the kernel sparse
-    #energy_threshold = 0.01;
+    energy_threshold = 0.01;
 
     # Make the CQT kernel sparser
-    #cqt_kernel(abs(cqt_kernel)<energy_threshold) = 0;
+    cqt_kernel[abs.(cqt_kernel).<energy_threshold] = 0;
 
     # Make the CQT kernel sparse
-    #cqt_kernel = sparse(cqt_kernel);
+    cqt_kernel = sparse(cqt_kernel);
 
     # From Parseval's theorem
-    #cqt_kernel = conj(cqt_kernel)/fft_length;
+    cqt_kernel = conj(cqt_kernel)/fft_length;
 
 end
 

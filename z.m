@@ -268,6 +268,7 @@
                 
                 % Save the spectral kernels
                 cqt_kernel(frequency_index,:) = spectral_kernel;
+                
             end
             
             % Energy threshold for making the kernel sparse
