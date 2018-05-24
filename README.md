@@ -72,7 +72,7 @@ ylabel('Frequency (kHz)')
 set(gca,'FontSize',30)
 ```
 
-<img src="images/stft.png" width="1000">
+<img src="images/matlab/stft.png" width="1000">
 
 ### istft Inverse short-time Fourier transform (STFT)
 `audio_signal = z.istft(audio_stft,window_function,step_length);`
@@ -141,7 +141,7 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
-<img src="images/istft.png" width="1000">
+<img src="images/matlab/istft.png" width="1000">
 
 ### cqtkernel Constant-Q transform (CQT) kernel
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
@@ -177,7 +177,7 @@ ylabel('CQT frequency')
 set(gca,'FontSize',30)
 ```
 
-<img src="images/cqtkernel.png" width="1000">
+<img src="images/matlab/cqtkernel.png" width="1000">
 
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
@@ -221,7 +221,7 @@ ylabel('Frequency (semitones)')
 set(gca,'FontSize',30)
 ```
 
-<img src="images/cqtspectrogram.png" width="1000">
+<img src="images/matlab/cqtspectrogram.png" width="1000">
 
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
@@ -267,7 +267,7 @@ ylabel('Chroma')
 set(gca,'FontSize',30)
 ```
 
-<img src="images/cqtchromagram.png" width="1000">
+<img src="images/matlab/cqtchromagram.png" width="1000">
 
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
@@ -313,8 +313,7 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
-<img src="images/mfcc.png" width="1000">
-
+<img src="images/matlab/mfcc.png" width="1000">
 
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 `audio_dct = z.dct(audio_signal,dct_type);`
@@ -364,7 +363,7 @@ subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(g
 subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences'), set(gca,'FontSize',30)
 ```
 
-<img src="images/dct.png" width="1000">
+<img src="images/matlab/dct.png" width="1000">
 
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 `audio_dst = z.dst(audio_signal,dst_type);`
@@ -414,7 +413,7 @@ subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV')
 subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
 ```
 
-<img src="images/dst.png" width="1000">
+<img src="images/matlab/dst.png" width="1000">
 
 ### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_mdct = z.mdct(audio_signal,window_function);`
@@ -457,7 +456,7 @@ ylabel('Frequency (kHz)')
 set(gca,'FontSize',30)
 ```
 
-<img src="images/mdct.png" width="1000">
+<img src="images/matlab/mdct.png" width="1000">
 
 ### imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
 `audio_signal = z.imdct(audio_mdct,window_function);`
@@ -501,7 +500,7 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
-<img src="images/imdct.png" width="1000">
+<img src="images/matlab/imdct.png" width="1000">
 
 ## z Python module
 
@@ -576,7 +575,7 @@ plt.ylabel('Frequency (kHz)')
 plt.show()
 ```
 
-<img src="images/stft_python.png" width="1000">
+<img src="images/python/stft.png" width="1000">
 
 
 ### istft Inverse short-time Fourier transform (STFT)
@@ -660,7 +659,7 @@ plt.xlabel('Time (s)')
 plt.show()
 ```
 
-<img src="images/istft_python.png" width="1000">
+<img src="images/python/istft.png" width="1000">
 
 ### cqtkernel Constant-Q transform (CQT) kernel
 ```
@@ -702,7 +701,7 @@ plt.ylabel('CQT frequency')
 plt.show()
 ```
 
-<img src="images/cqtkernel_python.png" width="1000">
+<img src="images/python/cqtkernel.png" width="1000">
 
 ### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
 ```
@@ -755,7 +754,7 @@ plt.ylabel('Frequency (semitones)')
 plt.show()
 ```
 
-<img src="images/cqtspectrogram_python.png" width="1000">
+<img src="images/python/cqtspectrogram.png" width="1000">
 
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 ```
@@ -809,7 +808,7 @@ plt.ylabel('Chroma')
 plt.show()
 ```
 
-<img src="images/cqtchromagram_python.png" width="1000">
+<img src="images/python/cqtchromagram.png" width="1000">
 
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 ```
@@ -865,7 +864,7 @@ plt.xlabel('Time (s)')
 plt.show()
 ```
 
-<img src="images/mfcc_python.png" width="1000">
+<img src="images/python/mfcc.png" width="1000">
 
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 ```
@@ -992,7 +991,7 @@ plt.subplot(4, 3, 12), plt.plot(audio_signal-audio_idst4), plt.autoscale(tight=T
 plt.show()
 ```
 
-<img src="images/dst_python.png" width="1000">
+<img src="images/python/dst.png" width="1000">
 
 ### mdct Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
 ```
@@ -1044,7 +1043,7 @@ plt.ylabel('Frequency (kHz)')
 plt.show()
 ```
 
-<img src="images/mdct_python.png" width="1000">
+<img src="images/python/mdct.png" width="1000">
 
 ### imdct Inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
 ```
@@ -1100,7 +1099,7 @@ plt.xlabel('Time (s)')
 plt.show()
 ```
 
-<img src="images/imdct_python.png" width="1000">
+<img src="images/python/imdct.png" width="1000">
 
 ## z Jupyter notebook
 https://github.com/zafarrafii/Z/blob/master/z.ipynb
@@ -1114,6 +1113,54 @@ z Functions:
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
 
 ### stft Short-time Fourier transform (STFT)
+`audio_stft = z.stft(audio_signal, window_function, step_length);`
+    
+Arguments:
+```
+- `audio_signal::Float`: the audio signal [number_samples, 1]
+- `window_function::Integer`: the window function [window_length, 1]
+- `step_length::Integer`: the step length in samples
+- `audio_stft::Float`: the audio STFT [window_length, number_frames]
+```
+
+Example: Compute and display the spectrogram of an audio file
+```
+% Audio signal averaged over its channels and sample rate in Hz
+[audio_signal,sample_rate] = audioread('audio_file.wav');
+audio_signal = mean(audio_signal,2);
+
+% Window duration in seconds (audio is stationary around 40 milliseconds)
+window_duration = 0.04;
+
+% Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
+window_length = 2^nextpow2(window_duration*sample_rate);
+
+% Window function (periodic Hamming window for COLA)
+window_function = hamming(window_length,'periodic');
+
+% Step length in samples (half the window length for COLA)
+step_length = window_length/2;
+
+% Magnitude spectrogram (without the DC component and the mirrored frequencies)
+audio_stft = z.stft(audio_signal,window_function,step_length);
+audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+
+% Spectrogram displayed in dB, s, and kHz
+figure
+imagesc(db(audio_spectrogram))
+axis xy
+colormap(jet)
+title('Spectrogram (dB)')
+xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)')
+yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
+yticklabels(1:sample_rate/2*1e-3)
+ylabel('Frequency (kHz)')
+set(gca,'FontSize',30)
+```
+
+<img src="images/julia/stft.png" width="1000">
 
 ### istft Inverse short-time Fourier transform (STFT)
 
