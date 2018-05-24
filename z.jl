@@ -24,7 +24,7 @@ Author:
 module z
 
 # Public
-export stft, istft, test
+#export stft, istft
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
@@ -60,7 +60,7 @@ step_length = convert(Int64, window_length/2);
 # Magnitude spectrogram (without the DC component and the mirrored frequencies)
 include("z.jl")
 using z
-audio_stft = stft(audio_signal, window_function, step_length);
+audio_stft = z.stft(audio_signal, window_function, step_length);
 audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
 
 # Spectrogram displayed in dB, s, and kHz
@@ -72,6 +72,7 @@ y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(au
 heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 ```
 """
+
 function stft(audio_signal, window_function, step_length)
 
     # Number of samples and window length
@@ -129,8 +130,8 @@ step_length = convert(Int64, window_length/2);
 # STFT of the left and right channels
 include("z.jl")
 using z
-audio_stft1 = stft(audio_signal[:,1], window_function, step_length);
-audio_stft2 = stft(audio_signal[:,2], window_function, step_length);
+audio_stft1 = z.stft(audio_signal[:,1], window_function, step_length);
+audio_stft2 = z.stft(audio_signal[:,2], window_function, step_length);
 
 # Magnitude spectrogram (with DC component) of the left and right channels
 audio_spectrogram1 = abs.(audio_stft1[1:Int(window_length/2)+1, :]);
@@ -145,8 +146,8 @@ center_stft1 = cat(1, center_mask1, center_mask1[Int(window_length/2):-1:2,:]).*
 center_stft2 = cat(1, center_mask2, center_mask2[Int(window_length/2):-1:2,:]).*audio_stft2;
 
 # Synthesized signals of the left and right channels for the center signal
-center_signal1 = istft(center_stft1, window_function, step_length);
-center_signal2 = istft(center_stft2, window_function, step_length);
+center_signal1 = z.istft(center_stft1, window_function, step_length);
+center_signal2 = z.istft(center_stft2, window_function, step_length);
 
 # Final stereo center and sides signals
 center_signal = cat(2, center_signal1, center_signal2);
