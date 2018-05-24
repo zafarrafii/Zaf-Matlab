@@ -1150,7 +1150,7 @@ y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(au
 heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 ```
 
-<img src="images/julia/stft.png" width="750">
+<img src="images/julia/stft.png" width="500">
 
 ### istft Inverse short-time Fourier transform (STFT)
 
@@ -1219,7 +1219,7 @@ sides_plot = plot(time_signal, sides_signal, xlabel="Time (s)", title="Sides Sig
 plot(audio_plot, center_plot, sides_plot, layout=(3,1), legend=false)
 ```
 
-<img src="images/julia/istft.png" width="750">
+<img src="images/julia/istft.png" width="500">
 
 # Author
 
