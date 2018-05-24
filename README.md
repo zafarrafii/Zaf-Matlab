@@ -928,7 +928,7 @@ plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.titl
 plt.show()
 ```
 
-<img src="images/dct_python.png" width="1000">
+<img src="images/python/dct.png" width="1000">
 
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 ```
