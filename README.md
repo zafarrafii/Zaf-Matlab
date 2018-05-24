@@ -1102,7 +1102,7 @@ z This module implements several functions for audio signal processing.
 z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-2)
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
-- [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
+- [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1253,7 +1253,7 @@ plotly()
 heatmap(abs.(cqt_kernel))
 ```
 
-<img src="images/julia/cqtkernel.png" width="1000">
+<img src="images/julia/cqtkernel.png" width="500">
 
 # Author
 
