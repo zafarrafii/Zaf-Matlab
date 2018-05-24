@@ -1130,14 +1130,14 @@ window_duration = 0.04;
 window_length = nextpow2(convert(Int64, window_duration*sample_rate));
 
 # Window function (periodic Hamming window for COLA)
-window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
+include("z.jl")
+using z
+window_function = z.hamming(window_length, "periodic");
 
 # Step length in samples (half the window length for COLA)
 step_length = convert(Int64, window_length/2);
 
 # Magnitude spectrogram (without the DC component and the mirrored frequencies)
-include("z.jl")
-using z
 audio_stft = z.stft(audio_signal, window_function, step_length);
 audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1,:]);
 
@@ -1172,14 +1172,14 @@ using WAV
 audio_signal, sample_rate = wavread("audio_file.wav");
 
 # Parameters for the STFT
+include("z.jl")
+using z
 window_duration = 0.04;
-window_length = nextpow2(convert(Int64, window_duration*sample_rate));
-window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
+window_length = nextpow2(ceil(Int64, window_duration*sample_rate));
+window_function = z.hamming(window_length,"periodic");
 step_length = convert(Int64, window_length/2);
 
 # STFT of the left and right channels
-include("z.jl")
-using z
 audio_stft1 = z.stft(audio_signal[:,1], window_function, step_length);
 audio_stft2 = z.stft(audio_signal[:,2], window_function, step_length);
 
