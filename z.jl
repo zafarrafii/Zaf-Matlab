@@ -200,4 +200,59 @@ function istft(audio_stft, window_function, step_length)
 
 end
 
+function cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency)
+
+# Number of frequency channels per octave
+octave_resolution = 12*frequency_resolution;
+
+# Constant ratio of frequency to resolution (= fk/(fk+1-fk))
+quality_factor = 1/(2^(1/octave_resolution)-1);
+
+# Number of frequency channels for the CQT
+number_frequencies = round(octave_resolution*log2(maximum_frequency/minimum_frequency));
+
+# Window length for the FFT (= window length of the minimum frequency = longest window)
+fft_length = 2^nextpow2(quality_factor*sample_rate/minimum_frequency);
+
+# Initialize the kernel
+cqt_kernel = zeros(number_frequencies,fft_length);
+
+# Loop over the frequency channels
+for frequency_index = 1:number_frequencies
+
+    # Frequency value (in Hz)
+    frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
+
+    # Window length (nearest odd value because the complex exponential will have an odd length, in samples)
+    window_length = 2*round(quality_factor*sample_rate/frequency_value/2)+1;
+
+    # Temporal kernel (without zero-padding, odd and symmetric)
+    temporal_kernel = hamming(window_length,'symmetric')' ...
+        .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
+
+    # Pre zero-padding to center FFTs (fft does post zero-padding; temporal kernel still odd but almost symmetric)
+    temporal_kernel = cat(2,zeros(1,(fft_length-window_length+1)/2),temporal_kernel);
+
+    # Spectral kernel (mostly real because temporal kernel almost symmetric)
+    spectral_kernel = fft(temporal_kernel,fft_length);
+
+    # Save the spectral kernels
+    cqt_kernel(frequency_index,:) = spectral_kernel;
+
+end
+
+# Energy threshold for making the kernel sparse
+energy_threshold = 0.01;
+
+# Make the CQT kernel sparser
+cqt_kernel(abs(cqt_kernel)<energy_threshold) = 0;
+
+# Make the CQT kernel sparse
+cqt_kernel = sparse(cqt_kernel);
+
+# From Parseval's theorem
+cqt_kernel = conj(cqt_kernel)/fft_length;
+
+end
+
 end
