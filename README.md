@@ -1102,6 +1102,7 @@ z This module implements several functions for audio signal processing.
 z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-2)
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
+- [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-1)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1220,6 +1221,39 @@ plot(audio_plot, center_plot, sides_plot, layout=(3,1), legend=false)
 ```
 
 <img src="images/julia/istft.png" width="500">
+
+### cqtkernel Constant-Q transform (CQT) kernel
+
+`cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);`
+
+Arguments:
+```
+sample_rate: sample rate in Hz
+frequency_resolution: frequency resolution in number of frequency channels per semitone
+minimum_frequency: minimum frequency in Hz
+maximum_frequency: maximum frequency in Hz
+cqt_kernel: CQT kernel [number_frequencies, fft_length]
+```
+
+Example: Compute and display the CQT kernel
+```
+# CQT kernel parameters
+sample_rate = 44100;
+frequency_resolution = 2;
+minimum_frequency = 55;
+maximum_frequency = sample_rate/2;
+
+# CQT kernel
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
+
+# Magnitude CQT kernel displayed
+Pkg.add("Plots")
+using Plots
+plotly()
+heatmap(abs.(cqt_kernel))
+```
+
+<img src="images/julia/cqtkernel.png" width="1000">
 
 # Author
 
