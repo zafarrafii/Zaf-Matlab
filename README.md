@@ -1219,7 +1219,9 @@ sides_plot = plot(time_signal, sides_signal, xlabel="Time (s)", title="Sides Sig
 plot(audio_plot, center_plot, sides_plot, layout=(3,1), legend=false)
 ```
 
-<img src="images/julia/istft.png" align="center" width="500">
+<p align="center">
+    <img src="images/julia/istft.png" width="500">
+</p>
 
 # Author
 
