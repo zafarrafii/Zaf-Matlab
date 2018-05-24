@@ -1109,10 +1109,10 @@ z Functions:
     
 Arguments:
 ```
-`audio_signal::Float`: the audio signal [number_samples, 1]
-`window_function::Integer`: the window function [window_length, 1]
-`step_length::Integer`: the step length in samples
-`audio_stft::Float`: the audio STFT [window_length, number_frames]
+audio_signal: the audio signal [number_samples, 1]
+window_function: the window function [window_length, 1]
+step_length: the step length in samples
+audio_stft: the audio STFT [window_length, number_frames]
 ```
 
 Example: Compute and display the spectrogram of an audio file
@@ -1158,10 +1158,10 @@ heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 
 Arguments:
 ```
-audio_stft: audio STFT [window_length,number_frames]
-window_function: window function [window_length,1]
+audio_stft: audio STFT [window_length, number_frames]
+window_function: window function [window_length, 1]
 step_length: step length in samples
-audio_signal: audio signal [number_samples,1]
+audio_signal: audio signal [number_samples, 1]
 ```
 
 Example: Estimate the center and sides signals of a stereo audio file
