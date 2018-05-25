@@ -1103,6 +1103,7 @@ z Functions:
 - [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft-2)
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-2)
+- [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1110,10 +1111,10 @@ z Functions:
     
 Arguments:
 ```
-audio_signal: the audio signal [number_samples, 1]
-window_function: the window function [window_length, 1]
-step_length: the step length in samples
-audio_stft: the audio STFT [window_length, number_frames]
+audio_signal::Float: the audio signal [number_samples, 1]
+window_function::Integer: the window function [window_length, 1]
+step_length::Integer: the step length in samples
+audio_stft::Complex: the audio STFT [window_length, number_frames]
 ```
 
 Example: Compute and display the spectrogram of an audio file
@@ -1158,10 +1159,10 @@ heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 
 Arguments:
 ```
-audio_stft: the audio STFT [window_length, number_frames]
-window_function: the window function [window_length, 1]
-step_length: the step length in samples
-audio_signal: the audio signal [number_samples, 1]
+audio_stft::Complex: the audio STFT [window_length, number_frames]
+window_function::Integer: the window function [window_length, 1]
+step_length::Integer: the step length in samples
+audio_signal::Float: the audio signal [number_samples, 1]
 ```
 
 Example: Estimate the center and sides signals of a stereo audio file
@@ -1226,11 +1227,11 @@ plot(audio_plot, center_plot, sides_plot, layout=(3,1), legend=false)
 
 Arguments:
 ```
-sample_rate: sample rate in Hz
-frequency_resolution: frequency resolution in number of frequency channels per semitone
-minimum_frequency: minimum frequency in Hz
-maximum_frequency: maximum frequency in Hz
-cqt_kernel: CQT kernel [number_frequencies, fft_length]
+sample_rate::Float: the sample rate in Hz
+frequency_resolution::Float: the frequency resolution in number of frequency channels per semitone
+minimum_frequency::Float: the minimum frequency in Hz
+maximum_frequency::Float: the maximum frequency in Hz
+cqt_kernel::Complex: the CQT kernel [number_frequencies, fft_length]
 ```
 
 Example: Compute and display the CQT kernel
@@ -1253,6 +1254,48 @@ heatmap(abs.(cqt_kernel))
 ```
 
 <img src="images/julia/cqtkernel.png" width="500">
+
+### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
+
+`audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel);`
+
+Arguments:
+```
+audio_signal::Float: the audio signal [number_samples, 1]
+sample_rate::Float: the sample rate in Hz
+time_resolution::Float: the time resolution in number of time frames per second
+cqt_kernel::Complex: the CQT kernel [number_frequencies, fft_length]
+audio_spectrogram::Float: the audio spectrogram in magnitude [number_frequencies, number_times]
+```
+Example: Compute and display the CQT spectrogram
+```
+# Audio file averaged over the channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# CQT kernel
+frequency_resolution = 2;
+minimum_frequency = 55;
+maximum_frequency = 3520;
+include("z.jl")
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
+
+# CQT spectrogram
+time_resolution = 25;
+audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel);
+
+#CQT spectrogram displayed in dB, s, and semitones
+Pkg.add("Plots")
+using Plots
+plotly()
+x_labels = [string(round(i/time_resolution, 2)) for i = 1:size(audio_spectrogram, 2)];
+y_labels = [string(round(55*2^((i-1)/(12*frequency_resolution)), 2)) for i = 1:size(audio_spectrogram, 1)];
+heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
+```
+
+<img src="images/julia/cqtspectrogram.png" width="500">
 
 # Author
 
