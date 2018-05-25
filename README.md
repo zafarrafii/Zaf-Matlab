@@ -1286,7 +1286,7 @@ cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, m
 time_resolution = 25;
 audio_spectrogram = z.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel);
 
-#CQT spectrogram displayed in dB, s, and semitones
+# CQT spectrogram displayed in dB, s, and Hz
 Pkg.add("Plots")
 using Plots
 plotly()
