@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   05/10/18
+    %   05/25/18
     
     methods (Static = true)
         
@@ -337,8 +337,8 @@
             [number_frequencies,fft_length] = size(cqt_kernel);
             
             % Zero-padding to center the CQT
-            audio_signal = [zeros(ceil((fft_length-step_length)/2),1); ...
-                audio_signal;zeros(floor((fft_length-step_length)/2),1)];
+            audio_signal = cat(1,zeros(ceil((fft_length-step_length)/2),1), ...
+                audio_signal,zeros(floor((fft_length-step_length)/2),1));
             
             % Initialize the spectrogram
             audio_spectrogram = zeros(number_frequencies,number_times);
@@ -350,6 +350,7 @@
                 sample_index = step_length*(time_index-1);
                 audio_spectrogram(:,time_index) = abs(cqt_kernel...
                     *fft(audio_signal(sample_index+1:sample_index+fft_length)));
+                
             end
             
         end
