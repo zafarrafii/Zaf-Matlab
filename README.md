@@ -1244,6 +1244,8 @@ minimum_frequency = 55;
 maximum_frequency = sample_rate/2;
 
 # CQT kernel
+include("z.jl")
+using z
 cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
 
 # Magnitude CQT kernel displayed
