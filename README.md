@@ -1132,7 +1132,6 @@ window_length = nextpow2(convert(Int64, window_duration*sample_rate));
 
 # Window function (periodic Hamming window for COLA)
 include("z.jl")
-using z
 window_function = z.hamming(window_length, "periodic");
 
 # Step length in samples (half the window length for COLA)
@@ -1174,7 +1173,6 @@ audio_signal, sample_rate = wavread("audio_file.wav");
 
 # Parameters for the STFT
 include("z.jl")
-using z
 window_duration = 0.04;
 window_length = nextpow2(ceil(Int64, window_duration*sample_rate));
 window_function = z.hamming(window_length,"periodic");
@@ -1245,7 +1243,6 @@ maximum_frequency = sample_rate/2;
 
 # CQT kernel
 include("z.jl")
-using z
 cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
 
 # Magnitude CQT kernel displayed
