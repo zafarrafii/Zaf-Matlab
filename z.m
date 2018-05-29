@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   05/25/18
+    %   05/29/18
     
     methods (Static = true)
         
@@ -405,7 +405,7 @@
             [number_frequencies,number_times] = size(audio_spectrogram);
             
             % Number of chroma bins
-            number_chromas = 12*frequency_resolution;
+            number_chromas = round(12*frequency_resolution);
             
             % Initialize the chromagram
             audio_chromagram = zeros(number_chromas,number_times);
@@ -415,7 +415,9 @@
                 
                 % Sum the energy of the frequency channels for every chroma
                 audio_chromagram(chroma_index,:) = sum(audio_spectrogram(chroma_index:number_chromas:number_frequencies,:),1);
+                
             end
+            
         end
         
         function audio_mfcc = mfcc(audio_signal,sample_rate,number_filters,number_coefficients)
