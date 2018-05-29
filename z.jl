@@ -430,11 +430,11 @@ audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficien
     Compute the mel frequency cepstrum coefficients (MFFCs)
 
 # Arguments:
-- `audio_signal::Float`: audio signal [number_samples, 1]
-- `sample_rate::Float:` sample rate in Hz
-- `number_filters::Integer:` number of filters
-- `number_coefficients::Integer:` number of coefficients (without the 0th coefficient)
-- `audio_mfcc::Float:` audio MFCCs [number_times, number_coefficients]
+- `audio_signal::Float`: the audio signal [number_samples, 1]
+- `sample_rate::Float`: the sample rate in Hz
+- `number_filters::Integer`: the number of filters
+- `number_coefficients::Integer`: the number of coefficients (without the 0th coefficient)
+- `audio_mfcc::Float`: the audio MFCCs [number_times, number_coefficients]
 
 # Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
 ```
@@ -451,24 +451,19 @@ include("z.jl")
 audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
 
 # Delta and delta-delta MFCCs
-audio_deltamfcc = diff(audio_mfcc,1,2);
-audio_deltadeltamfcc = diff(audio_deltamfcc,1,2);
+audio_deltamfcc = diff(audio_mfcc, 2);
+audio_deltadeltamfcc = diff(audio_deltamfcc, 2);
 
 # MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
-step_length = (2^nextpow2(0.04*sample_rate))/2;
-figure
-subplot(3,1,1), plot(audio_mfcc'), axis tight, title('MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,2), plot(audio_deltamfcc'), axis tight, title('Delta MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,3), plot(audio_deltadeltamfcc'), axis tight, title('Delta-delta MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
+Pkg.add("Plots")
+using Plots
+plotly()
+step_length = convert(Int64, nextpow2(ceil(Int64, 0.04*sample_rate))/2);
+time_signal = round.((1:size(audio_mfcc, 2))*step_length/sample_rate, 2);
+mfcc_plot = plot(time_signal, audio_mfcc', xlabel="Time (s)", title="MFCCs");
+deltamfcc_plot = plot(time_signal[2:end], audio_deltamfcc', xlabel="Time (s)", title="Delta MFCCs");
+deltadeltamfcc_plot = plot(time_signal[3:end], audio_deltadeltamfcc', xlabel="Time (s)", title="Delta-delta MFCCs");
+plot(mfcc_plot, deltamfcc_plot, deltadeltamfcc_plot, layout=(3,1), legend=false)
 ```
 """
 function mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
@@ -499,10 +494,10 @@ function mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
     for filter_index = 1:number_filters
 
         # Left and right sides of the triangular overlapping filters (linspace more accurate than triang or bartlett!)
-        filter_bank[filter_index,filter_indices(filter_index):filter_indices(filter_index+1)] =
-        linspace(0, 1, filter_indices(filter_index+1)-filter_indices(filter_index)+1);
-        filter_bank[filter_index,filter_indices(filter_index+1):filter_indices(filter_index+2)] =
-        linspace(1, 0, filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);
+        filter_bank[filter_index,filter_indices[filter_index]:filter_indices[filter_index+1]] =
+        linspace(0, 1, filter_indices[filter_index+1]-filter_indices[filter_index]+1);
+        filter_bank[filter_index,filter_indices[filter_index+1]:filter_indices[filter_index+2]] =
+        linspace(1, 0, filter_indices[filter_index+2]-filter_indices[filter_index+1]+1);
 
     end
 
