@@ -1345,7 +1345,7 @@ heatmap(x_labels, y_labels, 20*log10.(audio_chromagram))
 
 ### mfcc Mel frequency cepstrum coefficients (MFCCs)
 
-`audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)`
+`audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);`
 
 Arguments:
 ```
