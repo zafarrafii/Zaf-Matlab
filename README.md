@@ -1104,6 +1104,7 @@ z Functions:
 - [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft-2)
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-2)
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-2)
+- [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1112,7 +1113,7 @@ z Functions:
 Arguments:
 ```
 audio_signal::Float: the audio signal [number_samples, 1]
-window_function::Integer: the window function [window_length, 1]
+window_function::Float: the window function [window_length, 1]
 step_length::Integer: the step length in samples
 audio_stft::Complex: the audio STFT [window_length, number_frames]
 ```
@@ -1160,7 +1161,7 @@ heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 Arguments:
 ```
 audio_stft::Complex: the audio STFT [window_length, number_frames]
-window_function::Integer: the window function [window_length, 1]
+window_function::Float: the window function [window_length, 1]
 step_length::Integer: the step length in samples
 audio_signal::Float: the audio signal [number_samples, 1]
 ```
@@ -1228,7 +1229,7 @@ plot(audio_plot, center_plot, sides_plot, layout=(3,1), legend=false)
 Arguments:
 ```
 sample_rate::Float: the sample rate in Hz
-frequency_resolution::Float: the frequency resolution in number of frequency channels per semitone
+frequency_resolution::Integer: the frequency resolution in number of frequency channels per semitone
 minimum_frequency::Float: the minimum frequency in Hz
 maximum_frequency::Float: the maximum frequency in Hz
 cqt_kernel::Complex: the CQT kernel [number_frequencies, fft_length]
@@ -1296,6 +1297,50 @@ heatmap(x_labels, y_labels, 20*log10.(audio_spectrogram))
 ```
 
 <img src="images/julia/cqtspectrogram.png" width="500">
+
+### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
+
+`audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel);`
+
+Arguments:
+```
+audio_signal::Float: the audio signal [number_samples, 1]
+sample_rate::Float: the sample rate in Hz
+time_resolution::Float: the time resolution in number of time frames per second
+frequency_resolution::Integer: the frequency resolution in number of frequency channels per semitones
+cqt_kernel::Complex: the CQT kernel [number_frequencies, fft_length]
+audio_chromagram::Complex: the audio chromagram [number_chromas, number_times]
+```
+
+Example: Compute and display the CQT chromagram
+```
+# Audio file averaged over the channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# CQT kernel
+frequency_resolution = 2;
+minimum_frequency = 55;
+maximum_frequency = 3520;
+include("z.jl")
+cqt_kernel = z.cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum_frequency);
+
+# CQT chromagram
+time_resolution = 25;
+audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel);
+
+# CQT chromagram displayed in dB, s, and chromas
+Pkg.add("Plots")
+using Plots
+plotly()
+x_labels = [string(round(i/time_resolution, 2)) for i = 1:size(audio_chromagram, 2)];
+y_labels = [string(i) for i = 1:size(audio_chromagram, 1)];
+heatmap(x_labels, y_labels, 20*log10.(audio_chromagram))
+```
+
+<img src="images/julia/cqtchromagram.png" width="500">
 
 # Author
 
