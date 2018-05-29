@@ -405,7 +405,7 @@
             [number_frequencies,number_times] = size(audio_spectrogram);
             
             % Number of chroma bins
-            number_chromas = round(12*frequency_resolution);
+            number_chromas = 12*frequency_resolution;
             
             % Initialize the chromagram
             audio_chromagram = zeros(number_chromas,number_times);

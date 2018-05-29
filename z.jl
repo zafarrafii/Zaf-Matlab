@@ -19,12 +19,12 @@ Author:
 - http://zafarrafii.com
 - https://github.com/zafarrafii
 - https://www.linkedin.com/in/zafarrafii/
-- 05/24/18
+- 05/29/18
 """
 module z
 
 # Public
-export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram
+export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram, mfcc
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
@@ -33,7 +33,7 @@ Compute the short-time Fourier transform (STFT)
 
 # Arguments:
 - `audio_signal::Float`: the audio signal [number_samples, 1]
-- `window_function::Integer`: the window function [window_length, 1]
+- `window_function::Float`: the window function [window_length, 1]
 - `step_length::Integer`: the step length in samples
 - `audio_stft::Complex`: the audio STFT [window_length, number_frames]
 
@@ -108,7 +108,7 @@ Compute the inverse short-time Fourier transform (STFT)
 
 # Arguments:
 - `audio_stft::Complex`: the audio STFT [window_length, number_frames]
-- `window_function::Integer`: the window function [window_length, 1]
+- `window_function::Float`: the window function [window_length, 1]
 - `step_length::Integer`: the step length in samples
 - `audio_signal::Float`: the audio signal [number_samples, 1]
 
@@ -205,7 +205,7 @@ Compute the constant-Q transform (CQT) kernel
 
 # Arguments:
 - `sample_rate::Float` the sample rate in Hz
-- `frequency_resolution::Float` the frequency resolution in number of frequency channels per semitone
+- `frequency_resolution::Integer` the frequency resolution in number of frequency channels per semitone
 - `minimum_frequency::Float`: the minimum frequency in Hz
 - `maximum_frequency::Float`: the maximum frequency in Hz
 - `cqt_kernel::Complex`: the CQT kernel [number_frequencies, fft_length]
@@ -358,17 +358,17 @@ function cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 end
 
 """
-    audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
+    audio_chromagram = z.cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_resolution, cqt_kernel);
 
 Compute the constant-Q transform (CQT) chromagram using a kernel
 
 # Arguments:
 - `audio_signal::Float`: the audio signal [number_samples, 1]
-- `sample_ratel::Float`: the sample rate in Hz
-- `time_resolutionl::Float`: the time resolution in number of time frames per second
-- `frequency_resolutionl::Float`: the frequency resolution in number of frequency channels per semitones
+- `sample_rate::Float`: the sample rate in Hz
+- `time_resolution::Float`: the time resolution in number of time frames per second
+- `frequency_resolution::Integer`: the frequency resolution in number of frequency channels per semitones
 - `cqt_kernel::Complex`: the CQT kernel [number_frequencies, fft_length]
-- `audio_chromagraml::Complex`: the audio chromagram [number_chromas, number_times]
+- `audio_chromagram::Complex`: the audio chromagram [number_chromas, number_times]
 
 # Example: Compute and display the CQT chromagram
 ```
@@ -407,7 +407,7 @@ function cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_res
     number_frequencies, number_times = size(audio_spectrogram);
 
     # Number of chroma bins
-    number_chromas = round(Int64, 12*frequency_resolution);
+    number_chromas = 12*frequency_resolution;
 
     # Initialize the chromagram
     audio_chromagram = zeros(number_chromas, number_times);
@@ -421,6 +421,96 @@ function cqtchromagram(audio_signal, sample_rate, time_resolution, frequency_res
     end
 
     return audio_chromagram
+
+end
+
+"""
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
+
+    Compute the mel frequency cepstrum coefficients (MFFCs)
+
+# Arguments:
+- `audio_signal::Float`: audio signal [number_samples, 1]
+- `sample_rate::Float:` sample rate in Hz
+- `number_filters::Integer:` number of filters
+- `number_coefficients::Integer:` number of coefficients (without the 0th coefficient)
+- `audio_mfcc::Float:` audio MFCCs [number_times, number_coefficients]
+
+# Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+#  MFCCs for a given number of filters and coefficients
+number_filters = 40;
+number_coefficients = 20;
+include("z.jl")
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
+
+# Delta and delta-delta MFCCs
+audio_deltamfcc = diff(audio_mfcc,1,2);
+audio_deltadeltamfcc = diff(audio_deltamfcc,1,2);
+
+# MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
+step_length = (2^nextpow2(0.04*sample_rate))/2;
+figure
+subplot(3,1,1), plot(audio_mfcc'), axis tight, title('MFCCs')
+xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,2), plot(audio_deltamfcc'), axis tight, title('Delta MFCCs')
+xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,3), plot(audio_deltadeltamfcc'), axis tight, title('Delta-delta MFCCs')
+xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
+xticklabels(1:floor(length(audio_signal)/sample_rate))
+xlabel('Time (s)'), set(gca,'FontSize',30)
+```
+"""
+function mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
+
+    # Window duration in seconds, length in samples, and function, and step length in samples
+    window_duration = 0.04;
+    window_length = nextpow2(ceil(Int64, window_duration*sample_rate));
+    window_function = z.hamming(window_length, "periodic");
+    step_length = convert(Int64, window_length/2);
+
+    # Magnitude spectrogram (without the DC component and the mirrored frequencies)
+    audio_stft = z.stft(audio_signal, window_function, step_length);
+    audio_spectrogram = abs.(audio_stft[2:convert(Int64, window_length/2)+1, :]);
+
+    # Minimum and maximum mel frequencies
+    mininum_melfrequency = 2595*log10(1+(sample_rate/window_length)/700);
+    maximum_melfrequency = 2595*log10(1+(sample_rate/2)/700);
+
+    # Indices of the overlapping filters (linearly spaced in the mel scale and logarithmically spaced in the linear scale)
+    filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
+    filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
+    filter_indices = round.(Int64, 700*(10.^(filter_indices/2595)-1)*window_length/sample_rate);
+
+    # Initialize the filter bank
+    filter_bank = zeros(number_filters, convert(Int64, window_length/2));
+
+    # Loop over the filters
+    for filter_index = 1:number_filters
+
+        # Left and right sides of the triangular overlapping filters (linspace more accurate than triang or bartlett!)
+        filter_bank[filter_index,filter_indices(filter_index):filter_indices(filter_index+1)] =
+        linspace(0, 1, filter_indices(filter_index+1)-filter_indices(filter_index)+1);
+        filter_bank[filter_index,filter_indices(filter_index+1):filter_indices(filter_index+2)] =
+        linspace(1, 0, filter_indices(filter_index+2)-filter_indices(filter_index+1)+1);
+
+    end
+
+    # Discrete cosine transform of the log of the magnitude spectrogram mapped onto the mel scale using the filter bank
+    audio_mfcc = dct(log.(filter_bank*audio_spectrogram+eps()), 1);
+
+    # The first coefficients (without the 0th) represent the MFCCs
+    audio_mfcc = audio_mfcc[2:number_coefficients+1, :];
 
 end
 
