@@ -1340,7 +1340,7 @@ y_labels = [string(i) for i = 1:size(audio_chromagram, 1)];
 heatmap(x_labels, y_labels, 20*log10.(audio_chromagram))
 ```
 
-<img src="images/matlab/cqtchromagram.png" width="500">
+<img src="images/julia/cqtchromagram.png" width="500">
 
 # Author
 
