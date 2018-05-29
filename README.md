@@ -1105,6 +1105,7 @@ z Functions:
 - [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel-2)
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-2)
 - [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-2)
+- [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1341,6 +1342,51 @@ heatmap(x_labels, y_labels, 20*log10.(audio_chromagram))
 ```
 
 <img src="images/julia/cqtchromagram.png" width="500">
+
+### mfcc Mel frequency cepstrum coefficients (MFCCs)
+
+`audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)`
+
+Arguments:
+```
+audio_signal::Float: the audio signal [number_samples, 1]
+sample_rate::Float: the sample rate in Hz
+number_filters::Integer: the number of filters
+number_coefficients::Integer: the number of coefficients (without the 0th coefficient)
+audio_mfcc::Float: the audio MFCCs [number_times, number_coefficients]
+```
+
+Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+#  MFCCs for a given number of filters and coefficients
+number_filters = 40;
+number_coefficients = 20;
+include("z.jl")
+audio_mfcc = z.mfcc(audio_signal, sample_rate, number_filters, number_coefficients);
+
+# Delta and delta-delta MFCCs
+audio_deltamfcc = diff(audio_mfcc, 2);
+audio_deltadeltamfcc = diff(audio_deltamfcc, 2);
+
+# MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
+Pkg.add("Plots")
+using Plots
+plotly()
+step_length = convert(Int64, nextpow2(ceil(Int64, 0.04*sample_rate))/2);
+time_signal = round.((1:size(audio_mfcc, 2))*step_length/sample_rate, 2);
+mfcc_plot = plot(time_signal, audio_mfcc', xlabel="Time (s)", title="MFCCs");
+deltamfcc_plot = plot(time_signal[2:end], audio_deltamfcc', xlabel="Time (s)", title="Delta MFCCs");
+deltadeltamfcc_plot = plot(time_signal[3:end], audio_deltadeltamfcc', xlabel="Time (s)", title="Delta-delta MFCCs");
+plot(mfcc_plot, deltamfcc_plot, deltadeltamfcc_plot, layout=(3,1), legend=false)
+```
+
+<img src="images/julia/mfcc.png" width="500">
 
 # Author
 
