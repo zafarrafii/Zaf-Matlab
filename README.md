@@ -1106,6 +1106,7 @@ z Functions:
 - [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel-2)
 - [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-2)
 - [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-2)
+- [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1387,6 +1388,62 @@ plot(mfcc_plot, deltamfcc_plot, deltadeltamfcc_plot, layout=(3,1), legend=false)
 ```
 
 <img src="images/julia/mfcc.png" width="500">
+
+### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+
+`audio_dct = z.dct(audio_signal, dct_type)`
+
+Arguments:
+```
+audio_signal::Float: the audio signal [number_samples, number_frames]
+dct_type::Integer: the DCT type (1, 2, 3, or 4)
+audio_dct::Float: the audio DCT [number_frequencies, number_frames]
+```
+
+Example: Compute the 4 different DCTs and compare them to SciPy's DCTs
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal[1:window_length, :];
+
+# DCT-I, II, III, and IV
+include("z.jl")
+audio_dct1 = z.dct(audio_signal, 1);
+audio_dct2 = z.dct(audio_signal, 2);
+audio_dct3 = z.dct(audio_signal, 3);
+audio_dct4 = z.dct(audio_signal, 4);
+
+# Julia's DCT-II (Julia does not have a DCT-I, III, and IV!)
+julia_dct2 = dct(audio_signal, 1);
+
+# DCT-I, II, III, and IV, Julia's version, and their differences displayed
+#Pkg.add("Plots")
+using Plots
+plotly()
+dct1_plot = plot(audio_dct1, title="DCT-I");
+dct2_plot = plot(audio_dct2, title="DCT-II");
+dct3_plot = plot(audio_dct3, title="DCT-III");
+dct4_plot = plot(audio_dct4, title="DCT-IV");
+jdct1_plot = plot(zeros(window_length, 1))
+jdct2_plot = plot(audio_dct2, title="Julia's DCT-II");
+jdct3_plot = plot(zeros(window_length, 1));
+jdct4_plot = plot(zeros(window_length, 1));
+zjdct1_plot = plot(zeros(window_length, 1));
+zjdct2_plot = plot(audio_dct2-julia_dct2, title="Differences");
+zjdct3_plot = plot(zeros(window_length, 1));
+zjdct4_plot = plot(zeros(window_length, 1));
+zeros_plot = plot(zeros(window_length, 1));
+plot(dct1_plot, jdct1_plot, zjdct1_plot, dct2_plot, jdct2_plot, zjdct2_plot,
+dct3_plot, jdct3_plot, zjdct3_plot, dct4_plot, jdct4_plot, zjdct4_plot, layout=(4,3), legend=false)
+```
+
+<img src="images/julia/dct.png" width="500">
 
 # Author
 
