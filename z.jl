@@ -19,7 +19,7 @@ Author:
 - http://zafarrafii.com
 - https://github.com/zafarrafii
 - https://www.linkedin.com/in/zafarrafii/
-- 05/29/18
+- 05/30/18
 """
 module z
 
@@ -509,15 +509,149 @@ function mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
 
 end
 
+"""
+audio_dct = z.dct(audio_signal, dct_type);
+
+    Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+
+# Arguments:
+- `audio_signal::Float`: the audio signal [number_samples, number_frames]
+- dct_type::Integer`: the DCT type (1, 2, 3, or 4)
+- audio_dct::Float`: the audio DCT [number_frequencies, number_frames]
+
+# Example: Compute the 4 different DCTs and compare them to Julia's DCT
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal[1:window_length, :];
+
+# DCT-I, II, III, and IV
+include("z.jl")
+audio_dct1 = z.dct(audio_signal, 1);
+audio_dct2 = z.dct(audio_signal, 2);
+audio_dct3 = z.dct(audio_signal, 3);
+audio_dct4 = z.dct(audio_signal, 4);
+
+# Julia's DCT-II (Julia does not have a DCT-I, III, and IV!)
+julia_dct2 = dct(audio_signal, 1);
+
+# DCT-I, II, III, and IV, Julia's version, and their differences displayed
+#Pkg.add("Plots")
+using Plots
+plotly()
+dct1_plot = plot(audio_dct1, title="DCT-I");
+dct2_plot = plot(audio_dct2, title="DCT-II");
+dct3_plot = plot(audio_dct3, title="DCT-III");
+dct4_plot = plot(audio_dct4, title="DCT-IV");
+jdct1_plot = plot(zeros(window_length, 1))
+jdct2_plot = plot(audio_dct2, title="Julia's DCT-II");
+jdct3_plot = plot(zeros(window_length, 1));
+jdct4_plot = plot(zeros(window_length, 1));
+zjdct1_plot = plot(zeros(window_length, 1));
+zjdct2_plot = plot(audio_dct2-julia_dct2, title="Differences");
+zjdct3_plot = plot(zeros(window_length, 1));
+zjdct4_plot = plot(zeros(window_length, 1));
+zeros_plot = plot(zeros(window_length, 1));
+plot(dct1_plot, jdct1_plot, zjdct1_plot, dct2_plot, jdct2_plot, zjdct2_plot,
+dct3_plot, jdct3_plot, zjdct3_plot, dct4_plot, jdct4_plot, zjdct4_plot, layout=(4,3), legend=false)
+```
+"""
+function dct(audio_signal, dct_type)
+
+    if dct_type == 1
+
+        # Number of samples per frame
+        window_length = size(audio_signal, 1);
+
+        # Pre-processing to make the DCT-I matrix orthogonal (concatenate to avoid the input to change!)
+        audio_signal = [audio_signal[1:1, :]*sqrt(2); audio_signal[2:window_length-1, :];
+        audio_signal[window_length:window_length, :]*sqrt(2)];
+
+        # Compute the DCT-I using the FFT
+        audio_dct = [audio_signal; audio_signal[window_length-1:-1:2, :]];
+        audio_dct = fft(audio_dct, 1);
+        audio_dct = real(audio_dct[1:window_length, :])/2;
+
+        # Post-processing to make the DCT-I matrix orthogonal
+        audio_dct[[1, window_length], :] = audio_dct[[1, window_length], :]/sqrt(2);
+        audio_dct = audio_dct*sqrt(2/(window_length-1));
+
+    elseif dct_type == 2
+
+        # Number of samples and frames
+        window_length, number_frames = size(audio_signal);
+
+        # Compute the DCT-II using the FFT
+        audio_dct = zeros(4*window_length, number_frames);
+        audio_dct[2:2:2*window_length, :] = audio_signal;
+        audio_dct[2*window_length+2:2:4*window_length, :] = audio_signal[window_length:-1:1, :];
+        audio_dct = fft(audio_dct, 1);
+        audio_dct = real(audio_dct[1:window_length,:])/2;
+
+        # Post-processing to make the DCT-II matrix orthogonal
+        audio_dct[1, :] = audio_dct[1, :]/sqrt(2);
+        audio_dct = audio_dct*sqrt(2/window_length);
+
+    elseif dct_type == 3
+
+        # Number of samples and frames
+        window_length, number_frames = size(audio_signal);
+
+        # Pre-processing to make the DCT-III matrix orthogonal (concatenate to avoid the input to change!)
+        audio_signal = [audio_signal[1:1, :]*sqrt(2); audio_signal[2:window_length, :]];
+
+        # Compute the DCT-III using the FFT
+        audio_dct = zeros(4*window_length, number_frames);
+        audio_dct[1:window_length, :] = audio_signal;
+        audio_dct[window_length+2:2*window_length+1, :] = -audio_signal[window_length:-1:1, :];
+        audio_dct[2*window_length+2:3*window_length, :] = -audio_signal[2:window_length, :];
+        audio_dct[3*window_length+2:4*window_length, :] = audio_signal[window_length:-1:2, :];
+        audio_dct = fft(audio_dct, 1);
+        audio_dct = real(audio_dct[2:2:2*window_length, :])/4;
+
+        # Post-processing to make the DCT-III matrix orthogonal
+        audio_dct = audio_dct*sqrt(2/window_length);
+
+    elseif dct_type == 4
+
+        # Number of samples and frames
+        window_length, number_frames = size(audio_signal);
+
+        # Compute the DCT-IV using the FFT
+        audio_dct = zeros(8*window_length, number_frames);
+        audio_dct[2:2:2*window_length, :] = audio_signal;
+        audio_dct[2*window_length+2:2:4*window_length, :] = -audio_signal[window_length:-1:1, :];
+        audio_dct[4*window_length+2:2:6*window_length, :] = -audio_signal;
+        audio_dct[6*window_length+2:2:8*window_length, :] = audio_signal[window_length:-1:1, :];
+        audio_dct = fft(audio_dct, 1);
+        audio_dct = real(audio_dct[2:2:2*window_length, :])/4;
+
+        # Post-processing to make the DCT-IV matrix orthogonal
+        audio_dct = audio_dct*sqrt(2/window_length);
+
+    else
+
+        error("The DCT type must be either 1, 2, 3, or 4.");
+
+    end
+
+end
+
 "Compute the Hamming window"
-function hamming(window_length,window_sampling="symmetric")
+function hamming(window_length, window_sampling="symmetric")
 
     if window_sampling == "symmetric"
         window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/(window_length-1))
     elseif window_sampling == "periodic"
         window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length)
     else
-        error("Window sampling must be either 'symmetric or 'periodic'.")
+        error("The window sampling must be either 'symmetric' or 'periodic'.")
     end
 
 end

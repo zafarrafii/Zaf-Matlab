@@ -19,7 +19,7 @@ Author:
     http://zafarrafii.com
     https://github.com/zafarrafii
     https://www.linkedin.com/in/zafarrafii/
-    05/10/18
+    05/30/18
 """
 
 import numpy as np
@@ -583,7 +583,7 @@ def dct(audio_signal, dct_type):
         scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
         scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-        # DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+        # DCT-I, II, III, and IV, SciPy's versions, and their differences displayed
         plt.rc('font', size=30)
         plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
         plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
@@ -603,7 +603,7 @@ def dct(audio_signal, dct_type):
         # Number of samples per frame
         window_length = np.size(audio_signal, 0)
 
-        # Pre-processing to make the DCT-I matrix orthogonal (concatenate to avoid side-effects!)
+        # Pre-processing to make the DCT-I matrix orthogonal (concatenate to avoid the input to change!)
         audio_signal = np.concatenate((audio_signal[0:1, :] * np.sqrt(2), audio_signal[1:window_length - 1, :],
                                        audio_signal[window_length - 1:window_length, :] * np.sqrt(2)))
 
@@ -641,7 +641,7 @@ def dct(audio_signal, dct_type):
         # Number of samples and frames
         window_length, number_frames = np.shape(audio_signal)
 
-        # Pre-processing to make the DCT-III matrix orthogonal (concatenate to avoid side-effects!)
+        # Pre-processing to make the DCT-III matrix orthogonal (concatenate to avoid the input to change!)
         audio_signal = np.concatenate((audio_signal[0:1, :] * np.sqrt(2), audio_signal[1:window_length, :]))
 
         # Compute the DCT-III using the FFT
@@ -773,7 +773,7 @@ def dst(audio_signal, dst_type):
         # Number of samples and frames
         window_length, number_frames = np.shape(audio_signal)
 
-        # Pre-processing to make the DST-III matrix orthogonal (concatenate to avoid side-effects!)
+        # Pre-processing to make the DST-III matrix orthogonal (concatenate to avoid the input to change!)
         audio_signal = np.concatenate((audio_signal[0:window_length - 1, :],
                                        audio_signal[window_length - 1:window_length, :] * np.sqrt(2)))
 
