@@ -910,7 +910,7 @@ scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
 scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-# DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+# DCT-I, II, III, and IV, SciPy's versions, and their differences displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
