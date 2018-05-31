@@ -646,8 +646,8 @@ audio_dst = z.dst(audio_signal, dst_type);
 
 # Arguments:
 - `audio_signal::Float`: the audio signal [number_samples, number_frames]
-- dst_type::Integer`: the DST type (1, 2, 3, or 4)
-- audio_dst::Float`: the audio DST [number_frequencies, number_frames]
+- `dst_type::Integer`: the DST type (1, 2, 3, or 4)
+- `audio_dst::Float`: the audio DST [number_frequencies, number_frames]
 
 # Example: Compute the 4 different DSTs and compare them to their respective inverses
 ```
@@ -682,14 +682,14 @@ dst1_plot = plot(audio_dst1, title="DST-I");
 dst2_plot = plot(audio_dst2, title="DST-II");
 dst3_plot = plot(audio_dst3, title="DST-III");
 dst4_plot = plot(audio_dst4, title="DST-IV");
-idst1_plot = plot(audio_dst1, title="Inverse DST-I = DST-I");
-idst2_plot = plot(audio_dst2, title="Inverse DST-II = DST-III");
-idst3_plot = plot(audio_dst3, title="Inverse DST-III = DST-II");
-idst4_plot = plot(audio_dst4, title="Inverse DST-IV = DST-IV");
-ddst1_plot = plot(audio_dst1, title="Error");
-ddst2_plot = plot(audio_dst2, title="Error");
-ddst3_plot = plot(audio_dst3, title="Error");
-ddst4_plot = plot(audio_dst4, title="Error");
+idst1_plot = plot(audio_idst1, title="Inverse DST-I = DST-I");
+idst2_plot = plot(audio_idst2, title="Inverse DST-II = DST-III");
+idst3_plot = plot(audio_idst3, title="Inverse DST-III = DST-II");
+idst4_plot = plot(audio_idst4, title="Inverse DST-IV = DST-IV");
+ddst1_plot = plot(audio_signal-audio_idst1, title="Error");
+ddst2_plot = plot(audio_signal-audio_idst2, title="Error");
+ddst3_plot = plot(audio_signal-audio_idst3, title="Error");
+ddst4_plot = plot(audio_signal-audio_idst4, title="Error");
 plot(dst1_plot, idst1_plot, ddst1_plot, dst2_plot, idst2_plot, ddst2_plot,
 dst3_plot, idst3_plot, ddst3_plot, dst4_plot, idst4_plot, ddst4_plot, layout=(4,3), legend=false)
 ```
