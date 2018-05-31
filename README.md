@@ -1107,6 +1107,7 @@ z Functions:
 - [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel-2)
 - [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-2)
 - [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-2)
+- [dst - Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft-2)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1444,6 +1445,64 @@ dct3_plot, jdct3_plot, zjdct3_plot, dct4_plot, jdct4_plot, zjdct4_plot, layout=(
 ```
 
 <img src="images/julia/dct.png" width="500">
+
+### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
+
+`audio_dst = z.dst(audio_signal, dst_type)`
+
+Arguments:
+```
+audio_signal::Float: the audio signal [number_samples, number_frames]
+dst_type::Integer: the DST type (1, 2, 3, or 4)
+audio_dst::Float: the audio DST [number_frequencies, number_frames]
+```
+
+Example: Compute the 4 different DSTs and compare them to their respective inverses
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal[1:window_length, :];
+
+# DST-I, II, III, and IV
+include("z.jl")
+audio_dst1 = z.dst(audio_signal, 1);
+audio_dst2 = z.dst(audio_signal, 2);
+audio_dst3 = z.dst(audio_signal, 3);
+audio_dst4 = z.dst(audio_signal, 4);
+
+# Respective inverses, i.e., DST-I, II, III, and IV
+audio_idst1 = z.dst(audio_dst1, 1);
+audio_idst2 = z.dst(audio_dst2, 3);
+audio_idst3 = z.dst(audio_dst3, 2);
+audio_idst4 = z.dst(audio_dst4, 4);
+
+# DST-I, II, III, and IV, respective inverses, and errors displayed
+Pkg.add("Plots")
+using Plots
+plotly()
+dst1_plot = plot(audio_dst1, title="DST-I");
+dst2_plot = plot(audio_dst2, title="DST-II");
+dst3_plot = plot(audio_dst3, title="DST-III");
+dst4_plot = plot(audio_dst4, title="DST-IV");
+idst1_plot = plot(audio_idst1, title="Inverse DST-I = DST-I");
+idst2_plot = plot(audio_idst2, title="Inverse DST-II = DST-III");
+idst3_plot = plot(audio_idst3, title="Inverse DST-III = DST-II");
+idst4_plot = plot(audio_idst4, title="Inverse DST-IV = DST-IV");
+ddst1_plot = plot(audio_signal-audio_idst1, title="Error");
+ddst2_plot = plot(audio_signal-audio_idst2, title="Error");
+ddst3_plot = plot(audio_signal-audio_idst3, title="Error");
+ddst4_plot = plot(audio_signal-audio_idst4, title="Error");
+plot(dst1_plot, idst1_plot, ddst1_plot, dst2_plot, idst2_plot, ddst2_plot,
+dst3_plot, idst3_plot, ddst3_plot, dst4_plot, idst4_plot, ddst4_plot, layout=(4,3), legend=false)
+```
+
+<img src="images/julia/dst.png" width="500">
 
 # Author
 
