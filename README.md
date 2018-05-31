@@ -1423,7 +1423,7 @@ audio_dct4 = z.dct(audio_signal, 4);
 julia_dct2 = dct(audio_signal, 1);
 
 # DCT-I, II, III, and IV, Julia's version, and their differences displayed
-#Pkg.add("Plots")
+Pkg.add("Plots")
 using Plots
 plotly()
 dct1_plot = plot(audio_dct1, title="DCT-I");
