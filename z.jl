@@ -19,12 +19,12 @@ Author:
 - http://zafarrafii.com
 - https://github.com/zafarrafii
 - https://www.linkedin.com/in/zafarrafii/
-- 05/30/18
+- 05/31/18
 """
 module z
 
 # Public
-export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram, mfcc
+export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram, mfcc, dct, dst
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
@@ -131,23 +131,23 @@ audio_stft1 = z.stft(audio_signal[:,1], window_function, step_length);
 audio_stft2 = z.stft(audio_signal[:,2], window_function, step_length);
 
 # Magnitude spectrogram (with DC component) of the left and right channels
-audio_spectrogram1 = abs.(audio_stft1[1:Int(window_length/2)+1, :]);
-audio_spectrogram2 = abs.(audio_stft2[1:Int(window_length/2)+1, :]);
+audio_spectrogram1 = abs.(audio_stft1[1:convert(Int64, window_length/2)+1, :]);
+audio_spectrogram2 = abs.(audio_stft2[1:convert(Int64, window_length/2)+1, :]);
 
 # Time-frequency masks of the left and right channels for the center signal
 center_mask1 = min.(audio_spectrogram1, audio_spectrogram2)./audio_spectrogram1;
 center_mask2 = min.(audio_spectrogram1, audio_spectrogram2)./audio_spectrogram2;
 
 # STFT of the left and right channels for the center signal (with extension to mirrored frequencies)
-center_stft1 = cat(1, center_mask1, center_mask1[Int(window_length/2):-1:2,:]).*audio_stft1;
-center_stft2 = cat(1, center_mask2, center_mask2[Int(window_length/2):-1:2,:]).*audio_stft2;
+center_stft1 = [center_mask1; center_mask1[convert(Int64, window_length/2):-1:2,:]].*audio_stft1;
+center_stft2 = [center_mask2; center_mask2[convert(Int64, window_length/2):-1:2,:]].*audio_stft2;
 
 # Synthesized signals of the left and right channels for the center signal
 center_signal1 = z.istft(center_stft1, window_function, step_length);
 center_signal2 = z.istft(center_stft2, window_function, step_length);
 
 # Final stereo center and sides signals
-center_signal = cat(2, center_signal1, center_signal2);
+center_signal = [center_signal1, center_signal2];
 center_signal = center_signal[1:size(audio_signal, 1), :];
 sides_signal = audio_signal-center_signal;
 
@@ -260,8 +260,8 @@ function cqtkernel(sample_rate, frequency_resolution, minimum_frequency, maximum
         exp.(2*pi*im*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
 
         # Pre and post zero-padding to center FFTs
-        temporal_kernel = cat(2, zeros(1, convert(Int64, (fft_length-window_length+1)/2)),
-        temporal_kernel', zeros(1, convert(Int64, (fft_length-window_length-1)/2)));
+        temporal_kernel = [zeros(1, convert(Int64, (fft_length-window_length+1)/2)),
+        temporal_kernel', zeros(1, convert(Int64, (fft_length-window_length-1)/2))];
 
         # Spectral kernel (mostly real because temporal kernel almost symmetric)
         # (Note that Julia's fft equals the complex conjugate of Matlab's fft!)
@@ -338,8 +338,8 @@ function cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
     number_frequencies, fft_length = size(cqt_kernel);
 
     # Zero-padding to center the CQT
-    audio_signal = cat(1, zeros(ceil(Int64, (fft_length-step_length)/2),1), audio_signal,
-    zeros(floor(Int64, (fft_length-step_length)/2),1));
+    audio_signal = [zeros(ceil(Int64, (fft_length-step_length)/2),1); audio_signal;
+    zeros(floor(Int64, (fft_length-step_length)/2),1)];
 
     # Initialize the spectrogram
     audio_spectrogram = zeros(number_frequencies, number_times);
@@ -519,7 +519,7 @@ audio_dct = z.dct(audio_signal, dct_type);
 - dct_type::Integer`: the DCT type (1, 2, 3, or 4)
 - audio_dct::Float`: the audio DCT [number_frequencies, number_frames]
 
-# Example: Compute the 4 different DCTs and compare them to Julia's DCT
+# Example: Compute the 4 different DCTs and compare them to Julia's DCTs
 ```
 # Audio signal averaged over its channels and sample rate in Hz
 Pkg.add("WAV")
@@ -541,8 +541,8 @@ audio_dct4 = z.dct(audio_signal, 4);
 # Julia's DCT-II (Julia does not have a DCT-I, III, and IV!)
 julia_dct2 = dct(audio_signal, 1);
 
-# DCT-I, II, III, and IV, Julia's version, and their differences displayed
-#Pkg.add("Plots")
+# DCT-I, II, III, and IV, Julia's version, and their errors displayed
+Pkg.add("Plots")
 using Plots
 plotly()
 dct1_plot = plot(audio_dct1, title="DCT-I");
@@ -554,7 +554,7 @@ jdct2_plot = plot(audio_dct2, title="Julia's DCT-II");
 jdct3_plot = plot(zeros(window_length, 1));
 jdct4_plot = plot(zeros(window_length, 1));
 zjdct1_plot = plot(zeros(window_length, 1));
-zjdct2_plot = plot(audio_dct2-julia_dct2, title="Differences");
+zjdct2_plot = plot(audio_dct2-julia_dct2, title="Error");
 zjdct3_plot = plot(zeros(window_length, 1));
 zjdct4_plot = plot(zeros(window_length, 1));
 zeros_plot = plot(zeros(window_length, 1));
@@ -635,9 +635,134 @@ function dct(audio_signal, dct_type)
         # Post-processing to make the DCT-IV matrix orthogonal
         audio_dct = audio_dct*sqrt(2/window_length);
 
-    else
+    end
 
-        error("The DCT type must be either 1, 2, 3, or 4.");
+end
+
+"""
+audio_dst = z.dst(audio_signal, dst_type);
+
+    Compute the discrete sine transform (DST) using the fast Fourier transform (FFT)
+
+# Arguments:
+- `audio_signal::Float`: the audio signal [number_samples, number_frames]
+- dst_type::Integer`: the DST type (1, 2, 3, or 4)
+- audio_dst::Float`: the audio DST [number_frequencies, number_frames]
+
+# Example: Compute the 4 different DSTs and compare them to their respective inverses
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Audio signal for a given window length, and one frame
+window_length = 1024;
+audio_signal = audio_signal[1:window_length, :];
+
+# DST-I, II, III, and IV
+include("z.jl")
+audio_dst1 = z.dst(audio_signal, 1);
+audio_dst2 = z.dst(audio_signal, 2);
+audio_dst3 = z.dst(audio_signal, 3);
+audio_dst4 = z.dst(audio_signal, 4);
+
+# Respective inverses, i.e., DST-I, II, III, and IV
+audio_idst1 = z.dst(audio_dst1, 1);
+audio_idst2 = z.dst(audio_dst2, 3);
+audio_idst3 = z.dst(audio_dst3, 2);
+audio_idst4 = z.dst(audio_dst4, 4);
+
+# DST-I, II, III, and IV, respective inverses, and errors displayed
+Pkg.add("Plots")
+using Plots
+plotly()
+dst1_plot = plot(audio_dst1, title="DST-I");
+dst2_plot = plot(audio_dst2, title="DST-II");
+dst3_plot = plot(audio_dst3, title="DST-III");
+dst4_plot = plot(audio_dst4, title="DST-IV");
+idst1_plot = plot(audio_dst1, title="Inverse DST-I = DST-I");
+idst2_plot = plot(audio_dst2, title="Inverse DST-II = DST-III");
+idst3_plot = plot(audio_dst3, title="Inverse DST-III = DST-II");
+idst4_plot = plot(audio_dst4, title="Inverse DST-IV = DST-IV");
+ddst1_plot = plot(audio_dst1, title="Error");
+ddst2_plot = plot(audio_dst2, title="Error");
+ddst3_plot = plot(audio_dst3, title="Error");
+ddst4_plot = plot(audio_dst4, title="Error");
+plot(dst1_plot, idst1_plot, ddst1_plot, dst2_plot, idst2_plot, ddst2_plot,
+dst3_plot, idst3_plot, ddst3_plot, dst4_plot, idst4_plot, ddst4_plot, layout=(4,3), legend=false)
+```
+"""
+function dst(audio_signal, dst_type)
+
+    if dst_type==1
+
+        # Number of samples per frame
+        window_length, number_frames = size(audio_signal);
+
+        # Compute the DST-I using the FFT
+        audio_dst = [zeros(1, number_frames); audio_signal;
+        zeros(1, number_frames); -audio_signal[window_length:-1:1, :]];
+        audio_dst = fft(audio_dst, 1);
+        audio_dst = -imag(audio_dst[2:window_length+1, :])/2;
+
+        # Post-processing to make the DST-I matrix orthogonal
+        audio_dst = audio_dst*sqrt(2/(window_length+1));
+
+    elseif dst_type==2
+
+        # Number of samples per frame
+        window_length, number_frames = size(audio_signal);
+
+        # Compute the DST-II using the FFT
+        audio_dst = zeros(4*window_length, number_frames);
+        audio_dst[2:2:2*window_length, :] = audio_signal;
+        audio_dst[2*window_length+2:2:4*window_length, :] = -audio_signal[window_length:-1:1, :];
+        audio_dst = fft(audio_dst, 1);
+        audio_dst = -imag(audio_dst[2:window_length+1, :])/2;
+
+        # Post-processing to make the DST-II matrix orthogonal
+        audio_dst[window_length, :] = audio_dst[window_length, :]/sqrt(2);
+        audio_dst = audio_dst*sqrt(2/window_length);
+
+    elseif dst_type==3
+
+        # Number of samples per frame
+        window_length, number_frames = size(audio_signal);
+
+        # Pre-processing to make the DST-III matrix orthogonal (concatenate to avoid the input to change!)
+        audio_signal = [audio_signal[1:window_length-1, :];
+        audio_signal[window_length:window_length, :]*sqrt(2)];
+
+        # Compute the DST-III using the FFT
+        audio_dst = zeros(4*window_length, number_frames);
+        audio_dst[2:window_length+1, :] = audio_signal;
+        audio_dst[window_length+2:2*window_length, :] = audio_signal[window_length-1:-1:1, :];
+        audio_dst[2*window_length+2:3*window_length+1, :] = -audio_signal;
+        audio_dst[3*window_length+2:4*window_length, :] = -audio_signal[window_length-1:-1:1, :];
+        audio_dst = fft(audio_dst, 1);
+        audio_dst = -imag(audio_dst[2:2:2*window_length, :])/4;
+
+        # Post-processing to make the DST-III matrix orthogonal
+        audio_dst = audio_dst*sqrt(2/window_length);
+
+    elseif dst_type==4
+
+        # Number of samples per frame
+        window_length, number_frames = size(audio_signal);
+
+        # Compute the DST-IV using the FFT
+        audio_dst = zeros(8*window_length, number_frames);
+        audio_dst[2:2:2*window_length, :] = audio_signal;
+        audio_dst[2*window_length+2:2:4*window_length, :] = audio_signal[window_length:-1:1, :];
+        audio_dst[4*window_length+2:2:6*window_length, :] = -audio_signal;
+        audio_dst[6*window_length+2:2:8*window_length, :] = -audio_signal[window_length:-1:1, :];
+        audio_dst = fft(audio_dst, 1);
+        audio_dst = -imag(audio_dst[2:2:2*window_length, :])/4;
+
+        # Post-processing to make the DST-IV matrix orthogonal
+        audio_dst = audio_dst*sqrt(2/window_length);
 
     end
 
@@ -647,11 +772,9 @@ end
 function hamming(window_length, window_sampling="symmetric")
 
     if window_sampling == "symmetric"
-        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/(window_length-1))
+        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/(window_length-1));
     elseif window_sampling == "periodic"
-        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length)
-    else
-        error("The window sampling must be either 'symmetric' or 'periodic'.")
+        window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
     end
 
 end

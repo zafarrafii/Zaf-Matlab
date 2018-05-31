@@ -132,15 +132,15 @@
             %       center_mask2 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram2;
             %       
             %       % STFT of the left and right channels for the center signal (with extension to mirrored frequencies)
-            %       center_stft1 = cat(1,center_mask1,center_mask1(window_length/2:-1:2,:)).*audio_stft1;
-            %       center_stft2 = cat(1,center_mask2,center_mask2(window_length/2:-1:2,:)).*audio_stft2;
+            %       center_stft1 = [center_mask1;center_mask1(window_length/2:-1:2,:)].*audio_stft1;
+            %       center_stft2 = [center_mask2;center_mask2(window_length/2:-1:2,:)].*audio_stft2;
             %       
             %       % Synthesized signals of the left and right channels for the center signal
             %       center_signal1 = z.istft(center_stft1,window_function,step_length);
             %       center_signal2 = z.istft(center_stft2,window_function,step_length);
             %       
             %       % Final stereo center and sides signals
-            %       center_signal = cat(2,center_signal1,center_signal2);
+            %       center_signal = [center_signal1,center_signal2];
             %       center_signal = center_signal(1:length(audio_signal),:);
             %       sides_signal = audio_signal-center_signal;
             %       
@@ -337,8 +337,8 @@
             [number_frequencies,fft_length] = size(cqt_kernel);
             
             % Zero-padding to center the CQT
-            audio_signal = cat(1,zeros(ceil((fft_length-step_length)/2),1), ...
-                audio_signal,zeros(floor((fft_length-step_length)/2),1));
+            audio_signal = [zeros(ceil((fft_length-step_length)/2),1); ...
+                audio_signal;zeros(floor((fft_length-step_length)/2),1)];
             
             % Initialize the spectrogram
             audio_spectrogram = zeros(number_frequencies,number_times);
@@ -538,20 +538,20 @@
             %       matlab_dct3 = dct(audio_signal,'Type',3);
             %       matlab_dct4 = dct(audio_signal,'Type',4);
             %       
-            %       % DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+            %       % DCT-I, II, III, and IV, Matlab's versions, and errors displayed
             %       figure
             %       subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I'), set(gca,'FontSize',30)
             %       subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II'), set(gca,'FontSize',30)
             %       subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III'), set(gca,'FontSize',30)
             %       subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV'), set(gca,'FontSize',30)
             %       subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(gca,'FontSize',30)
             %   
             %   See also dct, fft
             
@@ -654,26 +654,26 @@
             %       audio_dst3 = z.dst(audio_signal,3);
             %       audio_dst4 = z.dst(audio_signal,4);
             %       
-            %       % Respective inverses, i.e., DST-I, II, III, and IV
+            %       % Respective inverses, i.e., DST-I, III, II, and IV
             %       audio_idst1 = z.dst(audio_dst1,1);
             %       audio_idst2 = z.dst(audio_dst2,3);
             %       audio_idst3 = z.dst(audio_dst3,2);
             %       audio_idst4 = z.dst(audio_dst4,4);
             %       
-            %       % DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+            %       % DST-I, II, III, and IV, respective inverses, and errors displayed
             %       figure
             %       subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I'), set(gca,'FontSize',30)
             %       subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II'), set(gca,'FontSize',30)
             %       subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III'), set(gca,'FontSize',30)
             %       subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Error'), set(gca,'FontSize',30)
             %       subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV'), set(gca,'FontSize',30)
             %       subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,12), plot(audio_signal-audio_idst4), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+            %       subplot(4,3,12), plot(audio_signal-audio_idst4), axis tight, title('Error'), set(gca,'FontSize',30)
             %
             %   See also dct, fft
             

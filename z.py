@@ -19,7 +19,7 @@ Author:
     http://zafarrafii.com
     https://github.com/zafarrafii
     https://www.linkedin.com/in/zafarrafii/
-    05/30/18
+    05/31/18
 """
 
 import numpy as np
@@ -583,17 +583,17 @@ def dct(audio_signal, dct_type):
         scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
         scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-        # DCT-I, II, III, and IV, SciPy's versions, and their differences displayed
+        # DCT-I, II, III, and IV, SciPy's versions, and  errors displayed
         plt.rc('font', size=30)
         plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
         plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
-        plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
+        plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 4), plt.plot(audio_dct2), plt.autoscale(tight=True), plt.title("DCT-II")
         plt.subplot(4, 3, 5), plt.plot(scipy_dct2), plt.autoscale(tight=True), plt.title("SciPy's DCT-II")
-        plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Differences")
+        plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 7), plt.plot(audio_dct3), plt.autoscale(tight=True), plt.title("DCT-III")
         plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
-        plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
+        plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
         plt.show()
     """
@@ -712,26 +712,26 @@ def dst(audio_signal, dst_type):
         audio_dst3 = z.dst(audio_signal, 3)
         audio_dst4 = z.dst(audio_signal, 4)
 
-        # Respective inverses, i.e., DST-I, II, III, and IV
+        # Respective inverses, i.e., DST-I, III, II, and IV
         audio_idst1 = z.dst(audio_dst1, 1)
         audio_idst2 = z.dst(audio_dst2, 3)
         audio_idst3 = z.dst(audio_dst3, 2)
         audio_idst4 = z.dst(audio_dst4, 4)
 
-        # DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+        # DST-I, II, III, and IV, corresponding inverses, and errors displayed
         plt.rc('font', size=30)
         plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
         plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
-        plt.subplot(4, 3, 3), plt.plot(audio_signal-audio_idst1), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+        plt.subplot(4, 3, 3), plt.plot(audio_signal-audio_idst1), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 4), plt.plot(audio_dst2), plt.autoscale(tight=True), plt.title("DST-II")
         plt.subplot(4, 3, 5), plt.plot(audio_idst2), plt.autoscale(tight=True), plt.title("Inverse DST-II = DST-III")
-        plt.subplot(4, 3, 6), plt.plot(audio_signal-audio_idst2), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+        plt.subplot(4, 3, 6), plt.plot(audio_signal-audio_idst2), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 7), plt.plot(audio_dst3), plt.autoscale(tight=True), plt.title("DST-III")
         plt.subplot(4, 3, 8), plt.plot(audio_idst3), plt.autoscale(tight=True), plt.title("Inverse DST-III = DST-II")
-        plt.subplot(4, 3, 9), plt.plot(audio_signal-audio_idst3), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+        plt.subplot(4, 3, 9), plt.plot(audio_signal-audio_idst3), plt.autoscale(tight=True), plt.title("Error")
         plt.subplot(4, 3, 10), plt.plot(audio_dst4), plt.autoscale(tight=True), plt.title("DST-IV")
         plt.subplot(4, 3, 11), plt.plot(audio_idst4), plt.autoscale(tight=True), plt.title("Inverse DST-IV = DST-IV")
-        plt.subplot(4, 3, 12), plt.plot(audio_signal-audio_idst4), plt.autoscale(tight=True), plt.title("Reconstruction differences")
+        plt.subplot(4, 3, 12), plt.plot(audio_signal-audio_idst4), plt.autoscale(tight=True), plt.title("Error")
         plt.show()
     """
     if dst_type == 1:
