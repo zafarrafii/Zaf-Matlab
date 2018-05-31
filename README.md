@@ -111,15 +111,15 @@ center_mask1 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram1;
 center_mask2 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram2;
 
 % STFT of the left and right channels of the center signal (with extension to mirrored frequencies)
-center_stft1 = cat(1,center_mask1,flipud(center_mask1(2:end-1,:))).*audio_stft1;
-center_stft2 = cat(1,center_mask2,flipud(center_mask2(2:end-1,:))).*audio_stft2;
+center_stft1 = [center_mask1;center_mask1(window_length/2:-1:2,:)].*audio_stft1;
+center_stft2 = [center_mask2;center_mask2(window_length/2:-1:2,:)].*audio_stft2;
 
 % Synthesized signals of the left and right channels of the center signal
 center_signal1 = z.istft(center_stft1,window_function,step_length);
 center_signal2 = z.istft(center_stft2,window_function,step_length);
 
 % Finalized stereo center and sides signals
-center_signal = cat(2,center_signal1,center_signal2);
+center_signal = [center_signal1,center_signal2];
 center_signal = center_signal(1:length(audio_signal),:);
 sides_signal = audio_signal-center_signal;
 
@@ -910,17 +910,17 @@ scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
 scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-# DCT-I, II, III, and IV, SciPy's versions, and their differences displayed
+# DCT-I, II, III, and IV, SciPy's versions, and errors displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
-plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 3), plt.plot(audio_dct1-scipy_dct1), plt.autoscale(tight=True), plt.title("Error")
 plt.subplot(4, 3, 4), plt.plot(audio_dct2), plt.autoscale(tight=True), plt.title("DCT-II")
 plt.subplot(4, 3, 5), plt.plot(scipy_dct2), plt.autoscale(tight=True), plt.title("SciPy's DCT-II")
-plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 6), plt.plot(audio_dct2-scipy_dct2), plt.autoscale(tight=True), plt.title("Error")
 plt.subplot(4, 3, 7), plt.plot(audio_dct3), plt.autoscale(tight=True), plt.title("DCT-III")
 plt.subplot(4, 3, 8), plt.plot(scipy_dct3), plt.autoscale(tight=True), plt.title("SciPy's DCT-III")
-plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Differences")
+plt.subplot(4, 3, 9), plt.plot(audio_dct3-scipy_dct3), plt.autoscale(tight=True), plt.title("Error")
 plt.subplot(4, 3, 10), plt.plot(audio_dct4), plt.autoscale(tight=True), plt.title("DCT-IV")
 plt.show()
 ```
