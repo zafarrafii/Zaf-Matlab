@@ -354,20 +354,20 @@ matlab_dct2 = dct(audio_signal,'Type',2);
 matlab_dct3 = dct(audio_signal,'Type',3);
 matlab_dct4 = dct(audio_signal,'Type',4);
 
-% DCT-I, II, III, and IV, Matlab's versions, and their differences displayed
+% DCT-I, II, III, and IV, Matlab's versions, and errors displayed
 figure
 subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I'), set(gca,'FontSize',30)
 subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I'), set(gca,'FontSize',30)
-subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II'), set(gca,'FontSize',30)
 subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II'), set(gca,'FontSize',30)
-subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III'), set(gca,'FontSize',30)
 subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III'), set(gca,'FontSize',30)
-subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV'), set(gca,'FontSize',30)
 subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(gca,'FontSize',30)
-subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Differences'), set(gca,'FontSize',30)
+subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(gca,'FontSize',30)
 ```
 
 <img src="images/matlab/dct.png" width="1000">
@@ -405,20 +405,20 @@ audio_idst2 = z.dst(audio_dst2,3);
 audio_idst3 = z.dst(audio_dst3,2);
 audio_idst4 = z.dst(audio_dst4,4);
 
-% DST-I, II, III, and IV, respective inverses, and differences with the original signal displayed
+% DST-I, II, III, and IV, respective inverses, and errors displayed
 figure
 subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I'), set(gca,'FontSize',30)
 subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I'), set(gca,'FontSize',30)
-subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II'), set(gca,'FontSize',30)
 subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III'), set(gca,'FontSize',30)
-subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III'), set(gca,'FontSize',30)
 subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II'), set(gca,'FontSize',30)
-subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Error'), set(gca,'FontSize',30)
 subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV'), set(gca,'FontSize',30)
 subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV'), set(gca,'FontSize',30)
-subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Reconstruction differences'), set(gca,'FontSize',30)
+subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Error'), set(gca,'FontSize',30)
 ```
 
 <img src="images/matlab/dst.png" width="1000">
@@ -910,7 +910,7 @@ scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
 scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-# DCT-I, II, III, and IV, SciPy's versions, and errors displayed
+# DCT-I, II, III, and IV, SciPy's versions, and their errors displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
@@ -969,7 +969,7 @@ audio_idst2 = z.dst(audio_dst2, 3)
 audio_idst3 = z.dst(audio_dst3, 2)
 audio_idst4 = z.dst(audio_dst4, 4)
 
-# DST-I, II, III, and IV, corresponding inverses, and errors displayed
+# DST-I, II, III, and IV, corresponding inverses, and their errors displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
@@ -1422,7 +1422,7 @@ audio_dct4 = z.dct(audio_signal, 4);
 # Julia's DCT-II (Julia does not have a DCT-I, III, and IV!)
 julia_dct2 = dct(audio_signal, 1);
 
-# DCT-I, II, III, and IV, Julia's version, and their differences displayed
+# DCT-I, II, III, and IV, Julia's version, and their errors displayed
 Pkg.add("Plots")
 using Plots
 plotly()
@@ -1435,7 +1435,7 @@ jdct2_plot = plot(audio_dct2, title="Julia's DCT-II");
 jdct3_plot = plot(zeros(window_length, 1));
 jdct4_plot = plot(zeros(window_length, 1));
 zjdct1_plot = plot(zeros(window_length, 1));
-zjdct2_plot = plot(audio_dct2-julia_dct2, title="Differences");
+zjdct2_plot = plot(audio_dct2-julia_dct2, title="Error");
 zjdct3_plot = plot(zeros(window_length, 1));
 zjdct4_plot = plot(zeros(window_length, 1));
 zeros_plot = plot(zeros(window_length, 1));
