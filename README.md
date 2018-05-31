@@ -910,7 +910,7 @@ scipy_dct1 = scipy_dct1*np.sqrt(2/(window_length-1)) / 2
 scipy_dct2 = scipy.fftpack.dct(audio_signal, axis=0, type=2, norm='ortho')
 scipy_dct3 = scipy.fftpack.dct(audio_signal, axis=0, type=3, norm='ortho')
 
-# DCT-I, II, III, and IV, SciPy's versions, and their errors displayed
+# DCT-I, II, III, and IV, SciPy's versions, and errors displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dct1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(scipy_dct1), plt.autoscale(tight=True), plt.title("SciPy's DCT-I")
@@ -938,7 +938,7 @@ dst_type: DST type (1, 2, 3, or 4)
 audio_dst: audio DST [number_frequencies, number_frames]
 ```
 
-Example: Compute the 4 different DSTs and compare them to their corresponding inverses
+Example: Compute the 4 different DSTs and compare them to their respective inverses
 ```
 # Import modules
 import scipy.io.wavfile
@@ -969,7 +969,7 @@ audio_idst2 = z.dst(audio_dst2, 3)
 audio_idst3 = z.dst(audio_dst3, 2)
 audio_idst4 = z.dst(audio_dst4, 4)
 
-# DST-I, II, III, and IV, corresponding inverses, and their errors displayed
+# DST-I, II, III, and IV, respective inverses, and errors displayed
 plt.rc('font', size=30)
 plt.subplot(4, 3, 1), plt.plot(audio_dst1), plt.autoscale(tight=True), plt.title("DCT-I")
 plt.subplot(4, 3, 2), plt.plot(audio_idst1), plt.autoscale(tight=True), plt.title("Inverse DST-I = DST-I")
@@ -1400,7 +1400,7 @@ dct_type::Integer: the DCT type (1, 2, 3, or 4)
 audio_dct::Float: the audio DCT [number_frequencies, number_frames]
 ```
 
-Example: Compute the 4 different DCTs and compare them to SciPy's DCTs
+Example: Compute the 4 different DCTs and compare them to Julia's DCTs
 ```
 # Audio signal averaged over its channels and sample rate in Hz
 Pkg.add("WAV")
@@ -1422,7 +1422,7 @@ audio_dct4 = z.dct(audio_signal, 4);
 # Julia's DCT-II (Julia does not have a DCT-I, III, and IV!)
 julia_dct2 = dct(audio_signal, 1);
 
-# DCT-I, II, III, and IV, Julia's version, and their errors displayed
+# DCT-I, II, III, and IV, Julia's version, and errors displayed
 Pkg.add("Plots")
 using Plots
 plotly()
