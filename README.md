@@ -399,7 +399,7 @@ audio_dst2 = z.dst(audio_signal,2);
 audio_dst3 = z.dst(audio_signal,3);
 audio_dst4 = z.dst(audio_signal,4);
 
-% Respective inverses, i.e., DST-I, II, III, and IV
+% Respective inverses, i.e., DST-I, III, II, and IV
 audio_idst1 = z.dst(audio_dst1,1);
 audio_idst2 = z.dst(audio_dst2,3);
 audio_idst3 = z.dst(audio_dst3,2);
@@ -963,7 +963,7 @@ audio_dst2 = z.dst(audio_signal, 2)
 audio_dst3 = z.dst(audio_signal, 3)
 audio_dst4 = z.dst(audio_signal, 4)
 
-# Respective inverses, i.e., DST-I, II, III, and IV
+# Respective inverses, i.e., DST-I, III, II, and IV
 audio_idst1 = z.dst(audio_dst1, 1)
 audio_idst2 = z.dst(audio_dst2, 3)
 audio_idst3 = z.dst(audio_dst3, 2)
