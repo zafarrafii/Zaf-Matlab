@@ -1016,7 +1016,7 @@ audio_signal = np.mean(audio_signal, 1)
 window_length = 512
 alpha_value = 5
 window_function = np.kaiser(int(window_length/2)+1, alpha_value*np.pi)
-window_function2 = np.cumsum(window_function[1:int(window_length/2)])
+window_function2 = np.cumsum(window_function[0:int(window_length/2)])
 window_function = np.sqrt(np.concatenate((window_function2, window_function2[int(window_length/2)::-1]))
                           / np.sum(window_function))
 
@@ -1108,6 +1108,7 @@ z Functions:
 - [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs-2)
 - [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-2)
 - [dst - Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft-2)
+- [mdct - Modified discrete cosine transform (MDCT) using the FFT](#mdct-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft-1)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1392,7 +1393,7 @@ plot(mfcc_plot, deltamfcc_plot, deltadeltamfcc_plot, layout=(3,1), legend=false)
 
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 
-`audio_dct = z.dct(audio_signal, dct_type)`
+`audio_dct = z.dct(audio_signal, dct_type);`
 
 Arguments:
 ```
@@ -1448,7 +1449,7 @@ dct3_plot, jdct3_plot, zjdct3_plot, dct4_plot, jdct4_plot, zjdct4_plot, layout=(
 
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 
-`audio_dst = z.dst(audio_signal, dst_type)`
+`audio_dst = z.dst(audio_signal, dst_type);`
 
 Arguments:
 ```
@@ -1503,6 +1504,47 @@ dst3_plot, idst3_plot, ddst3_plot, dst4_plot, idst4_plot, ddst4_plot, layout=(4,
 ```
 
 <img src="images/julia/dst.png" width="500">
+
+### mdct Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+
+`audio_mdct = z.mdct(audio_signal, window_function);`
+
+Arguments:
+```
+audio_signal::Float: audio signal [number_samples, 1]
+window_function::Float: window function [window_length, 1]
+audio_mdct::Float: audio MDCT [number_frequencies, number_times]
+```
+
+Example: Compute and display the MDCT as used in the AC-3 audio coding format
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
+window_length = 512;
+alpha_value = 5;
+include("z.jl")
+window_function = z.kaiser(convert(Int64, window_length/2)+1, alpha_value*pi);
+window_function2 = cumsum(window_function[1:convert(Int64, window_length/2)]);
+window_function = sqrt.([window_function2; window_function2[convert(Int64, window_length/2):-1:1]]./sum(window_function));
+
+# MDCT
+audio_mdct = z.mdct(audio_signal, window_function);
+
+# MDCT displayed in dB, s, and kHz
+Pkg.add("Plots")
+using Plots
+plotly()
+x_labels = [string(round(i*convert(Int64, window_length/2)/sample_rate, 2)) for i = 1:size(audio_mdct, 2)];
+y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_mdct, 1)];
+heatmap(x_labels, y_labels, 20*log10.(abs.(audio_mdct)))
+```
+
+<img src="images/julia/mdct.png" width="500">
 
 # Author
 
