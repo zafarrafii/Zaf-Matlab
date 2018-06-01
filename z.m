@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   05/31/18
+    %   06/01/18
     
     methods (Static = true)
         
@@ -815,7 +815,7 @@
             end
             
             % DCT-IV
-            audio_mdct = dct(audio_mdct,'Type',4);
+            audio_mdct = sqrt(window_length/4)*dct(audio_mdct,'Type',4);
             
         end
         

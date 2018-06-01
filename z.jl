@@ -19,12 +19,12 @@ Author:
 - http://zafarrafii.com
 - https://github.com/zafarrafii
 - https://www.linkedin.com/in/zafarrafii/
-- 05/31/18
+- 06/01/18
 """
 module z
 
 # Public
-export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram, mfcc, dct, dst
+export stft, istft, cqtkernel, cqtspectrogram, cqtchromagram, mfcc, dct, dst, mdct
 
 """
     audio_stft = z.stft(audio_signal, window_function, step_length);
@@ -768,6 +768,83 @@ function dst(audio_signal, dst_type)
 
 end
 
+"""
+audio_mdct = z.mdct(audio_signal,window_function);
+
+    Compute the modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+
+# Arguments:
+- `audio_signal::Float`: the audio signal [number_samples, 1]
+- `window_function::Float`: the window function [window_length, 1]
+- `audio_mdct::Float`: the audio MDCT [number_frequencies, number_times]
+
+# Example: Compute and display the MDCT as used in the AC-3 audio coding format
+```
+# Audio signal averaged over its channels and sample rate in Hz
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
+window_length = 512;
+alpha_value = 5;
+include("z.jl")
+window_function = z.kaiser(convert(Int64, window_length/2)+1, alpha_value*pi);
+window_function2 = cumsum(window_function[1:convert(Int64, window_length/2)]);
+window_function = sqrt.([window_function2; window_function2[convert(Int64, window_length/2):-1:1]]./sum(window_function));
+
+# MDCT
+audio_mdct = z.mdct(audio_signal, window_function);
+
+# MDCT displayed in dB, s, and kHz
+Pkg.add("Plots")
+using Plots
+plotly()
+x_labels = [string(round(i*convert(Int64, window_length/2)/sample_rate, 2)) for i = 1:size(audio_mdct, 2)];
+y_labels = [string(round(i*sample_rate/window_length/1000, 2)) for i = 1:size(audio_mdct, 1)];
+heatmap(x_labels, y_labels, 20*log10.(abs.(audio_mdct)))
+```
+"""
+function mdct(audio_signal, window_function)
+
+    # Number of samples and window length
+    number_samples = length(audio_signal);
+    window_length = length(window_function);
+
+    # Number of time frames
+    number_times = ceil(Int64, 2*number_samples/window_length)+1;
+
+    # Pre and post zero-padding of the signal
+    audio_signal = [zeros(convert(Int64, window_length/2), 1); audio_signal;
+    zeros(convert(Int64, (number_times+1)*window_length/2-number_samples), 1)];
+
+    # Initialize the MDCT
+    audio_mdct = zeros(convert(Int64, window_length/2), number_times);
+
+    # Pre and post-processing arrays
+    preprocessing_array = exp.(-im*pi/window_length*(0:window_length-1));
+    postprocessing_array = exp.(-im*pi/window_length*(window_length/2+1)*(0.5:window_length/2-0.5));
+
+    # Loop over the time frames
+    for time_index = 1:number_times
+
+        # Window the signal
+        sample_index = convert(Int64, window_length/2)*(time_index-1);
+        audio_segment = audio_signal[1+sample_index:window_length+sample_index].*window_function;
+
+        # FFT of the audio segment after pre-processing
+        audio_segment = fft(audio_segment.*preprocessing_array, 1);
+
+        # Truncate to the first half before post-processing
+        audio_mdct[:, time_index] = real(audio_segment[1:convert(Int64, window_length/2)].*postprocessing_array);
+
+    end
+
+    return audio_mdct
+
+end
+
 "Compute the Hamming window"
 function hamming(window_length, window_sampling="symmetric")
 
@@ -776,6 +853,17 @@ function hamming(window_length, window_sampling="symmetric")
     elseif window_sampling == "periodic"
         window_function = 0.54 - 0.46*cos.(2*pi*(0:window_length-1)/window_length);
     end
+
+end
+
+"Compute the Kaiser window"
+function kaiser(window_length, alpha_value)
+
+    window_function = zeros(window_length, 1);
+    for window_index = 1:window_length
+        window_function[window_index] = besseli(0, alpha_value*sqrt(1-(2*(window_index-1)/(window_length-1)-1).^2));
+    end
+    window_function = window_function/besseli(0, alpha_value);
 
 end
 

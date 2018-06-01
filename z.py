@@ -19,7 +19,7 @@ Author:
     http://zafarrafii.com
     https://github.com/zafarrafii
     https://www.linkedin.com/in/zafarrafii/
-    05/31/18
+    06/01/18
 """
 
 import numpy as np
@@ -837,7 +837,7 @@ def mdct(audio_signal, window_function):
         window_length = 512
         alpha_value = 5
         window_function = np.kaiser(int(window_length/2)+1, alpha_value*np.pi)
-        window_function2 = np.cumsum(window_function[1:int(window_length/2)])
+        window_function2 = np.cumsum(window_function[0:int(window_length/2)])
         window_function = np.sqrt(np.concatenate((window_function2, window_function2[int(window_length/2)::-1]))
                                   / np.sum(window_function))
 
