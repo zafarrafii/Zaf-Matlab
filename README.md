@@ -1109,6 +1109,7 @@ z Functions:
 - [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft-2)
 - [dst - Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft-2)
 - [mdct - Modified discrete cosine transform (MDCT) using the FFT](#mdct-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft-1)
+- [imdct - Inverse MDCT using the FFT](#imdct-inverse-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft-1)
 
 ### stft Short-time Fourier transform (STFT)
 
@@ -1545,6 +1546,49 @@ heatmap(x_labels, y_labels, 20*log10.(abs.(audio_mdct)))
 ```
 
 <img src="images/julia/mdct.png" width="500">
+
+### imdct Inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+
+`audio_signal = z.imdct(audio_mdct, window_function)`
+
+Arguments:
+```
+audio_mdct::Float: the audio MDCT [number_frequencies, number_times]
+window_function::Float: the window function [window_length, 1]
+audio_signal::Float: the audio signal [number_samples, 1]
+```
+
+Example: Verify that the MDCT is perfectly invertible
+```
+# Import modules
+Pkg.add("WAV")
+using WAV
+audio_signal, sample_rate = wavread("audio_file.wav");
+audio_signal = mean(audio_signal, 2);
+
+# MDCT with a slope function as used in the Vorbis audio coding format
+window_length = 2048;
+window_function = sin.(pi/2*(sin.(pi/window_length*(0.5:window_length-0.5)).^2));
+include("z.jl")
+audio_mdct = z.mdct(audio_signal, window_function);
+
+# Inverse MDCT and error signal
+audio_signal2 = z.imdct(audio_mdct, window_function);
+audio_signal2 = audio_signal2[1:length(audio_signal)];
+error_signal = audio_signal-audio_signal2;
+
+# Original, resynthesized, and error signals displayed in s
+Pkg.add("Plots")
+using Plots
+plotly()
+time_signal = (1:size(audio_signal, 1))/sample_rate;
+audio_plot = plot(time_signal, audio_signal, xlabel="Time (s)", title="Original Signal");
+audio2_plot = plot(time_signal, audio_signal2, xlabel="Time (s)", title="Resynthesized Signal");
+error_plot = plot(time_signal, error_signal, xlabel="Time (s)", title="Error Signal");
+plot(audio_plot, audio2_plot, error_plot, layout=(3,1), legend=false)
+```
+
+<img src="images/julia/imdct.png" width="500">
 
 # Author
 
