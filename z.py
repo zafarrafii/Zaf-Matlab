@@ -19,7 +19,7 @@ Author:
     http://zafarrafii.com
     https://github.com/zafarrafii
     https://www.linkedin.com/in/zafarrafii/
-    06/01/18
+    06/04/18
 """
 
 import numpy as np
@@ -99,7 +99,7 @@ def stft(audio_signal, window_function, step_length):
     for time_index in range(0, number_times):
 
         # Window the signal
-        sample_index = step_length * time_index
+        sample_index = time_index * step_length
         audio_stft[:, time_index] = audio_signal[sample_index:window_length + sample_index] * window_function
 
     # Fourier transform of the frames
@@ -201,7 +201,7 @@ def istft(audio_stft, window_function, step_length):
     for time_index in range(0, number_times):
 
         # Constant overlap-add (if proper window and step)
-        sample_index = step_length * time_index
+        sample_index = time_index * step_length
         audio_signal[sample_index:window_length + sample_index] \
             = audio_signal[sample_index:window_length + sample_index] + audio_stft[:, time_index]
 
@@ -372,7 +372,7 @@ def cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel):
     for time_index in range(0, number_times):
 
         # Magnitude CQT using the kernel
-        sample_index = step_length * time_index
+        sample_index = time_index * step_length
         audio_spectrogram[:, time_index] \
             = abs(cqt_kernel * np.fft.fft(audio_signal[sample_index:sample_index + fft_length]))
 
@@ -881,7 +881,7 @@ def mdct(audio_signal, window_function):
     for time_index in range(0, number_times):
 
         # Window the signal
-        sample_index = int(window_length / 2) * time_index
+        sample_index = time_index * int(window_length / 2)
         audio_segment = audio_signal[sample_index:sample_index + window_length] * window_function
 
         # FFT of the audio segment after pre-processing
@@ -895,7 +895,7 @@ def mdct(audio_signal, window_function):
 
 def imdct(audio_mdct, window_function):
     """
-    imdct Inverse Modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
+    imdct Inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT)
         audio_signal = z.imdct(audio_mdct,window_function)
 
     Arguments:
@@ -970,7 +970,7 @@ def imdct(audio_mdct, window_function):
     for time_index in range(0, number_times):
 
         # Recover the signal thanks to the time-domain aliasing cancellation (TDAC) principle
-        sample_index = number_frequencies * time_index
+        sample_index = time_index * number_frequencies
         audio_signal[sample_index:sample_index + 2 * number_frequencies] \
             = audio_signal[sample_index:sample_index + 2 * number_frequencies] + audio_mdct[:, time_index]
 

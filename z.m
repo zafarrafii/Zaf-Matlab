@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   06/01/18
+    %   06/04/18
     
     methods (Static = true)
         
@@ -88,7 +88,7 @@
             for time_index = 1:number_times
                 
                 % Window the signal
-                sample_index = step_length*(time_index-1);
+                sample_index = (time_index-1)*step_length;
                 audio_stft(:,time_index) ...
                     = audio_signal(1+sample_index:window_length+sample_index).*window_function;
                 
@@ -182,7 +182,7 @@
             for time_index = 1:number_times
                 
                 % Constant overlap-add (if proper window and step)
-                sample_index = step_length*(time_index-1);
+                sample_index = (time_index-1)*step_length;
                 audio_signal(1+sample_index:window_length+sample_index) ...
                     = audio_signal(1+sample_index:window_length+sample_index)+audio_stft(:,time_index);
             end
@@ -347,7 +347,7 @@
             for time_index = 1:number_times
                 
                 % Magnitude CQT using the kernel
-                sample_index = step_length*(time_index-1);
+                sample_index = (time_index-1)*step_length;
                 audio_spectrogram(:,time_index) = abs(cqt_kernel...
                     *fft(audio_signal(sample_index+1:sample_index+fft_length)));
                 
@@ -806,7 +806,7 @@
             for time_index = 1:number_times
                 
                 % Window the signal
-                sample_index = window_length/2*(time_index-1);
+                sample_index = (time_index-1)*window_length/2;
                 audio_segment = audio_signal(1+sample_index:window_length+sample_index).*window_function;
                 
                 % Time-domain aliasing cancellation (TDAC) principle
@@ -888,6 +888,7 @@
                 sample_index = (time_index-1)*number_frequencies+1;
                 audio_signal(sample_index:sample_index+2*number_frequencies-1,1) ...
                     = audio_signal(sample_index:sample_index+2*number_frequencies-1,1)+audio_mdct(:,time_index);
+                
             end
             
             % Remove the pre and post zero-padding
