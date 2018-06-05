@@ -19,7 +19,7 @@ Author:
     http://zafarrafii.com
     https://github.com/zafarrafii
     https://www.linkedin.com/in/zafarrafii/
-    06/04/18
+    06/05/18
 """
 
 import numpy as np
@@ -135,7 +135,7 @@ def istft(audio_stft, window_function, step_length):
         window_duration = 0.04
         window_length = int(2**np.ceil(np.log2(window_duration*sample_rate)))
         window_function = scipy.signal.hamming(window_length, False)
-        step_length = int(window_length/2)mal
+        step_length = int(window_length/2)
 
         # STFT of the left and right channels
         audio_stft1 = z.stft(audio_signal[:, 0], window_function, step_length)
