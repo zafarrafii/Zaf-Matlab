@@ -19,7 +19,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   06/04/18
+    %   06/14/18
     
     methods (Static = true)
         
@@ -165,7 +165,7 @@
             %   
             %   See also ifft, z.stft
             
-            % Window length in samples and number of time frames
+            % Window length and number of time frames
             [window_length,number_times] = size(audio_stft);
             
             % Number of samples for the signal
