@@ -6,7 +6,7 @@ This repository includes a Matlab class, a Python module, a Jupyter notebook, an
 - [z Python module](#z-python-module)
 - [z Jupyter notebook](#z-jupyter-notebook)
 - [z Julia module](#z-julia-module)
-- [Audio File](#audio-file)
+- [audio_file](#audio_file)
 - [Author](#author)
 
 ## z Matlab class
