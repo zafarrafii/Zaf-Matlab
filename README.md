@@ -6,6 +6,7 @@ This repository includes a Matlab class, a Python module, a Jupyter notebook, an
 - [z Python module](#z-python-module)
 - [z Jupyter notebook](#z-jupyter-notebook)
 - [z Julia module](#z-julia-module)
+- [Audio File](#audio-file)
 - [Author](#author)
 
 ## z Matlab class
@@ -1591,7 +1592,8 @@ plot(audio_plot, audio2_plot, error_plot, layout=(3,1), legend=false)
 <img src="images/julia/imdct.png" width="500">
 
 ## Audio File
-- Tamy - Que Pena / Tanto Faz
+
+- Tamy - Que Pena / Tanto Faz (excerpt)
 
 ## Author
 
