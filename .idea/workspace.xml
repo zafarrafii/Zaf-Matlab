@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92ef3f00-290b-47dc-b877-3f47f780b56b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Z.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Z.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/z.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="969">
-              <caret line="895" column="39" selection-start-line="895" selection-start-column="39" selection-end-line="895" selection-end-column="39" />
+            <state relative-caret-position="102">
+              <caret line="6" column="49" lean-forward="true" selection-start-line="6" selection-start-column="49" selection-end-line="6" selection-end-column="49" />
               <folding>
                 <element signature="e#786#804#0" expanded="true" />
                 <element signature="e#926#4160#0" />
@@ -28,7 +30,6 @@
                 <element signature="e#23991#30743#0" />
                 <element signature="e#30783#37156#0" />
                 <element signature="e#37204#40722#0" />
-                <element signature="e#40769#44828#0" />
               </folding>
             </state>
           </provider>
@@ -59,8 +60,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1280" />
-    <option name="height" value="1560" />
+    <option name="x" value="-7" />
+    <option name="width" value="974" />
+    <option name="height" value="1047" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -82,6 +84,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/Programs/Python/Python36/python.exe" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -120,9 +123,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="1560" extended-state="0" />
+    <frame x="-7" y="0" width="974" height="1047" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1215781" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.120726496" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -133,7 +136,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32983193" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32983193" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="8" sideWeight="0.4967213" visible="true" weight="0.25560224" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="8" sideWeight="0.4967213" visible="true" weight="0.39824945" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.3296011" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5032787" side_tool="true" weight="0.20518208" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -170,13 +173,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../REPET/repet.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../REPET/repet.py" />
     <entry file="file://$PROJECT_DIR$/z.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="895" column="39" selection-start-line="895" selection-start-column="39" selection-end-line="895" selection-end-column="39" />
+        <state relative-caret-position="102">
+          <caret line="6" column="49" lean-forward="true" selection-start-line="6" selection-start-column="49" selection-end-line="6" selection-end-column="49" />
           <folding>
             <element signature="e#786#804#0" expanded="true" />
             <element signature="e#926#4160#0" />
@@ -188,7 +189,6 @@
             <element signature="e#23991#30743#0" />
             <element signature="e#30783#37156#0" />
             <element signature="e#37204#40722#0" />
-            <element signature="e#40769#44828#0" />
           </folding>
         </state>
       </provider>
