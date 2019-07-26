@@ -1093,7 +1093,8 @@ plt.show()
 <img src="images/python/imdct.png" width="1000">
 
 ## z Jupyter notebook
-https://github.com/zafarrafii/Z/blob/master/z.ipynb
+
+https://nbviewer.jupyter.org/github/zafarrafii/Z/blob/master/z.ipynb
 
 ## z Julia module
 
