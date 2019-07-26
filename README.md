@@ -1094,7 +1094,7 @@ plt.show()
 
 ## z Jupyter notebook
 
-https://nbviewer.jupyter.org/github/zafarrafii/Z/blob/master/z.ipynb
+[Jupyter nbviewer](https://nbviewer.jupyter.org/github/zafarrafii/Z/blob/master/z.ipynb)
 
 ## z Julia module
 
