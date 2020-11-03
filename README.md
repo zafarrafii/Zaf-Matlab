@@ -1,6 +1,6 @@
 # Z
 
-This repository includes a Matlab class and a Julia module which implement/illustrate several methods/functions for audio signal processing.
+This repository includes a Matlab class and a Julia module which implement/illustrate several methods/functions for audio signal processing. For the Python module, see: https://github.com/zafarrafii/Zaf-Python
 
 - [z Matlab class](#z-matlab-class)
 - [z Julia module](#z-julia-module)
