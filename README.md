@@ -1,27 +1,40 @@
-# Z
+# Zaf-Matlab
 
-This repository includes a Matlab class and a Julia module which implement/illustrate several methods/functions for audio signal processing.
+Zafar's Audio Functions in Matlab for audio signal analysis.
 
-- For the updated Python module, see: https://github.com/zafarrafii/Zaf-Python
-- For the updated Julia module, see: https://github.com/zafarrafii/Zaf-Julia
+- [`zaf.m`](#zafm): Matlab class with the audio functions.
+- [`audio_file.wav`](#audio_filewav): audio file used for the examples.
 
-## z Matlab class
+See also:
+- [Zaf-Julia](https://github.com/zafarrafii/Zaf-Julia): Zafar's Audio Functions in Julia for audio signal analysis.
+- [Zaf-Python](https://github.com/zafarrafii/Zaf-Python): Zafar's Audio Functions in Python for audio signal analysis.
 
-z This class implements several methods for audio signal processing.
+## zaf.m
 
-z Methods:
-- [stft - Short-time Fourier transform (STFT)](#stft-short-time-fourier-transform-stft)
-- [istft - Inverse STFT](#istft-inverse-short-time-fourier-transform-stft)
-- [cqtkernel - Constant-Q transform (CQT) kernel](#cqtkernel-constant-q-transform-cqt-kernel)
-- [cqtspectrogram - CQT spectrogram using a CQT kernel](#cqtspectrogram-constant-q-transform-cqt-spectrogram-using-a-cqt-kernel)
-- [cqtchromagram - CQT chromagram using a CQT kernel](#cqtchromagram-constant-q-transform-cqt-chromagram-using-a-cqt-kernel)
-- [mfcc - Mel frequency cepstrum coefficients (MFCCs)](#mfcc-mel-frequency-cepstrum-coefficients-mfccs)
-- [dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)](#dct-discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft)
-- [dst - Discrete sine transform (DST) using the FFT](#dst-discrete-sine-transform-dst-using-the-fast-fourier-transform-fft)
-- [mdct - Modified discrete cosine transform (MDCT) using the DCT-IV](#mdct-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
-- [imdct - Inverse MDCT using the DCT-IV](#imdct-inverse-modified-discrete-cosine-transform-mdct-using-the-dct-iv)
+This Matlab class implements a number of functions for audio signal analysis.
 
-### stft Short-time Fourier transform (STFT)
+Simply copy the file `zaf.m` in your working directory and you are good to go.
+
+Functions:
+- [`stft`](#short-time-fourier-transform-stft) - Compute the short-time Fourier transform (STFT).
+- [`istft`](#inverse-short-time-fourier-transform-stft) - Compute the inverse STFT.
+- [`cqtkernel`](#constant-q-transform-cqt-kernel) - Compute the constant-Q transform (CQT) kernel.
+- [`cqtspectrogram`](#constant-q-transform-cqt-spectrogram-using-a-cqt-kernel) - Compute the CQT spectrogram using a CQT kernel.
+- [`cqtchromagram`](#constant-q-transform-cqt-chromagram-using-a-cqt-kernel) - Compute the CQT chromagram using a CQT kernel.
+- [`mfcc`](#mel-frequency-cepstrum-coefficients-mfccs) - Compute the mel frequency cepstrum coefficients (MFCCs).
+- [`dct`](#discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft) - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
+- [`dst`](#discrete-sine-transform-dst-using-the-fast-fourier-transform-fft) - Compute the discrete sine transform (DST) using the FFT.
+- [`mdct`](#modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft) - Compute the modified discrete cosine transform (MDCT) using the FFT.
+- [`imdct`](#inverse-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft) - Compute the inverse MDCT using the FFT.
+
+Other:
+- `sigplot` - Plot a signal in seconds.
+- `specshow` - Display a spectrogram in dB, seconds, and Hz..
+- `cqtspecshow` - Display a CQT spectrogram in dB, seconds, and Hz.
+- `cqtchromshow` - Display a CQT chromagram in seconds.
+
+
+### Short-time Fourier transform (STFT)
 
 `audio_stft = z.stft(audio_signal,window_function,step_length);`
     
