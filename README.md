@@ -524,11 +524,24 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 <img src="images/matlab/imdct.png" width="1000">
 
 
-## Author
+## examples.ipynb
+
+This Jupyter notebook shows some examples for the different functions of the Matlab class `zaf`.
+
+See [Jupyter notebook viewer](https://nbviewer.jupyter.org/github/zafarrafii/Zaf-Matlab/blob/master/examples.ipynb).
+
+
+## audio_file.wav
+
+23 second audio excerpt from the song *Que Pena Tanto Faz* performed by *Tamy*.
+
+
+# Author
 
 - Zafar Rafii
 - zafarrafii@gmail.com
-- [Website](http://zafarrafii.com/)
+- http://zafarrafii.com/
 - [CV](http://zafarrafii.com/Zafar%20Rafii%20-%20C.V..pdf)
-- [Google Scholar](https://scholar.google.com/citations?user=8wbS2EsAAAAJ&hl=en)
+- [GitHub](https://github.com/zafarrafii)
 - [LinkedIn](https://www.linkedin.com/in/zafarrafii/)
+- [Google Scholar](https://scholar.google.com/citations?user=8wbS2EsAAAAJ&hl=en)
