@@ -1,13 +1,13 @@
 # Zaf-Matlab
 
-Zafar's Audio Functions in Matlab for audio signal analysis.
+Zafar's Audio Functions in **Matlab** for audio signal analysis.
 
 - [`zaf.m`](#zafm): Matlab class with the audio functions.
 - [`audio_file.wav`](#audio_filewav): audio file used for the examples.
 
 See also:
-- [Zaf-Julia](https://github.com/zafarrafii/Zaf-Julia): Zafar's Audio Functions in Julia for audio signal analysis.
-- [Zaf-Python](https://github.com/zafarrafii/Zaf-Python): Zafar's Audio Functions in Python for audio signal analysis.
+- [Zaf-Julia](https://github.com/zafarrafii/Zaf-Julia): Zafar's Audio Functions in **Julia** for audio signal analysis.
+- [Zaf-Python](https://github.com/zafarrafii/Zaf-Python): Zafar's Audio Functions in **Python** for audio signal analysis.
 
 ## zaf.m
 
