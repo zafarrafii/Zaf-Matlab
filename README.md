@@ -38,14 +38,14 @@ Other:
 ### Short-time Fourier transform (STFT)
 
 ```
-audio_stft = zaf.stft(audio_signal, window_function, step_length)
+audio_stft = zaf.stft(audio_signal,window_function,step_length);
     
 Inputs:
     audio_signal: audio signal (number_samples,1)
     window_function: window function (window_length,1)
     step_length: step length in samples
 Output:
-    audio_stft: audio STFT (window_length, number_frames)
+    audio_stft: audio STFT (window_length,number_frames)
 ```
 
 #### Example: compute and display the spectrogram of an audio file
