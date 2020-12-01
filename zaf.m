@@ -1,31 +1,37 @@
- classdef z
-    % z This class implements several methods for audio signal processing.
+ classdef zaf
+    % zaf This Matlab class implements a number of functions for audio signal analysis.
     %
-    % z Methods:
-    %   stft - Short-time Fourier transform (STFT)
-    %   istft - Inverse STFT
-    %   cqtkernel - Constant-Q transform (CQT) kernel
-    %   cqtspectrogram - CQT spectrogram using a CQT kernel
-    %   cqtchromagram - CQT chromagram using a CQT kernel
-    %   mfcc - Mel frequency cepstrum coefficients (MFCCs)
-    %   dct - Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
-    %   dst - Discrete sine transform (DST) using the FFT
-    %   mdct - Modified discrete cosine transform (MDCT) using the DCT-IV
-    %   imdct - Inverse MDCT using the DCT-IV
+    % zaf Methods:
+	%   stft - Compute the short-time Fourier transform (STFT).
+	%   istft - Compute the inverse STFT.
+	%   cqtkernel - Compute the constant-Q transform (CQT) kernel.
+	%   cqtspectrogram - Compute the CQT spectrogram using a CQT kernel.
+	%   cqtchromagram - Compute the CQT chromagram using a CQT kernel.
+	%   mfcc - Compute the mel frequency cepstrum coefficients (MFCCs).
+	%   dct - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
+	%   dst - Compute the discrete sine transform (DST) using the FFT.
+	%   mdct - Compute the modified discrete cosine transform (MDCT) using the FFT.
+	%   imdct - Compute the inverse MDCT using the FFT.
     %
+	% zaf Other:
+	%   sigplot - Plot a signal in seconds.
+	%   specshow - Display an spectrogram in dB, seconds, and Hz.
+	%   cqtspecshow - Display a CQT spectrogram in dB, seconds, and Hz.
+	%   cqtchromshow - Display a CQT chromagram in seconds.
+	%
     % Author:
     %   Zafar Rafii
     %   zafarrafii@gmail.com
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   06/14/18
+    %   12/01/20
     
     methods (Static = true)
         
         function audio_stft = stft(audio_signal,window_function,step_length)
             % stft Short-time Fourier transform (STFT)
-            %   audio_stft = z.stft(audio_signal,window_function,step_length);
+            %   audio_stft = zaf.stft(audio_signal,window_function,step_length);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -51,7 +57,7 @@
             %       step_length = window_length/2;
             %       
             %       % Magnitude spectrogram (without the DC component and the mirrored frequencies)
-            %       audio_stft = z.stft(audio_signal,window_function,step_length);
+            %       audio_stft = zaf.stft(audio_signal,window_function,step_length);
             %       audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
             %       
             %       % Spectrogram displayed in dB, s, and kHz
@@ -68,7 +74,7 @@
             %       ylabel('Frequency (kHz)')
             %       set(gca,'FontSize',30)
             %
-            %   See also fft, z.istft, spectrogram
+            %   See also fft, zaf.istft, spectrogram
             
             % Number of samples and window length
             number_samples = length(audio_signal);
@@ -101,7 +107,7 @@
         
         function audio_signal = istft(audio_stft,window_function,step_length)
             % istft Inverse short-time Fourier transform (STFT)
-            %   audio_signal = z.istft(audio_stft,window_function,step_length);
+            %   audio_signal = zaf.istft(audio_stft,window_function,step_length);
             %   
             %   Arguments:
             %       audio_stft: audio STFT [window_length,number_frames]
@@ -120,8 +126,8 @@
             %       step_length = window_length/2;
             %       
             %       % STFT of the left and right channels
-            %       audio_stft1 = z.stft(audio_signal(:,1),window_function,step_length);
-            %       audio_stft2 = z.stft(audio_signal(:,2),window_function,step_length);
+            %       audio_stft1 = zaf.stft(audio_signal(:,1),window_function,step_length);
+            %       audio_stft2 = zaf.stft(audio_signal(:,2),window_function,step_length);
             %       
             %       % Magnitude spectrogram (with DC component) of the left and right channels
             %       audio_spectrogram1 = abs(audio_stft1(1:window_length/2+1,:));
@@ -136,8 +142,8 @@
             %       center_stft2 = [center_mask2;center_mask2(window_length/2:-1:2,:)].*audio_stft2;
             %       
             %       % Synthesized signals of the left and right channels for the center signal
-            %       center_signal1 = z.istft(center_stft1,window_function,step_length);
-            %       center_signal2 = z.istft(center_stft2,window_function,step_length);
+            %       center_signal1 = zaf.istft(center_stft1,window_function,step_length);
+            %       center_signal2 = zaf.istft(center_stft2,window_function,step_length);
             %       
             %       % Final stereo center and sides signals
             %       center_signal = [center_signal1,center_signal2];
@@ -163,7 +169,7 @@
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %   
-            %   See also ifft, z.stft
+            %   See also ifft, zaf.stft
             
             % Window length and number of time frames
             [window_length,number_times] = size(audio_stft);
@@ -197,7 +203,7 @@
         
         function cqt_kernel = cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
             % cqtkernel Constant-Q transform (CQT) kernel
-            %   cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %   cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
             %   
             %   Arguments:
             %       sample_rate: sample rate in Hz
@@ -214,7 +220,7 @@
             %       maximum_frequency = sample_rate/2;
             %       
             %       % CQT kernel
-            %       cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
             %       
             %       % Magnitude CQT kernel displayed
             %       figure
@@ -226,7 +232,7 @@
             %       ylabel('CQT frequency')
             %       set(gca,'FontSize',30)
             %
-            %   See also z.cqt, fft
+            %   See also zaf.cqt, fft
             
             % Number of frequency channels per octave
             octave_resolution = 12*frequency_resolution;
@@ -287,7 +293,7 @@
         
         function audio_spectrogram = cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel)
             % cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
-            %   audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            %   audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -305,11 +311,11 @@
             %       frequency_resolution = 2;
             %       minimum_frequency = 55;
             %       maximum_frequency = 3520;
-            %       cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
             %       
             %       % CQT spectrogram
             %       time_resolution = 25;
-            %       audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            %       audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
             %       
             %       % CQT spectrogram displayed in dB, s, and semitones
             %       figure
@@ -325,7 +331,7 @@
             %       ylabel('Frequency (semitones)')
             %       set(gca,'FontSize',30)
             %
-            %   See also z.cqtkernel, fft
+            %   See also zaf.cqtkernel, fft
             
             % Number of time samples per time frame
             step_length = round(sample_rate/time_resolution);
@@ -357,7 +363,7 @@
         
         function audio_chromagram = cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel)
             % cqtchromagram Constant-Q transform (CQT) chromagram using a kernel
-            %   audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
+            %   audio_chromagram = zaf.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -376,11 +382,11 @@
             %       frequency_resolution = 2;
             %       minimum_frequency = 55;
             %       maximum_frequency = 3520;
-            %       cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
             %       
             %       % CQT chromagram
             %       time_resolution = 25;
-            %       audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
+            %       audio_chromagram = zaf.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
             %       
             %       % CQT chromagram displayed in dB, s, and chromas
             %       figure
@@ -396,10 +402,10 @@
             %       ylabel('Chroma')
             %       set(gca,'FontSize',30)
             %
-            %   See also z.cqtkernel, z.cqtspectrogram
+            %   See also zaf.cqtkernel, zaf.cqtspectrogram
             
             % CQT spectrogram
-            audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
             
             % Number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_spectrogram);
@@ -422,7 +428,7 @@
         
         function audio_mfcc = mfcc(audio_signal,sample_rate,number_filters,number_coefficients)
             % mfcc Mel frequency cepstrum coefficients (MFFCs)
-            %   audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
+            %   audio_mfcc = zaf.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -439,7 +445,7 @@
             %       % MFCCs for a given number of filters and coefficients
             %       number_filters = 40;
             %       number_coefficients = 20;
-            %       audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
+            %       audio_mfcc = zaf.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
             %       
             %       % Delta and delta-delta MFCCs
             %       audio_deltamfcc = diff(audio_mfcc,1,2);
@@ -461,7 +467,7 @@
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %   
-            %   See also z.stft, dct
+            %   See also zaf.stft, dct
             
             % Window duration in seconds, length in samples, and function, 
             % and step length in samples
@@ -472,7 +478,7 @@
             
             % Magnitude spectrogram (without the DC component and the 
             % mirrored frequencies)
-            audio_stft = z.stft(audio_signal,window_function,step_length);
+            audio_stft = zaf.stft(audio_signal,window_function,step_length);
             audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
             
             % Minimum and maximum mel frequencies
@@ -510,7 +516,7 @@
         
         function audio_dct = dct(audio_signal,dct_type)
             % dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
-            %   audio_dct = z.dct(audio_signal,dct_type);
+            %   audio_dct = zaf.dct(audio_signal,dct_type);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,number_frames]
@@ -527,10 +533,10 @@
             %       audio_signal = audio_signal(1:window_length,:);
             %       
             %       % DCT-I, II, III, and IV
-            %       audio_dct1 = z.dct(audio_signal,1);
-            %       audio_dct2 = z.dct(audio_signal,2);
-            %       audio_dct3 = z.dct(audio_signal,3);
-            %       audio_dct4 = z.dct(audio_signal,4);
+            %       audio_dct1 = zaf.dct(audio_signal,1);
+            %       audio_dct2 = zaf.dct(audio_signal,2);
+            %       audio_dct3 = zaf.dct(audio_signal,3);
+            %       audio_dct4 = zaf.dct(audio_signal,4);
             %       
             %       % Matlab's DCT-I, II, III, and IV
             %       matlab_dct1 = dct(audio_signal,'Type',1);
@@ -632,7 +638,7 @@
         
         function audio_dst = dst(audio_signal,dst_type)
             % dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
-            %   audio_dst = z.dst(audio_signal,dst_type);
+            %   audio_dst = zaf.dst(audio_signal,dst_type);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,number_frames]
@@ -649,16 +655,16 @@
             %       audio_signal = audio_signal(1:window_length);
             %       
             %       % DST-I, II, III, and IV
-            %       audio_dst1 = z.dst(audio_signal,1);
-            %       audio_dst2 = z.dst(audio_signal,2);
-            %       audio_dst3 = z.dst(audio_signal,3);
-            %       audio_dst4 = z.dst(audio_signal,4);
+            %       audio_dst1 = zaf.dst(audio_signal,1);
+            %       audio_dst2 = zaf.dst(audio_signal,2);
+            %       audio_dst3 = zaf.dst(audio_signal,3);
+            %       audio_dst4 = zaf.dst(audio_signal,4);
             %       
             %       % Respective inverses, i.e., DST-I, III, II, and IV
-            %       audio_idst1 = z.dst(audio_dst1,1);
-            %       audio_idst2 = z.dst(audio_dst2,3);
-            %       audio_idst3 = z.dst(audio_dst3,2);
-            %       audio_idst4 = z.dst(audio_dst4,4);
+            %       audio_idst1 = zaf.dst(audio_dst1,1);
+            %       audio_idst2 = zaf.dst(audio_dst2,3);
+            %       audio_idst3 = zaf.dst(audio_dst3,2);
+            %       audio_idst4 = zaf.dst(audio_dst4,4);
             %       
             %       % DST-I, II, III, and IV, respective inverses, and errors displayed
             %       figure
@@ -751,7 +757,7 @@
         
         function audio_mdct = mdct(audio_signal,window_function)
             % mdct Modified discrete cosine transform (MDCT) using the DCT-IV
-            %   audio_mdct = z.mdct(audio_signal,window_function);
+            %   audio_mdct = zaf.mdct(audio_signal,window_function);
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -771,7 +777,7 @@
             %       window_function = sqrt([window_function2;window_function2(window_length/2:-1:1)]./sum(window_function));
             %       
             %       % MDCT
-            %       audio_mdct = z.mdct(audio_signal,window_function);
+            %       audio_mdct = zaf.mdct(audio_signal,window_function);
             %       
             %       % MDCT displayed in dB, s, and kHz
             %       figure
@@ -787,7 +793,7 @@
             %       ylabel('Frequency (kHz)')
             %       set(gca,'FontSize',30)
             %
-            %   See also dct, z.imdct
+            %   See also dct, zaf.imdct
             
             % Number of samples and window length
             number_samples = length(audio_signal);
@@ -821,7 +827,7 @@
         
         function audio_signal = imdct(audio_mdct,window_function)
             % imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
-            %   audio_signal = z.imdct(audio_mdct,window_function);
+            %   audio_signal = zaf.imdct(audio_mdct,window_function);
             %   
             %   Arguments:
             %       audio_mdct: audio MDCT [number_frequencies,number_times]
@@ -836,10 +842,10 @@
             %       % MDCT with a slope function as used in the Vorbis audio coding format
             %       window_length = 2048;
             %       window_function = sin((pi/2)*sin((pi/window_length)*(0.5:(window_length-0.5))).^2)';
-            %       audio_mdct = z.mdct(audio_signal,window_function);
+            %       audio_mdct = zaf.mdct(audio_signal,window_function);
             %       
             %       % Inverse MDCT and error signal
-            %       audio_signal2 = z.imdct(audio_mdct,window_function);
+            %       audio_signal2 = zaf.imdct(audio_mdct,window_function);
             %       audio_signal2 = audio_signal2(1:length(audio_signal));
             %       error_signal = audio_signal-audio_signal2;
             %       
@@ -858,7 +864,7 @@
             %       xticklabels(1:floor(length(audio_signal)/sample_rate))
             %       xlabel('Time (s)'), set(gca,'FontSize',30)
             %
-            %   See also dct, z.mdct
+            %   See also dct, zaf.mdct
             
             % Number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_mdct);
