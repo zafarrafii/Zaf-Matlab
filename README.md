@@ -37,17 +37,19 @@ Other:
 
 ### Short-time Fourier transform (STFT)
 
-`audio_stft = z.stft(audio_signal,window_function,step_length);`
-    
-Arguments:
 ```
-audio_signal: audio signal [number_samples,1]
-window_function: window function [window_length,1]
-step_length: step length in samples
-audio_stft: audio stft [window_length,number_frames]
+audio_stft = zaf.stft(audio_signal, window_function, step_length)
+    
+Inputs:
+    audio_signal: audio signal (number_samples,1)
+    window_function: window function (window_length,1)
+    step_length: step length in samples
+Output:
+    audio_stft: audio STFT (window_length, number_frames)
 ```
 
-Example: Compute and display the spectrogram of an audio file
+#### Example: compute and display the spectrogram of an audio file
+
 ```
 % Audio signal averaged over its channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -86,6 +88,7 @@ set(gca,'FontSize',30)
 
 <img src="images/matlab/stft.png" width="1000">
 
+
 ### istft Inverse short-time Fourier transform (STFT)
 
 `audio_signal = z.istft(audio_stft,window_function,step_length);`
@@ -98,7 +101,7 @@ step_length: step length in samples
 audio_signal: audio signal [number_samples,1]
 ```
 
-Example: Estimate the center and sides signals of a stereo audio file
+#### Example: Estimate the center and sides signals of a stereo audio file
 ```
 % Stereo signal and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -156,6 +159,7 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 
 <img src="images/matlab/istft.png" width="1000">
 
+
 ### cqtkernel Constant-Q transform (CQT) kernel
 
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
@@ -169,7 +173,8 @@ maximum_frequency: maximum frequency in Hz
 cqt_kernel: CQT kernel [number_frequencies,fft_length]
 ```
 
-Example: Compute and display the CQT kernel
+#### Example: Compute and display the CQT kernel
+
 ```
 % CQT kernel parameters
 sample_rate = 44100;
@@ -238,6 +243,7 @@ set(gca,'FontSize',30)
 
 <img src="images/matlab/cqtspectrogram.png" width="1000">
 
+
 ### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
 
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
@@ -252,7 +258,8 @@ cqt_kernel: CQT kernel [number_frequencies,fft_length]
 audio_chromagram: audio chromagram [number_chromas,number_times]
 ```
 
-Example: Compute and display the CQT chromagram
+#### Example: Compute and display the CQT chromagram
+
 ```
 % Audio file averaged over the channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -332,6 +339,7 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 
 <img src="images/matlab/mfcc.png" width="1000">
 
+
 ### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
 
 `audio_dct = z.dct(audio_signal,dct_type);`
@@ -343,7 +351,8 @@ dct_type: dct type (1, 2, 3, or 4)
 audio_dct: audio DCT [number_frequencies,number_frames]
 ```
 
-Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+#### Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+
 ```
 % Audio signal averaged over its channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -383,6 +392,7 @@ subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(g
 
 <img src="images/matlab/dct.png" width="1000">
 
+
 ### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
 
 `audio_dst = z.dst(audio_signal,dst_type);`
@@ -394,7 +404,8 @@ dst_type: DST type (1, 2, 3, or 4)
 audio_dst: audio DST [number_frequencies,number_frames]
 ```
 
-Example: Compute the 4 different DSTs and compare them to their respective inverses
+#### Example: Compute the 4 different DSTs and compare them to their respective inverses
+
 ```
 % Audio signal averaged over its channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -434,6 +445,7 @@ subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Error'), set(
 
 <img src="images/matlab/dst.png" width="1000">
 
+
 ### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
 
 `audio_mdct = z.mdct(audio_signal,window_function);`
@@ -445,7 +457,8 @@ window_function: window function [window_length,1]
 audio_mdct: audio MDCT [number_frequencies,number_times]
 ```
 
-Example: Compute and display the MDCT as used in the AC-3 audio coding format
+#### Example: Compute and display the MDCT as used in the AC-3 audio coding format
+
 ```
 % Audio file averaged over the channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -478,6 +491,7 @@ set(gca,'FontSize',30)
 
 <img src="images/matlab/mdct.png" width="1000">
 
+
 ### imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
 
 `audio_signal = z.imdct(audio_mdct,window_function);`
@@ -489,7 +503,8 @@ audio_mdct: audio MDCT [number_frequencies,number_times]
 audio_signal: audio signal [number_samples,1]
 ```
 
-Example: Verify that the MDCT is perfectly invertible
+#### Example: verify that the MDCT is perfectly invertible
+
 ```
 % Audio file averaged over the channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
