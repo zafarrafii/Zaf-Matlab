@@ -37,6 +37,10 @@ Other:
 
 ### Short-time Fourier transform (STFT)
 
+### stft
+
+Compute the short-time Fourier transform (STFT).
+
 ```
 audio_stft = zaf.stft(audio_signal,window_function,step_length);
     
