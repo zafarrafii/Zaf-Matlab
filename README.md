@@ -163,7 +163,9 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 <img src="images/matlab/istft.png" width="1000">
 
 
-### cqtkernel Constant-Q transform (CQT) kernel
+### cqtkernel
+
+Compute the constant-Q transform (CQT) kernel.
 
 `cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
 
@@ -201,7 +203,10 @@ set(gca,'FontSize',30)
 
 <img src="images/matlab/cqtkernel.png" width="1000">
 
-### cqtspectrogram Constant-Q transform (CQT) spectrogram using a CQT kernel
+
+### cqtspectrogram
+
+Compute the constant-Q transform (CQT) spectrogram using a kernel.
 
 `audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
 
@@ -247,7 +252,9 @@ set(gca,'FontSize',30)
 <img src="images/matlab/cqtspectrogram.png" width="1000">
 
 
-### cqtchromagram Constant-Q transform (CQT) chromagram using a CQT kernel
+### cqtchromagram
+
+Compute the constant-Q transform (CQT) chromagram using a kernel.
 
 `audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
 
@@ -295,7 +302,9 @@ set(gca,'FontSize',30)
 
 <img src="images/matlab/cqtchromagram.png" width="1000">
 
-### mfcc Mel frequency cepstrum coefficients (MFCCs)
+### mfcc
+
+Compute the mel frequency cepstrum coefficients (MFFCs).
 
 `audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
 
@@ -343,7 +352,9 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 <img src="images/matlab/mfcc.png" width="1000">
 
 
-### dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
+### dct
+
+Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
 
 `audio_dct = z.dct(audio_signal,dct_type);`
 
@@ -396,7 +407,9 @@ subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(g
 <img src="images/matlab/dct.png" width="1000">
 
 
-### dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
+### dst
+
+Compute the discrete sine transform (DST) using the fast Fourier transform (FFT).
 
 `audio_dst = z.dst(audio_signal,dst_type);`
 
@@ -449,7 +462,9 @@ subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Error'), set(
 <img src="images/matlab/dst.png" width="1000">
 
 
-### mdct Modified discrete cosine transform (MDCT) using the DCT-IV
+### mdct
+
+Compute the modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT).
 
 `audio_mdct = z.mdct(audio_signal,window_function);`
 
@@ -495,7 +510,9 @@ set(gca,'FontSize',30)
 <img src="images/matlab/mdct.png" width="1000">
 
 
-### imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
+### imdct
+
+Compute the inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT).
 
 `audio_signal = z.imdct(audio_mdct,window_function);`
 
