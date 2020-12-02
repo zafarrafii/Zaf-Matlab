@@ -18,15 +18,15 @@ Simply copy the file `zaf.m` in your working directory and you are good to go.
 
 Functions:
 - [`stft`](#stft) - Compute the short-time Fourier transform (STFT).
-- [`istft`](#inverse-short-time-fourier-transform-stft) - Compute the inverse STFT.
-- [`cqtkernel`](#constant-q-transform-cqt-kernel) - Compute the constant-Q transform (CQT) kernel.
-- [`cqtspectrogram`](#constant-q-transform-cqt-spectrogram-using-a-cqt-kernel) - Compute the CQT spectrogram using a CQT kernel.
-- [`cqtchromagram`](#constant-q-transform-cqt-chromagram-using-a-cqt-kernel) - Compute the CQT chromagram using a CQT kernel.
-- [`mfcc`](#mel-frequency-cepstrum-coefficients-mfccs) - Compute the mel frequency cepstrum coefficients (MFCCs).
-- [`dct`](#discrete-cosine-transform-dct-using-the-fast-fourier-transform-fft) - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
-- [`dst`](#discrete-sine-transform-dst-using-the-fast-fourier-transform-fft) - Compute the discrete sine transform (DST) using the FFT.
-- [`mdct`](#modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft) - Compute the modified discrete cosine transform (MDCT) using the FFT.
-- [`imdct`](#inverse-modified-discrete-cosine-transform-mdct-using-the-fast-fourier-transform-fft) - Compute the inverse MDCT using the FFT.
+- [`istft`](#istft) - Compute the inverse STFT.
+- [`cqtkernel`](#cqtkernel) - Compute the constant-Q transform (CQT) kernel.
+- [`cqtspectrogram`](#cqtspectrogram) - Compute the CQT spectrogram using a CQT kernel.
+- [`cqtchromagram`](#cqtchromagram) - Compute the CQT chromagram using a CQT kernel.
+- [`mfcc`](#mfcc) - Compute the mel frequency cepstrum coefficients (MFCCs).
+- [`dct`](#dct) - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
+- [`dst`](#dst) - Compute the discrete sine transform (DST) using the FFT.
+- [`mdct`](#mdct) - Compute the modified discrete cosine transform (MDCT) using the FFT.
+- [`imdct`](#imdct) - Compute the inverse MDCT using the FFT.
 
 Other:
 - `sigplot` - Plot a signal in seconds.
@@ -90,7 +90,9 @@ set(gca,'FontSize',30)
 <img src="images/matlab/stft.png" width="1000">
 
 
-### istft Inverse short-time Fourier transform (STFT)
+### istft
+
+Compute the inverse short-time Fourier transform (STFT).
 
 `audio_signal = z.istft(audio_stft,window_function,step_length);`
 
