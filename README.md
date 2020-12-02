@@ -17,7 +17,7 @@ This Matlab class implements a number of functions for audio signal analysis.
 Simply copy the file `zaf.m` in your working directory and you are good to go.
 
 Functions:
-- [`stft`](#short-time-fourier-transform-stft) - Compute the short-time Fourier transform (STFT).
+- [`stft`](#stft) - Compute the short-time Fourier transform (STFT).
 - [`istft`](#inverse-short-time-fourier-transform-stft) - Compute the inverse STFT.
 - [`cqtkernel`](#constant-q-transform-cqt-kernel) - Compute the constant-Q transform (CQT) kernel.
 - [`cqtspectrogram`](#constant-q-transform-cqt-spectrogram-using-a-cqt-kernel) - Compute the CQT spectrogram using a CQT kernel.
@@ -33,9 +33,6 @@ Other:
 - `specshow` - Display a spectrogram in dB, seconds, and Hz..
 - `cqtspecshow` - Display a CQT spectrogram in dB, seconds, and Hz.
 - `cqtchromshow` - Display a CQT chromagram in seconds.
-
-
-### Short-time Fourier transform (STFT)
 
 ### stft
 
