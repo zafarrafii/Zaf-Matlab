@@ -25,13 +25,13 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/01/20
+    %   12/02/20
     
     methods (Static = true)
         
         function audio_stft = stft(audio_signal,window_function,step_length)
-            % stft Short-time Fourier transform (STFT)
-            %   audio_stft = zaf.stft(audio_signal,window_function,step_length);
+            % stft Compute the short-time Fourier transform (STFT)
+            %   audio_stft = zaf.stft(audio_signal,window_function,step_length)
             %   
             %   Arguments:
             %       audio_signal: audio signal [number_samples,1]
@@ -39,7 +39,7 @@
             %       step_length: step length in samples
             %       audio_stft: audio STFT [window_length,number_frames]
             %   
-            %   Example: Compute and display the spectrogram of an audio file
+            %   Example: compute and display the spectrogram of an audio file
             %       % Audio signal averaged over its channels and sample rate in Hz
             %       [audio_signal,sample_rate] = audioread('audio_file.wav');
             %       audio_signal = mean(audio_signal,2);
