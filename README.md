@@ -36,20 +36,18 @@ Other:
 
 ### stft
 
-Compute the short-time Fourier transform (STFT).
-
 ```
-audio_stft = zaf.stft(audio_signal,window_function,step_length);
+audio_stft = zaf.stft(audio_signal, window_function, step_length)
     
 Inputs:
-    audio_signal: audio signal (number_samples,1)
-    window_function: window function (window_length,1)
+    audio_signal: audio signal (number_samples,)
+    window_function: window function (window_length,)
     step_length: step length in samples
 Output:
-    audio_stft: audio STFT (window_length,number_frames)
+    audio_stft: audio STFT (window_length, number_frames)
 ```
 
-#### Example: compute and display the spectrogram of an audio file
+Example: Compute and display the spectrogram from an audio file.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -94,17 +92,19 @@ set(gca,'FontSize',30)
 
 Compute the inverse short-time Fourier transform (STFT).
 
-`audio_signal = z.istft(audio_stft,window_function,step_length);`
-
-Arguments:
 ```
-audio_stft: audio STFT [window_length,number_frames]
-window_function: window function [window_length,1]
-step_length: step length in samples
-audio_signal: audio signal [number_samples,1]
+audio_signal = zaf.istft(audio_stft, window_function, step_length)
+
+Inputs:
+    audio_stft: audio STFT (window_length, number_frames)
+    window_function: window function (window_length,)
+    step_length: step length in samples
+Output:
+    audio_signal: audio signal (number_samples,)
 ```
 
-#### Example: Estimate the center and sides signals of a stereo audio file
+Example: Estimate the center and the sides from a stereo audio file.
+
 ```
 % Stereo signal and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -167,18 +167,19 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 
 Compute the constant-Q transform (CQT) kernel.
 
-`cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);`
-
-Arguments:
 ```
-sample_rate: sample rate in Hz
-frequency_resolution: frequency resolution in number of frequency channels per semitone
-minimum_frequency: minimum frequency in Hz
-maximum_frequency: maximum frequency in Hz
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
+cqt_kernel = zaf.cqtkernel(sampling_frequency, frequency_resolution, minimum_frequency, maximum_frequency)
+
+Inputs:
+    sampling_frequency: sampling frequency in Hz
+    frequency_resolution: frequency resolution in number of frequency channels per semitone
+    minimum_frequency: minimum frequency in Hz
+    maximum_frequency: maximum frequency in Hz
+Output:
+    cqt_kernel: CQT kernel (number_frequencies, fft_length)
 ```
 
-#### Example: Compute and display the CQT kernel
+Example: Compute and display the CQT kernel.
 
 ```
 % CQT kernel parameters
@@ -206,19 +207,22 @@ set(gca,'FontSize',30)
 
 ### cqtspectrogram
 
-Compute the constant-Q transform (CQT) spectrogram using a kernel.
+Compute the constant-Q transform (CQT) kernel.
 
-`audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);`
+```
+audio_spectrogram = zaf.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
-Arguments:
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    sampling_frequency: sampling frequency in Hz
+    time_resolution: time resolution in number of time frames per second
+    cqt_kernel: CQT kernel (number_frequencies, fft_length)
+Output:
+    audio_spectrogram: audio spectrogram in magnitude (number_frequencies, number_times)
 ```
-audio_signal: audio signal [number_samples,1]
-sample_rate: sample rate in Hz
-time_resolution: time resolution in number of time frames per second
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
-audio_spectrogram: audio spectrogram in magnitude [number_frequencies,number_times]
-```
-Example: Compute and display the CQT spectrogram
+
+Example: Compute and display the CQT spectrogram.
+
 ```
 % Audio file averaged over the channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -256,19 +260,20 @@ set(gca,'FontSize',30)
 
 Compute the constant-Q transform (CQT) chromagram using a kernel.
 
-`audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);`
-
-Arguments:
 ```
-audio_signal: audio signal [number_samples,1]
-sample_rate: sample rate in Hz
-time_resolution: time resolution in number of time frames per second
-frequency_resolution: frequency resolution in number of frequency channels per semitones
-cqt_kernel: CQT kernel [number_frequencies,fft_length]
-audio_chromagram: audio chromagram [number_chromas,number_times]
+audio_chromagram = zaf.cqtchromagram(audio_signal, sampling_frequency, time_resolution, frequency_resolution, cqt_kernel)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    sampling_frequency: sampling frequency in Hz
+    time_resolution: time resolution in number of time frames per second
+    frequency_resolution: frequency resolution in number of frequency channels per semitones
+    cqt_kernel: CQT kernel (number_frequencies, fft_length)
+Output:
+    audio_chromagram: audio chromagram (number_chromas, number_times)
 ```
 
-#### Example: Compute and display the CQT chromagram
+Example: Compute and display the CQT chromagram.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -301,6 +306,7 @@ set(gca,'FontSize',30)
 ```
 
 <img src="images/matlab/cqtchromagram.png" width="1000">
+
 
 ### mfcc
 
@@ -356,16 +362,17 @@ xlabel('Time (s)'), set(gca,'FontSize',30)
 
 Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
 
-`audio_dct = z.dct(audio_signal,dct_type);`
-
-Arguments:
 ```
-audio_signal: audio signal [number_samples,number_frames]
-dct_type: dct type (1, 2, 3, or 4)
-audio_dct: audio DCT [number_frequencies,number_frames]
+audio_dct = zaf.dct(audio_signal, dct_type)
+
+Inputs:
+    audio_signal: audio signal (window_length,)
+    dct_type: dct type (1, 2, 3, or 4)
+Output:
+    audio_dct: audio DCT (number_frequencies,)
 ```
 
-#### Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
+Example: Compute the 4 different DCTs and compare them to Matlab's DCTs.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -411,16 +418,17 @@ subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(g
 
 Compute the discrete sine transform (DST) using the fast Fourier transform (FFT).
 
-`audio_dst = z.dst(audio_signal,dst_type);`
-
-Arguments:
 ```
-audio_signal: audio signal [number_samples,number_frames]
-dst_type: DST type (1, 2, 3, or 4)
-audio_dst: audio DST [number_frequencies,number_frames]
+audio_dst = zaf.dst(audio_signal, dst_type)
+
+Inputs:
+    audio_signal: audio signal (window_length,)
+    dst_type: DST type (1, 2, 3, or 4)
+Output:
+    audio_dst: audio DST (number_frequencies,)
 ```
 
-#### Example: Compute the 4 different DSTs and compare them to their respective inverses
+Example: Compute the 4 different DSTs and compare their respective inverses with the original audio.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -466,16 +474,17 @@ subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Error'), set(
 
 Compute the modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT).
 
-`audio_mdct = z.mdct(audio_signal,window_function);`
-
-Arguments:
 ```
-audio_signal: audio signal [number_samples,1]
-window_function: window function [window_length,1]
-audio_mdct: audio MDCT [number_frequencies,number_times]
+audio_mdct = zaf.mdct(audio_signal, window_function)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    window_function: window function (window_length,)
+Output:
+    audio_mdct: audio MDCT (number_frequencies, number_times)
 ```
 
-#### Example: Compute and display the MDCT as used in the AC-3 audio coding format
+Example: Compute and display the MDCT as used in the AC-3 audio coding format.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -514,16 +523,17 @@ set(gca,'FontSize',30)
 
 Compute the inverse modified discrete cosine transform (MDCT) using the fast Fourier transform (FFT).
 
-`audio_signal = z.imdct(audio_mdct,window_function);`
-
-Arguments:
 ```
-window_function: window function [window_length,1]
-audio_mdct: audio MDCT [number_frequencies,number_times]
-audio_signal: audio signal [number_samples,1]
+audio_signal = zaf.imdct(audio_mdct, window_function)
+
+Inputs:
+    audio_mdct: audio MDCT (number_frequencies, number_times)
+    window_function: window function (window_length,)
+Output:
+    audio_signal: audio signal (number_samples,)
 ```
 
-#### Example: verify that the MDCT is perfectly invertible
+Example: Verify that the MDCT is perfectly invertible.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
