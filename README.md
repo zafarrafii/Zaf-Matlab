@@ -181,7 +181,7 @@ Output:
     cqt_kernel: CQT kernel (number_frequencies, fft_length)
 ```
 
-Example: Compute and display the CQT kernel.
+#### Example: Compute and display the CQT kernel.
 
 ```
 % CQT kernel parameters
@@ -223,7 +223,7 @@ Output:
     audio_spectrogram: audio spectrogram in magnitude (number_frequencies, number_times)
 ```
 
-Example: Compute and display the CQT spectrogram.
+#### Example: Compute and display the CQT spectrogram.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -275,7 +275,7 @@ Output:
     audio_chromagram: audio chromagram (number_chromas, number_times)
 ```
 
-Example: Compute and display the CQT chromagram.
+#### Example: Compute and display the CQT chromagram.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -314,18 +314,20 @@ set(gca,'FontSize',30)
 
 Compute the mel frequency cepstrum coefficients (MFFCs).
 
-`audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);`
-
-Arguments:
 ```
-audio_signal: audio signal [number_samples,1]
-sample_rate: sample rate in Hz
-number_filters: number of filters
-number_coefficients: number of coefficients (without the 0th coefficient)
-audio_mfcc: audio MFCCs [number_times,number_coefficients]
+audio_mfcc = zaf.mfcc(audio_signal, sampling_frequency, number_filters, number_coefficients)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    sampling_frequency: sampling frequency in Hz
+    number_filters: number of filters
+    number_coefficients: number of coefficients (without the 0th coefficient)
+Output:
+    audio_mfcc: audio MFCCs (number_times, number_coefficients)
 ```
 
-Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+#### Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+
 ```
 % Audio signal averaged over its channels and sample rate in Hz
 [audio_signal,sample_rate] = audioread('audio_file.wav');
@@ -374,7 +376,7 @@ Output:
     audio_dct: audio DCT (number_frequencies,)
 ```
 
-Example: Compute the 4 different DCTs and compare them to Matlab's DCTs.
+#### Example: Compute the 4 different DCTs and compare them to Matlab's DCTs.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -430,7 +432,7 @@ Output:
     audio_dst: audio DST (number_frequencies,)
 ```
 
-Example: Compute the 4 different DSTs and compare their respective inverses with the original audio.
+#### Example: Compute the 4 different DSTs and compare their respective inverses with the original audio.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -486,7 +488,7 @@ Output:
     audio_mdct: audio MDCT (number_frequencies, number_times)
 ```
 
-Example: Compute and display the MDCT as used in the AC-3 audio coding format.
+#### Example: Compute and display the MDCT as used in the AC-3 audio coding format.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
@@ -535,7 +537,7 @@ Output:
     audio_signal: audio signal (number_samples,)
 ```
 
-Example: Verify that the MDCT is perfectly invertible.
+#### Example: Verify that the MDCT is perfectly invertible.
 
 ```
 % Audio file averaged over the channels and sample rate in Hz
