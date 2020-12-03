@@ -49,7 +49,7 @@ Output:
     audio_stft: audio STFT (window_length, number_frames)
 ```
 
-Example: Compute and display the spectrogram from an audio file.
+#### Example: Compute and display the spectrogram from an audio file.
 
 ```
 % Audio signal averaged over its channels and sample rate in Hz
@@ -105,7 +105,7 @@ Output:
     audio_signal: audio signal (number_samples,)
 ```
 
-Example: Estimate the center and the sides from a stereo audio file.
+#### Example: Estimate the center and the sides from a stereo audio file.
 
 ```
 % Stereo signal and sample rate in Hz
