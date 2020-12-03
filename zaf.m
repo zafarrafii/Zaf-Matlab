@@ -25,82 +25,52 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/02/20
+    %   12/03/20
     
     methods (Static = true)
         
         function audio_stft = stft(audio_signal,window_function,step_length)
-            % stft Compute the short-time Fourier transform (STFT)
+            % stft Compute the short-time Fourier transform (STFT).
             %   audio_stft = zaf.stft(audio_signal,window_function,step_length)
             %   
-            %   Arguments:
+            %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
             %       window_function: window function [window_length,1]
             %       step_length: step length in samples
+            %   Output:
             %       audio_stft: audio STFT [window_length,number_frames]
             %   
-            %   Example: compute and display the spectrogram of an audio file
-            %       % Audio signal averaged over its channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
-            %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % Window duration in seconds (audio is stationary around 40 milliseconds)
-            %       window_duration = 0.04;
-            %       
-            %       % Window length in samples (power of 2 for fast FFT and constant overlap-add (COLA))
-            %       window_length = 2^nextpow2(window_duration*sample_rate);
-            %       
-            %       % Window function (periodic Hamming window for COLA)
-            %       window_function = hamming(window_length,'periodic');
-            %       
-            %       % Step length in samples (half the window length for COLA)
-            %       step_length = window_length/2;
-            %       
-            %       % Magnitude spectrogram (without the DC component and the mirrored frequencies)
-            %       audio_stft = zaf.stft(audio_signal,window_function,step_length);
-            %       audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
-            %       
-            %       % Spectrogram displayed in dB, s, and kHz
-            %       figure
-            %       imagesc(db(audio_spectrogram))
-            %       axis xy
-            %       colormap(jet)
-            %       title('Spectrogram (dB)')
-            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
-            %       yticklabels(1:sample_rate/2*1e-3)
-            %       ylabel('Frequency (kHz)')
-            %       set(gca,'FontSize',30)
-            %
-            %   See also fft, zaf.istft, spectrogram
+            %   Example: Compute and display the spectrogram from an audio file.
+            % 
             
-            % Number of samples and window length
+            % Get the number of samples and the window length in samples
             number_samples = length(audio_signal);
             window_length = length(window_function);
             
-            % Number of time frames
-            number_times = ceil((window_length-step_length+number_samples)/step_length);
+            % Derive the zero-padding length at the start and at the end of the signal to center the windows
+            padding_length = floor(window_length/2);
             
-            % Zero-padding at the start and end to center the windows
-            audio_signal = [zeros(window_length-step_length,1);audio_signal; ...
-                zeros(number_times*step_length-number_samples,1)];
+            % Compute the number of time frames given the zero-padding at the start and at the end of the signal
+            number_times = ceil(((number_samples+2*padding_length)-window_length)/step_length)+1;
+            
+            % Zero-pad the start and the end of the signal to center the windows
+            audio_signal = [zeros(padding_length,1);audio_signal; ...
+                zeros((number_times*step_length+(window_length-step_length)-padding_length)-number_samples,1)];
             
             % Initialize the STFT
             audio_stft = zeros(window_length,number_times);
             
             % Loop over the time frames
-            for time_index = 1:number_times
+            i = 0;
+            for j = 1:number_times
                 
                 % Window the signal
-                sample_index = (time_index-1)*step_length;
-                audio_stft(:,time_index) ...
-                    = audio_signal(1+sample_index:window_length+sample_index).*window_function;
+                audio_stft(:,j) = audio_signal(i+1:i+window_length).*window_function;
+                i = i+step_length;
                 
             end
             
-            % Fourier transform of the frames
+            % Compute the Fourier transform of the frames using the FFT
             audio_stft = fft(audio_stft);
             
         end
@@ -899,6 +869,53 @@
             
             % Remove the pre and post zero-padding
             audio_signal = audio_signal(number_frequencies+1:end-number_frequencies);
+            
+        end
+        
+        function im = specshow(audio_spectrogram, number_samples, sampling_frequency, xtick_step, ytick_step)
+            % specshow Display a spectrogram in dB, seconds, and Hz.
+            %   zaf.specshow(audio_spectrogram, number_samples, sampling_frequency, xtick_step, ytick_step)
+            %   
+            %   Inputs:
+            %       audio_spectrogram: audio spectrogram (without DC and mirrored frequencies) [number_frequencies, number_times] [number_samples,1]
+            %       number_samples: number of samples from the original signal
+            %       sampling_frequency: sampling frequency from the original signal in Hz
+            %       xtick_step: step for the x-axis ticks in seconds (default: 1 second)
+            %       ytick_step: step for the y-axis ticks in Hz (default: 1000 Hz)
+            
+            % Set the default values for xtick_step and ytick_step
+            if nargin <= 3
+                xtick_step = 1;
+                ytick_step = 1000;
+            end
+            
+            % Get the number of frequency channels and time frames
+            [number_frequencies,number_times] = size(audio_spectrogram);
+            
+            % Derive the number of Hertz and seconds
+            number_hertz = sampling_frequency/2;
+            number_seconds = number_samples/sampling_frequency;
+            
+            % Derive the number of time frames per second and the number of frequency channels per Hz
+            time_resolution = number_times/number_seconds;
+            frequency_resolution = number_frequencies/number_hertz;
+            
+            % Prepare the tick locations and labels for the x-axis
+            xtick_locations = xtick_step*time_resolution:xtick_step*time_resolution:number_times;
+            xtick_labels = xtick_step:xtick_step:number_seconds;
+            
+            % Prepare the tick locations and labels for the y-axis
+            ytick_locations = ytick_step*frequency_resolution:ytick_step*frequency_resolution:number_frequencies;
+            ytick_labels = ytick_step:ytick_step:number_hertz;
+            
+            % Display the spectrogram in dB, seconds, and Hz
+            im = imagesc(db(audio_spectrogram));
+            axis xy
+            colormap(jet)
+            xticks(xtick_locations)
+            xticklabels(xtick_labels)
+            yticks(ytick_locations)
+            yticklabels(ytick_labels)
             
         end
         
