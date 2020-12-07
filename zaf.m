@@ -25,7 +25,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/03/20
+    %   12/06/20
     
     methods (Static = true)
         
@@ -872,12 +872,12 @@
             
         end
         
-        function im = specshow(audio_spectrogram, number_samples, sampling_frequency, xtick_step, ytick_step)
+        function specshow(audio_spectrogram, number_samples, sampling_frequency, xtick_step, ytick_step)
             % specshow Display a spectrogram in dB, seconds, and Hz.
             %   zaf.specshow(audio_spectrogram, number_samples, sampling_frequency, xtick_step, ytick_step)
             %   
             %   Inputs:
-            %       audio_spectrogram: audio spectrogram (without DC and mirrored frequencies) [number_frequencies, number_times] [number_samples,1]
+            %       audio_spectrogram: audio spectrogram (without DC and mirrored frequencies) [number_frequencies, number_times]
             %       number_samples: number of samples from the original signal
             %       sampling_frequency: sampling frequency from the original signal in Hz
             %       xtick_step: step for the x-axis ticks in seconds (default: 1 second)
@@ -909,7 +909,7 @@
             ytick_labels = ytick_step:ytick_step:number_hertz;
             
             % Display the spectrogram in dB, seconds, and Hz
-            im = imagesc(db(audio_spectrogram));
+            imagesc(db(audio_spectrogram))
             axis xy
             colormap(jet)
             xticks(xtick_locations)
