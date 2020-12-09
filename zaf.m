@@ -41,7 +41,33 @@
             %       audio_stft: audio STFT [window_length,number_frames]
             %   
             %   Example: Compute and display the spectrogram from an audio file.
-            % 
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
+            %       audio_signal = mean(audio_signal,2);
+            %
+            %       % Set the window duration in seconds (audio is stationary around 40 milliseconds)
+            %       window_duration = 0.04;
+            %
+            %       % Derive the window length in samples (use powers of 2 for faster FFT and constant overlap-add (COLA))
+            %       window_length = 2^nextpow2(window_duration*sampling_frequency);
+            %
+            %       % Compute the window function (periodic Hamming window for COLA)
+            %       window_function = hamming(window_length,'periodic');
+            %
+            %       % Set the step length in samples (half of the window length for COLA)
+            %       step_length = window_length/2;
+            %
+            %       % Compute the STFT
+            %       audio_stft = zaf.stft(audio_signal,window_function,step_length);
+            %
+            %       % Derive the magnitude spectrogram (without the DC component and the mirrored frequencies)
+            %       audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+            %
+            %       % Display the spectrogram in dB, seconds, and Hz
+            %       xtick_step = 1;
+            %       ytick_step = 1000;
+            %       zaf.specshow(audio_spectrogram, length(audio_signal), sampling_frequency, xtick_step, ytick_step);
+            %       title('Spectrogram (dB)')
             
             % Get the number of samples and the window length in samples
             number_samples = length(audio_signal);
@@ -76,13 +102,14 @@
         end
         
         function audio_signal = istft(audio_stft,window_function,step_length)
-            % istft Inverse short-time Fourier transform (STFT)
-            %   audio_signal = zaf.istft(audio_stft,window_function,step_length);
+            % istft Compute the inverse short-time Fourier transform (STFT).
+            %   audio_signal = zaf.istft(audio_stft,window_function,step_length)
             %   
-            %   Arguments:
+            %   Inputs:
             %       audio_stft: audio STFT [window_length,number_frames]
             %       window_function: window function [window_length,1]
             %       step_length: step length in samples
+            %   Output:
             %       audio_signal: audio signal [number_samples,1]
             %   
             %   Example: Estimate the center and sides signals of a stereo audio file
