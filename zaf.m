@@ -278,7 +278,7 @@
         end
         
         function audio_spectrogram = cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel)
-            % cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
+            % cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel.
             %   audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
             %   
             %   Inputs:
@@ -338,66 +338,39 @@
             
         end
         
-        function audio_chromagram = cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel)
-            % cqtchromagram Constant-Q transform (CQT) chromagram using a kernel
-            %   audio_chromagram = zaf.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
+        function audio_chromagram = cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
+            % cqtchromagram Compute the constant-Q transform (CQT) chromagram using a kernel.
+            %   audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
             %   
-            %   Arguments:
+            %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
-            %       sample_rate: sample rate in Hz
+            %       sampling_frequency: sample frequency in Hz
             %       time_resolution: time resolution in number of time frames per second
             %       frequency_resolution: frequency resolution in number of frequency channels per semitones
             %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
+            %   Output:
             %       audio_chromagram: audio chromagram [number_chromas,number_times]
             %   
-            %   Example: Compute and display the CQT chromagram
-            %       % Audio file averaged over the channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
-            %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % CQT kernel
-            %       frequency_resolution = 2;
-            %       minimum_frequency = 55;
-            %       maximum_frequency = 3520;
-            %       cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
-            %       
-            %       % CQT chromagram
-            %       time_resolution = 25;
-            %       audio_chromagram = zaf.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
-            %       
-            %       % CQT chromagram displayed in dB, s, and chromas
-            %       figure
-            %       imagesc(db(audio_chromagram))
-            %       axis xy
-            %       colormap(jet)
-            %       title('CQT chromagram (dB)')
-            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       yticks(1:frequency_resolution:12*frequency_resolution)
-            %       yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
-            %       ylabel('Chroma')
-            %       set(gca,'FontSize',30)
-            %
-            %   See also zaf.cqtkernel, zaf.cqtspectrogram
+            %   Example: Compute and display the CQT chromagram.
+
             
-            % CQT spectrogram
-            audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+            % Compute the CQT spectrogram
+            audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             
-            % Number of frequency channels and time frames
+            % Get the number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_spectrogram);
             
-            % Number of chroma bins
+            % Derive the number of chroma channels
             number_chromas = 12*frequency_resolution;
             
             % Initialize the chromagram
             audio_chromagram = zeros(number_chromas,number_times);
             
             % Loop over the chroma bins
-            for chroma_index = 1:number_chromas
+            for i = 1:number_chromas
                 
                 % Sum the energy of the frequency channels for every chroma
-                audio_chromagram(chroma_index,:) = sum(audio_spectrogram(chroma_index:number_chromas:number_frequencies,:),1);
+                audio_chromagram(i,:) = sum(audio_spectrogram(i:number_chromas:number_frequencies,:),1);
                 
             end
             
@@ -1001,6 +974,37 @@
             
         end
         
+        function cqtchromshow(audio_chromagram, time_resolution, xtick_step)
+            % cqtchromshow Display a CQT chromagram in seconds.
+            %   zaf.cqtchromshow(audio_chromagram, time_resolution, xtick_step)
+            %   
+            %   Inputs:
+            %       audio_chromagram: CQT audio chromagram [number_chromas, number_times]
+            %       time_resolution: time resolution in number of time frames per second
+            %       xtick_step: step for the x-axis ticks in seconds (default: 1 second)
+            
+            % Set the default values for xtick_step
+            if nargin <= 3
+                xtick_step = 1;
+            end
+            
+            % Get the number of time frames
+            number_times = size(audio_chromagram,2);
+            
+            % Prepare the tick locations and labels for the x-axis
+            xtick_locations = xtick_step*time_resolution:xtick_step*time_resolution:number_times;
+            xtick_labels = xtick_step:xtick_step:number_times/time_resolution;
+            
+            % Display the chromagram in seconds
+            imagesc(audio_chromagram)
+            axis xy
+            colormap(jet)
+            xticks(xtick_locations)
+            xticklabels(xtick_labels)
+            xlabel('Time (s)')
+            ylabel('Chroma')
+            
+        end
         
     end
 end
