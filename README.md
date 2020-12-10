@@ -176,27 +176,26 @@ Output:
 #### Example: Compute and display the CQT kernel.
 
 ```
-% CQT kernel parameters
-sample_rate = 44100;
+% Set the parameters for the CQT kernel
+sampling_frequency = 44100;
 frequency_resolution = 2;
 minimum_frequency = 55;
-maximum_frequency = sample_rate/2;
+maximum_frequency = sampling_frequency/2;
 
-% CQT kernel
-cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+% Compute the CQT kernel
+cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
-% Magnitude CQT kernel displayed
+% Display the magnitude CQT kernel
 figure
 imagesc(abs(cqt_kernel))
 axis xy
 colormap(jet)
 title('Magnitude CQT kernel')
 xlabel('FFT length')
-ylabel('CQT frequency')
-set(gca,'FontSize',30)
+% ylabel('CQT frequency')
 ```
 
-<img src="images/matlab/cqtkernel.png" width="1000">
+<img src="images/cqtkernel.png" width="1000">
 
 
 ### cqtspectrogram
