@@ -113,57 +113,7 @@
             %       audio_signal: audio signal [number_samples,1]
             %   
             %   Example: Estimate the center and sides signals from a stereo audio file.
-            %       % Read the (stereo) audio signal with its sampling frequency in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
-            % 
-            %       % Set the parameters for the STFT
-            %       window_duration = 0.04;
-            %       window_length = 2^nextpow2(window_duration*sample_rate);
-            %       window_function = hamming(window_length,'periodic');
-            %       step_length = window_length/2;
-            % 
-            %       % Compute the STFTs for the left and right channels
-            %       audio_stft1 = zaf.stft(audio_signal(:,1),window_function,step_length);
-            %       audio_stft2 = zaf.stft(audio_signal(:,2),window_function,step_length);
-            % 
-            %       % Derive the magnitude spectrograms (with DC component) for the left and right channels
-            %       audio_spectrogram1 = abs(audio_stft1(1:window_length/2+1,:));
-            %       audio_spectrogram2 = abs(audio_stft2(1:window_length/2+1,:));
-            % 
-            %       % Estimate the time-frequency masks for the left and right channels for the center
-            %       center_mask1 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram1;
-            %       center_mask2 = min(audio_spectrogram1,audio_spectrogram2)./audio_spectrogram2;
-            % 
-            %       % Derive the STFTs for the left and right channels for the center (with mirrored frequencies)
-            %       center_stft1 = [center_mask1;center_mask1(window_length/2:-1:2,:)].*audio_stft1;
-            %       center_stft2 = [center_mask2;center_mask2(window_length/2:-1:2,:)].*audio_stft2;
-            % 
-            %       % Synthesize the signals for the left and right channels for the center
-            %       center_signal1 = zaf.istft(center_stft1,window_function,step_length);
-            %       center_signal2 = zaf.istft(center_stft2,window_function,step_length);
-            % 
-            %       % Derive the final stereo center and sides signals
-            %       center_signal = [center_signal1,center_signal2];
-            %       center_signal = center_signal(1:length(audio_signal),:);
-            %       sides_signal = audio_signal-center_signal;
-            % 
-            %       % Write the center and sides signals
-            %       audiowrite('center_signal.wav',center_signal,sample_rate);
-            %       audiowrite('sides_signal.wav',sides_signal,sample_rate);
-            % 
-            %       % Display the original, center, and sides signals in seconds
-            %       xtick_step = 1;
-            %       figure
-            %       subplot(3,1,1)
-            %       zaf.sigplot(audio_signal, sampling_frequency, xtick_step)
-            %       ylim([-1,1]), title("Original signal")
-            %       subplot(3,1,2)
-            %       zaf.sigplot(center_signal, sampling_frequency, xtick_step)
-            %       ylim([-1,1]), title("Center signal")
-            %       subplot(3,1,3)
-            %       zaf.sigplot(sides_signal, sampling_frequency, xtick_step)
-            %       ylim([-1,1]), title("Sides signal")
-
+            
             % Get the window length in samples and the number of time frames
             [window_length,number_times] = size(audio_stft);
             
@@ -196,8 +146,8 @@
         end
         
         function cqt_kernel = cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency)
-            % cqtkernel Compute the constant-Q transform (CQT) kernel.
-            %   cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency)
+            % cqtkernel Constant-Q transform (CQT) kernel
+            %   cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
             %   
             %   Arguments:
             %       sample_rate: sample rate in Hz
@@ -901,28 +851,45 @@
             %   zaf.sigplot(audio_signal, sampling_frequency, xtick_step)
             %   
             %   Inputs:
-            %       audio_signal: audio signal [number_samples, number_channels]
+            %       audio_signal: audio spectrogram (without DC and mirrored frequencies) [number_frequencies, number_times]
+            %       number_samples: number of samples from the original signal
             %       sampling_frequency: sampling frequency from the original signal in Hz
             %       xtick_step: step for the x-axis ticks in seconds (default: 1 second)
+            %       ytick_step: step for the y-axis ticks in Hz (default: 1000 Hz)
             
-            % Set the default values for xtick_step
+            % Set the default values for xtick_step and ytick_step
             if nargin <= 3
                 xtick_step = 1;
+                ytick_step = 1000;
             end
             
-            % Get the number of samples
-            number_samples = size(audio_signal,1);
+            % Get the number of frequency channels and time frames
+            [number_frequencies,number_times] = size(audio_spectrogram);
+            
+            % Derive the number of Hertz and seconds
+            number_hertz = sampling_frequency/2;
+            number_seconds = number_samples/sampling_frequency;
+            
+            % Derive the number of time frames per second and the number of frequency channels per Hz
+            time_resolution = number_times/number_seconds;
+            frequency_resolution = number_frequencies/number_hertz;
             
             % Prepare the tick locations and labels for the x-axis
-            xtick_locations = xtick_step*sampling_frequency:xtick_step*sampling_frequency:number_samples;
-            xtick_labels = xtick_step:xtick_step:number_samples/sampling_frequency;
+            xtick_locations = xtick_step*time_resolution:xtick_step*time_resolution:number_times;
+            xtick_labels = xtick_step:xtick_step:number_seconds;
             
-            % Plot the signal in seconds
-            plot(audio_signal)
-            xlim([0,number_samples])
+            % Prepare the tick locations and labels for the y-axis
+            ytick_locations = ytick_step*frequency_resolution:ytick_step*frequency_resolution:number_frequencies;
+            ytick_labels = ytick_step:ytick_step:number_hertz;
+            
+            % Display the spectrogram in dB, seconds, and Hz
+            imagesc(db(audio_spectrogram))
+            axis xy
+            colormap(jet)
             xticks(xtick_locations)
             xticklabels(xtick_labels)
-            xlabel('Time (s)')
+            yticks(ytick_locations)
+            yticklabels(ytick_labels)
             
         end
         
@@ -970,8 +937,6 @@
             xticklabels(xtick_labels)
             yticks(ytick_locations)
             yticklabels(ytick_labels)
-            xlabel('Time (s)')
-            ylabel('Frequency (Hz)')
             
         end
         
