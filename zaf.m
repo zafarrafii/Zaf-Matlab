@@ -199,91 +199,84 @@
             % cqtkernel Compute the constant-Q transform (CQT) kernel.
             %   cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency)
             %   
-            %   Arguments:
-            %       sample_rate: sample rate in Hz
+            %   Inputs:
+            %       sampling_frequency: sample frequency in Hz
             %       frequency_resolution: frequency resolution in number of frequency channels per semitone
             %       minimum_frequency: minimum frequency in Hz
             %       maximum_frequency: maximum frequency in Hz
             %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
             %   
-            %   Example: Compute and display the CQT kernel
-            %       % CQT kernel parameters
-            %       sample_rate = 44100;
+            %   Example: Compute and display the CQT kernel.
+            %       % Set the parameters for the CQT kernel
+            %       sampling_frequency = 44100;
             %       frequency_resolution = 2;
             %       minimum_frequency = 55;
-            %       maximum_frequency = sample_rate/2;
-            %       
-            %       % CQT kernel
-            %       cqt_kernel = zaf.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
-            %       
-            %       % Magnitude CQT kernel displayed
+            %       maximum_frequency = sampling_frequency/2;
+            % 
+            %       % Compute the CQT kernel
+            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
+            % 
+            %       % Display the magnitude CQT kernel
             %       figure
             %       imagesc(abs(cqt_kernel))
             %       axis xy
             %       colormap(jet)
             %       title('Magnitude CQT kernel')
             %       xlabel('FFT length')
-            %       ylabel('CQT frequency')
-            %       set(gca,'FontSize',30)
-            %
-            %   See also zaf.cqt, fft
-            
-            % Number of frequency channels per octave
+            %       % ylabel('CQT frequency')
+
+            % Derive the umber of frequency channels per octave
             octave_resolution = 12*frequency_resolution;
             
-            % Constant ratio of frequency to resolution (= fk/(fk+1-fk))
+            % Compute the constant ratio of frequency to resolution (= fk/(fk+1-fk))
             quality_factor = 1/(2^(1/octave_resolution)-1);
             
-            % Number of frequency channels for the CQT
+            % Compute the number of frequency channels for the CQT
             number_frequencies = round(octave_resolution*log2(maximum_frequency/minimum_frequency));
             
-            % Window length for the FFT (= window length of the minimum 
-            % frequency = longest window)
+            % Compute the window length for the FFT (= longest window for the minimum frequency)
             fft_length = 2^nextpow2(quality_factor*sample_rate/minimum_frequency);
             
-            % Initialize the kernel
+            % Initialize the CQT kernel
             cqt_kernel = zeros(number_frequencies,fft_length);
             
             % Loop over the frequency channels
-            for frequency_index = 1:number_frequencies
+            for i = 1:number_frequencies
                 
-                % Frequency value (in Hz)
-                frequency_value = minimum_frequency*2^((frequency_index-1)/octave_resolution);
+                % Derive the frequency value in Hz
+                frequency_value = minimum_frequency*2^((i-1)/octave_resolution);
                 
-                % Window length (nearest odd value because the complex 
-                % exponential will have an odd length, in samples)
+                % Compute the window length in samples (nearest odd value to center the temporal kernel on 0)
                 window_length = 2*round(quality_factor*sample_rate/frequency_value/2)+1;
                 
-                % Temporal kernel (without zero-padding, odd and symmetric)
+                % Compute the temporal kernel for the current frequency (odd and symmetric)
                 temporal_kernel = hamming(window_length,'symmetric')' ... 
                     .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
                 
-                % Pre zero-padding to center FFTs (fft does post zero-
-                % padding; temporal kernel still odd but almost symmetric)
-                temporal_kernel = cat(2,zeros(1,(fft_length-window_length+1)/2),temporal_kernel);
+                % Derive the pad width to center the temporal kernels
+                pad_width = (fft_length-window_length+1)/2;
                 
-                % Spectral kernel (mostly real because temporal kernel
-                % almost symmetric)
-                spectral_kernel = fft(temporal_kernel,fft_length);
-                
-                % Save the spectral kernels
-                cqt_kernel(frequency_index,:) = spectral_kernel;
+                % Save the current temporal kernel at the center
+                %(the zero-padded temporal kernels are not perfectly symmetric anymore because of the even length here)
+                cqt_kernel(i,pad_width+1:pad_width+window_length) = temporal_kernel;
                 
             end
             
-            % Energy threshold for making the kernel sparse
-            energy_threshold = 0.01;
+            % Derive the spectral kernels by taking the FFT of the temporal kernels
+            % (the spectral kernels are almost real because the temporal kernels are almost symmetric)
+             cqt_kernel = fft(cqt_kernel,[],2);
             
-            % Make the CQT kernel sparser
-            cqt_kernel(abs(cqt_kernel)<energy_threshold) = 0;
+            % Make the CQT kernel sparser by zeroing magnitudes below a threshold
+            cqt_kernel(abs(cqt_kernel)<0.01) = 0;
             
             % Make the CQT kernel sparse
             cqt_kernel = sparse(cqt_kernel);
             
-            % From Parseval's theorem
+            % Get the final CQT kernel by using Parseval's theorem
             cqt_kernel = conj(cqt_kernel)/fft_length;
             
         end
+        
         
         function audio_spectrogram = cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel)
             % cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel
