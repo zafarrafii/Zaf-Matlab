@@ -260,36 +260,27 @@ Output:
 #### Example: Compute and display the CQT chromagram.
 
 ```
-% Audio file averaged over the channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% CQT kernel
+% Compute the CQT kernel using some parameters
 frequency_resolution = 2;
 minimum_frequency = 55;
 maximum_frequency = 3520;
-cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
-% CQT chromagram
+% Compute the CQT chromagram
 time_resolution = 25;
-audio_chromagram = z.cqtchromagram(audio_signal,sample_rate,time_resolution,frequency_resolution,cqt_kernel);
+audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
 
-% CQT chromagram displayed in dB, s, and chromas
-figure
-imagesc(db(audio_chromagram))
-axis xy
-colormap(jet)
-title('CQT chromagram (dB)')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-yticks(1:frequency_resolution:12*frequency_resolution)
-yticklabels({'A','A#','B','C','C#','D','D#','E','F','F#','G','G#'})
-ylabel('Chroma')
-set(gca,'FontSize',30)
+% Display the CQT chromagram in seconds
+xtick_step = 1;
+zaf.cqtchromshow(audio_chromagram, time_resolution, xtick_step)
+title('CQT chromagram')
 ```
 
-<img src="images/matlab/cqtchromagram.png" width="1000">
+<img src="images/cqtchromagram.png" width="1000">
 
 
 ### mfcc
