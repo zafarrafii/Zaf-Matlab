@@ -302,12 +302,12 @@
             % 
             %       % Compute the (magnitude) CQT spectrogram using the kernel
             %       time_resolution = 25;
-            %       audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+            %     audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             % 
-            %       % Display the CQT spectrogram in dB, seconds, and Hz
-            %       xtick_step = 1;
-            %       zaf.cqtspecshow(audio_spectrogram,time_resolution, frequency_resolution,minimum_frequency,xtick_step);
-            %       title('CQT spectrogram (dB)')
+            %     % Display the CQT spectrogram in dB, seconds, and Hz
+            %     xtick_step = 1;
+            %     zaf.cqtspecshow(audio_spectrogram,time_resolution, frequency_resolution,minimum_frequency,xtick_step);
+            %     title('CQT spectrogram (dB)')
             
             % Derive the number of time samples per time frame
             step_length = round(sampling_frequency/time_resolution);
