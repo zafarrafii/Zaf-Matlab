@@ -192,7 +192,7 @@ axis xy
 colormap(jet)
 title('Magnitude CQT kernel')
 xlabel('FFT length')
-% ylabel('CQT frequency')
+ylabel('CQT frequency')
 ```
 
 <img src="images/cqtkernel.png" width="1000">
