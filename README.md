@@ -217,36 +217,27 @@ Output:
 #### Example: Compute and display the CQT spectrogram.
 
 ```
-% Audio file averaged over the channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% CQT kernel
+% Compute the CQT kernel using some parameters
 frequency_resolution = 2;
 minimum_frequency = 55;
 maximum_frequency = 3520;
-cqt_kernel = z.cqtkernel(sample_rate,frequency_resolution,minimum_frequency,maximum_frequency);
+cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
-% CQT spectrogram
+% Compute the (magnitude) CQT spectrogram using the kernel
 time_resolution = 25;
-audio_spectrogram = z.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
 
-% CQT spectrogram displayed in dB, s, and semitones
-figure
-imagesc(db(audio_spectrogram))
-axis xy
-colormap(jet)
+% Display the CQT spectrogram in dB, seconds, and Hz
+xtick_step = 1;
+zaf.cqtspecshow(audio_spectrogram,time_resolution, frequency_resolution,minimum_frequency,xtick_step);
 title('CQT spectrogram (dB)')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*time_resolution))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-yticks(1:12*frequency_resolution:6*12*frequency_resolution)
-yticklabels({'A1 (55 Hz)','A2 (110 Hz)','A3 (220 Hz)','A4 (440 Hz)','A5 (880 Hz)','A6 (1760 Hz)'})
-ylabel('Frequency (semitones)')
-set(gca,'FontSize',30)
 ```
 
-<img src="images/matlab/cqtspectrogram.png" width="1000">
+<img src="images/cqtspectrogram.png" width="1000">
 
 
 ### cqtchromagram
