@@ -299,40 +299,36 @@ Output:
     audio_mfcc: audio MFCCs (number_times, number_coefficients)
 ```
 
-#### Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs
+#### Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
 
 ```
-% Audio signal averaged over its channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav')
 audio_signal = mean(audio_signal,2);
 
-% MFCCs for a given number of filters and coefficients
+% Compute the MFCCs with a given number of filters and coefficients
 number_filters = 40;
 number_coefficients = 20;
-audio_mfcc = z.mfcc(audio_signal,sample_rate,number_filters,number_coefficients);
+audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients);
 
-% Delta and delta-delta MFCCs
-audio_deltamfcc = diff(audio_mfcc,1,2);
-audio_deltadeltamfcc = diff(audio_deltamfcc,1,2);
+% Compute the delta and delta-delta MFCCs
+audio_dmfcc = diff(audio_mfcc,1,2);
+audio_ddmfcc = diff(audio_dmfcc,1,2);
 
-% MFCCs, delta MFCCs, and delta-delta MFCCs displayed in s
-step_length = (2^nextpow2(0.04*sample_rate))/2;
-figure
-subplot(3,1,1), plot(audio_mfcc'), axis tight, title('MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,2), plot(audio_deltamfcc'), axis tight, title('Delta MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,3), plot(audio_deltadeltamfcc'), axis tight, title('Delta-delta MFCCs')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/step_length))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
+% Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
+time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
+
+% Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
+xtick_step = 1;
+subplot(3,1,1)
+zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
+subplot(3,1,2)
+zaf.sigplot(audio_dmfcc',time_resolution,xtick_step), title('Delta MFCCs')
+subplot(3,1,3)
+zaf.sigplot(audio_ddmfcc',time_resolution,xtick_step), title('Delta MFCCs')
 ```
 
-<img src="images/matlab/mfcc.png" width="1000">
+<img src="images/mfcc.png" width="1000">
 
 
 ### dct
