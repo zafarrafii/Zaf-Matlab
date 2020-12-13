@@ -25,7 +25,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/09/20
+    %   12/12/20
     
     methods (Static = true)
         
@@ -66,6 +66,7 @@
             %       % Display the spectrogram in dB, seconds, and Hz
             %       xtick_step = 1;
             %       ytick_step = 1000;
+            %       figure
             %       zaf.specshow(audio_spectrogram, length(audio_signal), sampling_frequency, xtick_step, ytick_step);
             %       title('Spectrogram (dB)')
             
@@ -306,7 +307,8 @@
             % 
             %       % Display the CQT spectrogram in dB, seconds, and Hz
             %       xtick_step = 1;
-            %       zaf.cqtspecshow(audio_spectrogram,time_resolution, frequency_resolution,minimum_frequency,xtick_step);
+            %       figure
+            %       zaf.cqtspecshow(audio_spectrogram,time_resolution,frequency_resolution,minimum_frequency,xtick_step);
             %       title('CQT spectrogram (dB)')
             
             % Derive the number of time samples per time frame
@@ -352,7 +354,25 @@
             %       audio_chromagram: audio chromagram [number_chromas,number_times]
             %   
             %   Example: Compute and display the CQT chromagram.
-
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
+            %       audio_signal = mean(audio_signal,2);
+            % 
+            %       % Compute the CQT kernel using some parameters
+            %       frequency_resolution = 2;
+            %       minimum_frequency = 55;
+            %       maximum_frequency = 3520;
+            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
+            % 
+            %       % Compute the CQT chromagram
+            %       time_resolution = 25;
+            %       audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
+            % 
+            %       % Display the CQT chromagram in seconds
+            %       xtick_step = 1;
+            %       figure
+            %       zaf.cqtchromshow(audio_chromagram,time_resolution,xtick_step)
+            %       title('CQT chromagram')
             
             % Compute the CQT spectrogram
             audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
@@ -407,6 +427,7 @@
             % 
             %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
             %       xtick_step = 1;
+            %       figure
             %       subplot(3,1,1)
             %       zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
             %       subplot(3,1,2)
@@ -459,121 +480,121 @@
         end
         
         function audio_dct = dct(audio_signal,dct_type)
-            % dct Discrete cosine transform (DCT) using the fast Fourier transform (FFT)
-            %   audio_dct = zaf.dct(audio_signal,dct_type);
+            % dct Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
+            %   audio_dct = zaf.dct(audio_signal,dct_type)
             %   
-            %   Arguments:
-            %       audio_signal: audio signal [number_samples,number_frames]
+            %   Inputs:
+            %       audio_signal: audio signal [number_samples,1]
             %       dct_type: DCT type (1, 2, 3, or 4)
-            %       audio_dct: audio DCT [number_frequencies,number_frames]
+            %   Output:
+            %       audio_dct: audio DCT [number_frequencies,1]
             %   
-            %   Example: Compute the 4 different DCTs and compare them to Matlab's DCTs
-            %       % Audio signal averaged over its channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %   Example: Compute the 4 different DCTs and compare them to MATLAB's DCTs.
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
             %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % Audio signal for a given window length, and one frame
+            % 
+            %       % Get an audio segment for a given window length
             %       window_length = 1024;
-            %       audio_signal = audio_signal(1:window_length,:);
-            %       
-            %       % DCT-I, II, III, and IV
-            %       audio_dct1 = zaf.dct(audio_signal,1);
-            %       audio_dct2 = zaf.dct(audio_signal,2);
-            %       audio_dct3 = zaf.dct(audio_signal,3);
-            %       audio_dct4 = zaf.dct(audio_signal,4);
-            %       
-            %       % Matlab's DCT-I, II, III, and IV
-            %       matlab_dct1 = dct(audio_signal,'Type',1);
-            %       matlab_dct2 = dct(audio_signal,'Type',2);
-            %       matlab_dct3 = dct(audio_signal,'Type',3);
-            %       matlab_dct4 = dct(audio_signal,'Type',4);
-            %       
-            %       % DCT-I, II, III, and IV, Matlab's versions, and errors displayed
+            %       audio_segment = audio_signal(1:window_length);
+            % 
+            %       % Compute the DCT-I, II, III, and IV
+            %       audio_dct1 = zaf.dct(audio_segment,1);
+            %       audio_dct2 = zaf.dct(audio_segment,2);
+            %       audio_dct3 = zaf.dct(audio_segment,3);
+            %       audio_dct4 = zaf.dct(audio_segment,4);
+            % 
+            %       % Compute MATLAB's DCT-I, II, III, and IV
+            %       matlab_dct1 = dct(audio_segment,'Type',1);
+            %       matlab_dct2 = dct(audio_segment,'Type',2);
+            %       matlab_dct3 = dct(audio_segment,'Type',3);
+            %       matlab_dct4 = dct(audio_segment,'Type',4);
+            % 
+            %       % Plot the DCT-I, II, III, and IV, MATLAB's versions, and their differences
             %       figure
-            %       subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(gca,'FontSize',30)
-            %   
-            %   See also dct, fft
+            %       subplot(3,4,1), plot(audio_dct1), xlim([0,window_length]), title('DCT-I')
+            %       subplot(3,4,2), plot(audio_dct2), xlim([0,window_length]), title('DCT-II')
+            %       subplot(3,4,3), plot(audio_dct3), xlim([0,window_length]), title('DCT-III')
+            %       subplot(3,4,4), plot(audio_dct4), xlim([0,window_length]), title('DCT-IV')
+            %       subplot(3,4,5), plot(matlab_dct1), xlim([0,window_length]), title('MATLAB''s DCT-I')
+            %       subplot(3,4,6), plot(matlab_dct2), xlim([0,window_length]), title('MATLAB''s DCT-II')
+            %       subplot(3,4,7), plot(matlab_dct3), xlim([0,window_length]), title('MATLAB''s DCT-III')
+            %       subplot(3,4,8), plot(matlab_dct4), xlim([0,window_length]), title('MATLAB''s DCT-IV')
+            %       subplot(3,4,9), plot(audio_dct1-matlab_dct1), xlim([0,window_length]), title('DCT-I - MATLAB''s DCT-I')
+            %       subplot(3,4,10), plot(audio_dct2-matlab_dct2), xlim([0,window_length]), title('DCT-II - MATLAB''s DCT-II')
+            %       subplot(3,4,11), plot(audio_dct3-matlab_dct3), xlim([0,window_length]), title('DCT-III - MATLAB''s DCT-III')
+            %       subplot(3,4,12), plot(audio_dct4-matlab_dct4), xlim([0,window_length]), title('DCT-IV - MATLAB''s DCT-IV')
             
+            % Check if the DCT type is I, II, III, or IV
             switch dct_type
                 case 1
                     
-                    % Number of samples per frame
-                    window_length = size(audio_signal,1);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
-                    % Pre-processing to make the DCT-I matrix orthogonal
-                    audio_signal([1,window_length],:) = audio_signal([1,window_length],:)*sqrt(2);
+                    % Pre-process the signal to make the DCT-I matrix orthogonal
+                    audio_signal([1,end]) = audio_signal([1,end])*sqrt(2);
 
                     % Compute the DCT-I using the FFT
-                    audio_dct = [audio_signal;audio_signal(window_length-1:-1:2,:)];
+                    audio_dct = [audio_signal;audio_signal(end-1:-1:2)];
                     audio_dct = fft(audio_dct);
-                    audio_dct = real(audio_dct(1:window_length,:))/2;
+                    audio_dct = real(audio_dct(1:window_length))/2;
                     
-                    % Post-processing to make the DCT-I matrix orthogonal
-                    audio_dct([1,window_length],:) = audio_dct([1,window_length],:)/sqrt(2);
+                    % Post-process the results to make the DCT-I matrix orthogonal
+                    audio_dct([1,end]) = audio_dct([1,end])/sqrt(2);
                     audio_dct = audio_dct*sqrt(2/(window_length-1));
                     
                 case 2
                     
-                    % Number of samples and frames
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
                     % Compute the DCT-II using the FFT
-                    audio_dct = zeros(4*window_length,number_frames);
-                    audio_dct(2:2:2*window_length,:) = audio_signal;
-                    audio_dct(2*window_length+2:2:4*window_length,:) = audio_signal(window_length:-1:1,:);
+                    audio_dct = zeros(4*window_length,1);
+                    audio_dct(2:2:2*window_length) = audio_signal;
+                    audio_dct(2*window_length+2:2:4*window_length) = audio_signal(end:-1:1);
                     audio_dct = fft(audio_dct);
-                    audio_dct = real(audio_dct(1:window_length,:))/2;
+                    audio_dct = real(audio_dct(1:window_length))/2;
 
-                    % Post-processing to make the DCT-II matrix orthogonal
-                    audio_dct(1,:) = audio_dct(1,:)/sqrt(2);
+                    % Post-process the results to make the DCT-II matrix orthogonal
+                    audio_dct(1) = audio_dct(1)/sqrt(2);
                     audio_dct = audio_dct*sqrt(2/window_length);
                     
                 case 3
                     
-                    % Number of samples and frames
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
-                    % Pre-processing to make the DCT-III matrix orthogonal
-                    audio_signal(1,:) = audio_signal(1,:)*sqrt(2);
+                    % Pre-process the signal to make the DCT-III matrix orthogonal
+                    audio_signal(1) = audio_signal(1)*sqrt(2);
                     
                     % Compute the DCT-III using the FFT
-                    audio_dct = zeros(4*window_length,number_frames);
-                    audio_dct(1:window_length,:) = audio_signal;
-                    audio_dct(window_length+2:2*window_length+1,:) = -audio_signal(window_length:-1:1,:);
-                    audio_dct(2*window_length+2:3*window_length,:) = -audio_signal(2:window_length,:);
-                    audio_dct(3*window_length+2:4*window_length,:) = audio_signal(window_length:-1:2,:);
+                    audio_dct = zeros(4*window_length,1);
+                    audio_dct(1:window_length) = audio_signal;
+                    audio_dct(window_length+2:2*window_length+1) = -audio_signal(end:-1:1,:);
+                    audio_dct(2*window_length+2:3*window_length) = -audio_signal(2:end,:);
+                    audio_dct(3*window_length+2:4*window_length) = audio_signal(end:-1:2,:);
                     audio_dct = fft(audio_dct);
-                    audio_dct = real(audio_dct(2:2:2*window_length,:))/4;
+                    audio_dct = real(audio_dct(2:2:2*window_length))/4;
                     
-                    % Post-processing to make the DCT-III matrix orthogonal
+                    % Post-process the results to make the DCT-III matrix orthogonal
                     audio_dct = audio_dct*sqrt(2/window_length);
                     
                 case 4
                     
-                    % Number of samples and frames
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
                     % Compute the DCT-IV using the FFT
-                    audio_dct = zeros(8*window_length,number_frames);
-                    audio_dct(2:2:2*window_length,:) = audio_signal;
-                    audio_dct(2*window_length+2:2:4*window_length,:) = -audio_signal(window_length:-1:1,:);
-                    audio_dct(4*window_length+2:2:6*window_length,:) = -audio_signal;
-                    audio_dct(6*window_length+2:2:8*window_length,:) = audio_signal(window_length:-1:1,:);
+                    audio_dct = zeros(8*window_length,1);
+                    audio_dct(2:2:2*window_length) = audio_signal;
+                    audio_dct(2*window_length+2:2:4*window_length) = -audio_signal(end:-1:1,:);
+                    audio_dct(4*window_length+2:2:6*window_length) = -audio_signal;
+                    audio_dct(6*window_length+2:2:8*window_length) = audio_signal(end:-1:1,:);
                     audio_dct = fft(audio_dct);
-                    audio_dct = real(audio_dct(2:2:2*window_length,:))/4;
+                    audio_dct = real(audio_dct(2:2:2*window_length))/4;
                     
-                    % Post-processing to make the DCT-IV matrix orthogonal
+                    % Post-process the results to make the DCT-IV matrix orthogonal
                     audio_dct = audio_dct*sqrt(2/window_length);
                     
             end
@@ -581,118 +602,119 @@
         end
         
         function audio_dst = dst(audio_signal,dst_type)
-            % dst Discrete sine transform (DST) using the fast Fourier transform (FFT)
-            %   audio_dst = zaf.dst(audio_signal,dst_type);
+            % dst Compute the discrete sine transform (DST) using the fast Fourier transform (FFT).
+            %   audio_dst = zaf.dst(audio_signal,dst_type)
             %   
-            %   Arguments:
-            %       audio_signal: audio signal [number_samples,number_frames]
+            %   Inputs:
+            %       audio_signal: audio signal [number_samples,1]
             %       dst_type: DST type (1, 2, 3, or 4)
-            %       audio_dst: audio DST [number_frequencies,number_frames]
+            %   Outputs:
+            %       audio_dst: audio DST [number_frequencies,1]
             %   
-            %   Example: Compute the 4 different DSTs and compare them to their respective inverses
-            %       % Audio signal averaged over its channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %   Example: Compute the 4 different DSTs and compare their respective inverses with the original audio.
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
             %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % Audio signal for a given window length, and one frame
+            % 
+            %       % Get an audio segment for a given window length
             %       window_length = 1024;
-            %       audio_signal = audio_signal(1:window_length);
-            %       
-            %       % DST-I, II, III, and IV
-            %       audio_dst1 = zaf.dst(audio_signal,1);
-            %       audio_dst2 = zaf.dst(audio_signal,2);
-            %       audio_dst3 = zaf.dst(audio_signal,3);
-            %       audio_dst4 = zaf.dst(audio_signal,4);
-            %       
-            %       % Respective inverses, i.e., DST-I, III, II, and IV
+            %       audio_segment = audio_signal(1:window_length);
+            % 
+            %       % Compute the DST-I, II, III, and IV
+            %       audio_dst1 = zaf.dst(audio_segment,1);
+            %       audio_dst2 = zaf.dst(audio_segment,2);
+            %       audio_dst3 = zaf.dst(audio_segment,3);
+            %       audio_dst4 = zaf.dst(audio_segment,4);
+            % 
+            %       % Compute their respective inverses, i.e., DST-I, II, III, and IV
             %       audio_idst1 = zaf.dst(audio_dst1,1);
             %       audio_idst2 = zaf.dst(audio_dst2,3);
             %       audio_idst3 = zaf.dst(audio_dst3,2);
             %       audio_idst4 = zaf.dst(audio_dst4,4);
-            %       
-            %       % DST-I, II, III, and IV, respective inverses, and errors displayed
+            % 
+            %       % Plot the DST-I, II, III, and IV, their respective inverses, and their differences with the original audio segment
             %       figure
-            %       subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I'), set(gca,'FontSize',30)
-            %       subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III'), set(gca,'FontSize',30)
-            %       subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II'), set(gca,'FontSize',30)
-            %       subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Error'), set(gca,'FontSize',30)
-            %       subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV'), set(gca,'FontSize',30)
-            %       subplot(4,3,12), plot(audio_signal-audio_idst4), axis tight, title('Error'), set(gca,'FontSize',30)
-            %
-            %   See also dct, fft
+            %       subplot(3,4,1), plot(audio_dst1), xlim([0,window_length]), title('DST-I')
+            %       subplot(3,4,2), plot(audio_dst2), xlim([0,window_length]), title('DST-II')
+            %       subplot(3,4,3), plot(audio_dst3), xlim([0,window_length]), title('DST-III')
+            %       subplot(3,4,4), plot(audio_dst4), xlim([0,window_length]), title('DST-IV')
+            %       subplot(3,4,5), plot(audio_idst1), xlim([0,window_length]), title('Inverse DST-I (DST-I)')
+            %       subplot(3,4,6), plot(audio_idst2), xlim([0,window_length]), title('Inverse DST-II (DST-III)')
+            %       subplot(3,4,7), plot(audio_idst3), xlim([0,window_length]), title('Inverse DST-III (DST-II)')
+            %       subplot(3,4,8), plot(audio_idst4), xlim([0,window_length]), title('Inverse DST-IV (DST-IV)')
+            %       subplot(3,4,9), plot(audio_idst1-audio_segment), xlim([0,window_length]), title('Inverse DST-I - audio segment')
+            %       subplot(3,4,10), plot(audio_idst2-audio_segment), xlim([0,window_length]), title('Inverse DST-II - audio segment')
+            %       subplot(3,4,11), plot(audio_idst3-audio_segment), xlim([0,window_length]), title('Inverse DST-III - audio segment')
+            %       subplot(3,4,12), plot(audio_idst4-audio_segment), xlim([0,window_length]), title('Inverse DST-IV - audio segment')
             
+            % Check if the DST type is I, II, III, or IV
             switch dst_type
                 case 1
                     
-                    % Number of samples per frame
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
                     % Compute the DST-I using the FFT
-                    audio_dst = [zeros(1,number_frames);audio_signal; ...
-                        zeros(1,number_frames);-audio_signal(window_length:-1:1,:)];
+                    audio_dst = zeros(2*window_length+2,1);
+                    audio_dst(2:window_length+1) = audio_signal;
+                    audio_dst(window_length+3:end) = -audio_signal(end:-1:1);
                     audio_dst = fft(audio_dst);
-                    audio_dst = -imag(audio_dst(2:window_length+1,:))/2;
+                    audio_dst = -imag(audio_dst(2:window_length+1))/2;
                     
-                    % Post-processing to make the DST-I matrix orthogonal
+                    % Post-process the results to make the DST-I matrix orthogonal
                     audio_dst = audio_dst*sqrt(2/(window_length+1));
                     
                 case 2
                     
-                    % Number of samples per frame
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
                     % Compute the DST-II using the FFT
-                    audio_dst = zeros(4*window_length,number_frames);
-                    audio_dst(2:2:2*window_length,:) = audio_signal;
-                    audio_dst(2*window_length+2:2:4*window_length,:) = -audio_signal(window_length:-1:1,:);
+                    audio_dst = zeros(4*window_length,1);
+                    audio_dst(2:2:2*window_length) = audio_signal;
+                    audio_dst(2*window_length+2:2:4*window_length) = -audio_signal(end:-1:1);
                     audio_dst = fft(audio_dst);
-                    audio_dst = -imag(audio_dst(2:window_length+1,:))/2;
+                    audio_dst = -imag(audio_dst(2:window_length+1))/2;
                     
-                    % Post-processing to make the DST-II matrix orthogonal
-                    audio_dst(window_length,:) = audio_dst(window_length,:)/sqrt(2);
+                    % Post-process the results to make the DST-II matrix orthogonal
+                    audio_dst(end) = audio_dst(end)/sqrt(2);
                     audio_dst = audio_dst*sqrt(2/window_length);
                     
                 case 3
                     
-                    % Number of samples per frame
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
-                    % Pre-processing to make the DST-III matrix orthogonal
-                    audio_signal(window_length,:) = audio_signal(window_length,:)*sqrt(2);
+                    % Pre-process the signal to make the DST-III matrix orthogonal
+                    audio_signal(end) = audio_signal(end)*sqrt(2);
                     
                     % Compute the DST-III using the FFT
-                    audio_dst = zeros(4*window_length,number_frames);
-                    audio_dst(2:window_length+1,:) = audio_signal;
-                    audio_dst(window_length+2:2*window_length,:) = audio_signal(window_length-1:-1:1,:);
-                    audio_dst(2*window_length+2:3*window_length+1,:) = -audio_signal;
-                    audio_dst(3*window_length+2:4*window_length,:) = -audio_signal(window_length-1:-1:1,:);
+                    audio_dst = zeros(4*window_length,1);
+                    audio_dst(2:window_length+1) = audio_signal;
+                    audio_dst(window_length+2:2*window_length) = audio_signal(end-1:-1:1);
+                    audio_dst(2*window_length+2:3*window_length+1) = -audio_signal;
+                    audio_dst(3*window_length+2:4*window_length) = -audio_signal(end-1:-1:1);
                     audio_dst = fft(audio_dst);
-                    audio_dst = -imag(audio_dst(2:2:2*window_length,:))/4;
+                    audio_dst = -imag(audio_dst(2:2:2*window_length))/4;
                     
-                    % Post-processing to make the DST-III matrix orthogonal
+                    % Post-process the results to make the DST-III matrix orthogonal
                     audio_dst = audio_dst*sqrt(2/window_length);
                     
                 case 4
                     
-                    % Number of samples per frame
-                    [window_length,number_frames] = size(audio_signal);
+                    % Get the number of samples
+                    window_length = length(audio_signal);
                     
                     % Compute the DST-IV using the FFT
-                    audio_dst = zeros(8*window_length,number_frames);
-                    audio_dst(2:2:2*window_length,:) = audio_signal;
-                    audio_dst(2*window_length+2:2:4*window_length,:) = audio_signal(window_length:-1:1,:);
-                    audio_dst(4*window_length+2:2:6*window_length,:) = -audio_signal;
-                    audio_dst(6*window_length+2:2:8*window_length,:) = -audio_signal(window_length:-1:1,:);
+                    audio_dst = zeros(8*window_length,1);
+                    audio_dst(2:2:2*window_length) = audio_signal;
+                    audio_dst(2*window_length+2:2:4*window_length) = audio_signal(end:-1:1);
+                    audio_dst(4*window_length+2:2:6*window_length) = -audio_signal;
+                    audio_dst(6*window_length+2:2:8*window_length) = -audio_signal(end:-1:1);
                     audio_dst = fft(audio_dst);
-                    audio_dst = -imag(audio_dst(2:2:2*window_length,:))/4;
+                    audio_dst = -imag(audio_dst(2:2:2*window_length))/4;
                     
-                    % Post-processing to make the DST-IV matrix orthogonal
+                    % Post-process the results to make the DST-IV matrix orthogonal
                     audio_dst = audio_dst*sqrt(2/window_length);
                     
             end
