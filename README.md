@@ -142,7 +142,6 @@ audiowrite('sides_signal.wav',sides_signal,sample_rate);
 
 % Display the original, center, and sides signals in seconds
 xtick_step = 1;
-figure
 subplot(3,1,1)
 zaf.sigplot(audio_signal, sampling_frequency, xtick_step)
 ylim([-1,1]), title("Original signal")
@@ -186,7 +185,6 @@ maximum_frequency = sampling_frequency/2;
 cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
 % Display the magnitude CQT kernel
-figure
 imagesc(abs(cqt_kernel))
 axis xy
 colormap(jet)
