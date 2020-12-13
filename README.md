@@ -349,46 +349,46 @@ Output:
     audio_dct: audio DCT (number_frequencies,)
 ```
 
-#### Example: Compute the 4 different DCTs and compare them to Matlab's DCTs.
+#### Example: Compute the 4 different DCTs and compare them to MATLAB's DCTs.
 
 ```
-% Audio signal averaged over its channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% Audio signal for a given window length, and one frame
+% Get an audio segment for a given window length
 window_length = 1024;
-audio_signal = audio_signal(1:window_length);
+audio_segment = audio_signal(1:window_length);
 
-% DCT-I, II, III, and IV
-audio_dct1 = z.dct(audio_signal,1);
-audio_dct2 = z.dct(audio_signal,2);
-audio_dct3 = z.dct(audio_signal,3);
-audio_dct4 = z.dct(audio_signal,4);
+% Compute the DCT-I, II, III, and IV
+audio_dct1 = zaf.dct(audio_segment,1);
+audio_dct2 = zaf.dct(audio_segment,2);
+audio_dct3 = zaf.dct(audio_segment,3);
+audio_dct4 = zaf.dct(audio_segment,4);
 
-% Matlab's DCT-I, II, III, and IV
-matlab_dct1 = dct(audio_signal,'Type',1);
-matlab_dct2 = dct(audio_signal,'Type',2);
-matlab_dct3 = dct(audio_signal,'Type',3);
-matlab_dct4 = dct(audio_signal,'Type',4);
+% Compute MATLAB's DCT-I, II, III, and IV
+matlab_dct1 = dct(audio_segment,'Type',1);
+matlab_dct2 = dct(audio_segment,'Type',2);
+matlab_dct3 = dct(audio_segment,'Type',3);
+matlab_dct4 = dct(audio_segment,'Type',4);
 
-% DCT-I, II, III, and IV, Matlab's versions, and errors displayed
+% Plot the DCT-I, II, III, and IV, MATLAB's versions, and their differences
 figure
-subplot(4,3,1), plot(audio_dct1), axis tight, title('DCT-I'), set(gca,'FontSize',30)
-subplot(4,3,2), plot(matlab_dct1), axis tight, title('Maltab''s DCT-I'), set(gca,'FontSize',30)
-subplot(4,3,3), plot(audio_dct1-matlab_dct1), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,4), plot(audio_dct2), axis tight, title('DCT-II'), set(gca,'FontSize',30)
-subplot(4,3,5), plot(matlab_dct2),axis tight, title('Maltab''s DCT-II'), set(gca,'FontSize',30)
-subplot(4,3,6), plot(audio_dct2-matlab_dct2), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,7), plot(audio_dct3), axis tight, title('DCT-III'), set(gca,'FontSize',30)
-subplot(4,3,8), plot(matlab_dct3), axis tight, title('Maltab''s DCT-III'), set(gca,'FontSize',30)
-subplot(4,3,9), plot(audio_dct3-matlab_dct3), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,10), plot(audio_dct4), axis tight, title('DCT-IV'), set(gca,'FontSize',30)
-subplot(4,3,11), plot(matlab_dct4), axis tight, title('Maltab''s DCT-IV'), set(gca,'FontSize',30)
-subplot(4,3,12), plot(audio_dct4-matlab_dct4), axis tight, title('Error'), set(gca,'FontSize',30)
+subplot(3,4,1), plot(audio_dct1), xlim([0,window_length]), title('DCT-I')
+subplot(3,4,2), plot(audio_dct2), xlim([0,window_length]), title('DCT-II')
+subplot(3,4,3), plot(audio_dct3), xlim([0,window_length]), title('DCT-III')
+subplot(3,4,4), plot(audio_dct4), xlim([0,window_length]), title('DCT-IV')
+subplot(3,4,5), plot(matlab_dct1), xlim([0,window_length]), title('MATLAB''s DCT-I')
+subplot(3,4,6), plot(matlab_dct2), xlim([0,window_length]), title('MATLAB''s DCT-II')
+subplot(3,4,7), plot(matlab_dct3), xlim([0,window_length]), title('MATLAB''s DCT-III')
+subplot(3,4,8), plot(matlab_dct4), xlim([0,window_length]), title('MATLAB''s DCT-IV')
+subplot(3,4,9), plot(audio_dct1-matlab_dct1), xlim([0,window_length]), title('DCT-I - MATLAB''s DCT-I')
+subplot(3,4,10), plot(audio_dct2-matlab_dct2), xlim([0,window_length]), title('DCT-II - MATLAB''s DCT-II')
+subplot(3,4,11), plot(audio_dct3-matlab_dct3), xlim([0,window_length]), title('DCT-III - MATLAB''s DCT-III')
+subplot(3,4,12), plot(audio_dct4-matlab_dct4), xlim([0,window_length]), title('DCT-IV - MATLAB''s DCT-IV')
 ```
 
-<img src="images/matlab/dct.png" width="1000">
+<img src="images/dct.png" width="1000">
 
 
 ### dst
