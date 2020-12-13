@@ -464,36 +464,29 @@ Output:
 #### Example: Compute and display the MDCT as used in the AC-3 audio coding format.
 
 ```
-% Audio file averaged over the channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
-window_length = 2048;
+% Compute the Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
+window_length = 512;
 alpha_value = 5;
 window_function = kaiser(window_length/2+1,alpha_value*pi);
 window_function2 = cumsum(window_function(1:window_length/2));
-window_function = sqrt([window_function2;window_function2(window_length/2:-1:1)]./sum(window_function));
+window_function = sqrt([window_function2; window_function2(window_length/2:-1:1)]/sum(window_function));
 
-% MDCT
-audio_mdct = z.mdct(audio_signal,window_function);
+% Compute the MDCT
+audio_mdct = zaf.mdct(audio_signal,window_function);
 
-% MDCT displayed in dB, s, and kHz
+% Display the MDCT in dB, seconds, and Hz
+xtick_step = 1;
+ytick_step = 1000;
 figure
-imagesc(db(audio_mdct))
-axis xy
-colormap(jet)
-title('mdct (dB)')
-xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/(window_length/2)))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)')
-yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
-yticklabels(1:sample_rate/2*1e-3)
-ylabel('Frequency (kHz)')
-set(gca,'FontSize',30)
+zaf.specshow(abs(audio_mdct),length(audio_signal),sampling_frequency,xtick_step,ytick_step)
+title('MDCT (dB)')
 ```
 
-<img src="images/matlab/mdct.png" width="1000">
+<img src="images/mdct.png" width="1000">
 
 
 ### imdct
@@ -543,7 +536,7 @@ xticklabels(1:floor(length(audio_signal)/sample_rate))
 xlabel('Time (s)'), set(gca,'FontSize',30)
 ```
 
-<img src="images/matlab/imdct.png" width="1000">
+<img src="images/imdct.png" width="1000">
 
 
 ## examples.ipynb
