@@ -77,6 +77,7 @@ audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
 % Display the spectrogram in dB, seconds, and Hz
 xtick_step = 1;
 ytick_step = 1000;
+figure
 zaf.specshow(audio_spectrogram, length(audio_signal), sampling_frequency, xtick_step, ytick_step);
 title('Spectrogram (dB)')
 ```
@@ -142,6 +143,7 @@ audiowrite('sides_signal.wav',sides_signal,sample_rate);
 
 % Display the original, center, and sides signals in seconds
 xtick_step = 1;
+figure
 subplot(3,1,1)
 zaf.sigplot(audio_signal, sampling_frequency, xtick_step)
 ylim([-1,1]), title("Original signal")
@@ -185,6 +187,7 @@ maximum_frequency = sampling_frequency/2;
 cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
 % Display the magnitude CQT kernel
+figure
 imagesc(abs(cqt_kernel))
 axis xy
 colormap(jet)
@@ -231,6 +234,7 @@ audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_reso
 
 % Display the CQT spectrogram in dB, seconds, and Hz
 xtick_step = 1;
+figure
 zaf.cqtspecshow(audio_spectrogram,time_resolution, frequency_resolution,minimum_frequency,xtick_step);
 title('CQT spectrogram (dB)')
 ```
@@ -274,6 +278,7 @@ audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolu
 
 % Display the CQT chromagram in seconds
 xtick_step = 1;
+figure
 zaf.cqtchromshow(audio_chromagram, time_resolution, xtick_step)
 title('CQT chromagram')
 ```
@@ -318,6 +323,7 @@ time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
 
 % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
 xtick_step = 1;
+figure
 subplot(3,1,1)
 zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
 subplot(3,1,2)
