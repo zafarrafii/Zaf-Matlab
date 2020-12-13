@@ -408,43 +408,43 @@ Output:
 #### Example: Compute the 4 different DSTs and compare their respective inverses with the original audio.
 
 ```
-% Audio signal averaged over its channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% Audio signal for a given window length, and one frame
+% Get an audio segment for a given window length
 window_length = 1024;
-audio_signal = audio_signal(1:window_length);
+audio_segment = audio_signal(1:window_length);
 
-% DST-I, II, III, and IV
-audio_dst1 = z.dst(audio_signal,1);
-audio_dst2 = z.dst(audio_signal,2);
-audio_dst3 = z.dst(audio_signal,3);
-audio_dst4 = z.dst(audio_signal,4);
+% Compute the DST-I, II, III, and IV
+audio_dst1 = zaf.dst(audio_segment,1);
+audio_dst2 = zaf.dst(audio_segment,2);
+audio_dst3 = zaf.dst(audio_segment,3);
+audio_dst4 = zaf.dst(audio_segment,4);
 
-% Respective inverses, i.e., DST-I, III, II, and IV
-audio_idst1 = z.dst(audio_dst1,1);
-audio_idst2 = z.dst(audio_dst2,3);
-audio_idst3 = z.dst(audio_dst3,2);
-audio_idst4 = z.dst(audio_dst4,4);
+% Compute their respective inverses, i.e., DST-I, II, III, and IV
+audio_idst1 = zaf.dst(audio_dst1,1);
+audio_idst2 = zaf.dst(audio_dst2,3);
+audio_idst3 = zaf.dst(audio_dst3,2);
+audio_idst4 = zaf.dst(audio_dst4,4);
 
-% DST-I, II, III, and IV, respective inverses, and errors displayed
+% Plot the DST-I, II, III, and IV, their respective inverses, and their differences with the original audio segment
 figure
-subplot(4,3,1), plot(audio_dst1), axis tight, title('DST-I'), set(gca,'FontSize',30)
-subplot(4,3,2), plot(audio_idst1), axis tight, title('Inverse DST-I = DST-I'), set(gca,'FontSize',30)
-subplot(4,3,3), plot(audio_signal-audio_idst1), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,4), plot(audio_dst2), axis tight, title('DST-II'), set(gca,'FontSize',30)
-subplot(4,3,5), plot(audio_idst2), axis tight, title('Inverse DST-II = DST-III'), set(gca,'FontSize',30)
-subplot(4,3,6), plot(audio_signal-audio_idst2), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,7), plot(audio_dst3), axis tight, title('DST-III'), set(gca,'FontSize',30)
-subplot(4,3,8), plot(audio_idst3), axis tight, title('Inverse DST-III = DST-II'), set(gca,'FontSize',30)
-subplot(4,3,9), plot(audio_signal-audio_idst3), axis tight, title('Error'), set(gca,'FontSize',30)
-subplot(4,3,10), plot(audio_dst4), axis tight, title('DST-IV'), set(gca,'FontSize',30)
-subplot(4,3,11), plot(audio_idst4), axis tight, title('Inverse DST-IV = DST-IV'), set(gca,'FontSize',30)
-subplot(4,3,12), plot(audio_signal-audio_idst4, axis tight, title('Error'), set(gca,'FontSize',30)
+subplot(3,4,1), plot(audio_dst1), xlim([0,window_length]), title('DST-I')
+subplot(3,4,2), plot(audio_dst2), xlim([0,window_length]), title('DST-II')
+subplot(3,4,3), plot(audio_dst3), xlim([0,window_length]), title('DST-III')
+subplot(3,4,4), plot(audio_dst4), xlim([0,window_length]), title('DST-IV')
+subplot(3,4,5), plot(audio_idst1), xlim([0,window_length]), title('Inverse DST-I (DST-I)')
+subplot(3,4,6), plot(audio_idst2), xlim([0,window_length]), title('Inverse DST-II (DST-III)')
+subplot(3,4,7), plot(audio_idst3), xlim([0,window_length]), title('Inverse DST-III (DST-II)')
+subplot(3,4,8), plot(audio_idst4), xlim([0,window_length]), title('Inverse DST-IV (DST-IV)')
+subplot(3,4,9), plot(audio_idst1-audio_segment), xlim([0,window_length]), title('Inverse DST-I - audio segment')
+subplot(3,4,10), plot(audio_idst2-audio_segment), xlim([0,window_length]), title('Inverse DST-II - audio segment')
+subplot(3,4,11), plot(audio_idst3-audio_segment), xlim([0,window_length]), title('Inverse DST-III - audio segment')
+subplot(3,4,12), plot(audio_idst4-audio_segment), xlim([0,window_length]), title('Inverse DST-IV - audio segment')
 ```
 
-<img src="images/matlab/dst.png" width="1000">
+<img src="images/dst.png" width="1000">
 
 
 ### mdct
