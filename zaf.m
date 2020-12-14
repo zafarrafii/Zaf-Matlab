@@ -25,7 +25,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/12/20
+    %   12/13/20
     
     methods (Static = true)
         
@@ -181,7 +181,8 @@
             i = 0;
             for j = 1:number_times
                 
-                % Perform a constant overlap-add (COLA) of the signal (with proper window function and step length)
+                % Perform a constant overlap-add (COLA) of the signal 
+                % (with proper window function and step length)
                 audio_signal(i+1:i+window_length) ...
                     = audio_signal(i+1:i+window_length)+audio_stft(:,j);
                 i = i+step_length;
@@ -247,12 +248,14 @@
                 % Derive the frequency value in Hz
                 frequency_value = minimum_frequency*2^((i-1)/octave_resolution);
                 
-                % Compute the window length in samples (nearest odd value to center the temporal kernel on 0)
+                % Compute the window length in samples 
+                % (nearest odd value to center the temporal kernel on 0)
                 window_length = 2*round(quality_factor*sampling_frequency/frequency_value/2)+1;
                 
                 % Compute the temporal kernel for the current frequency (odd and symmetric)
                 temporal_kernel = hamming(window_length,'symmetric')' ... 
-                    .*exp(2*pi*1j*quality_factor*(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
+                    .*exp(2*pi*1j*quality_factor ...
+                    *(-(window_length-1)/2:(window_length-1)/2)/window_length)/window_length;
                 
                 % Derive the pad width to center the temporal kernels
                 pad_width = (fft_length-window_length+1)/2;
@@ -471,7 +474,8 @@
                     = linspace(1,0,filter_indices(i+2)-filter_indices(i+1)+1);
             end
             
-            % Compute the discrete cosine transform of the log magnitude spectrogram mapped onto the mel scale using the filter bank
+            % Compute the discrete cosine transform of the log magnitude spectrogram 
+            % mapped onto the mel scale using the filter bank
             audio_mfcc = dct(log(filter_bank*audio_spectrogram+eps));
             
             % Keep only the first coefficients (without the 0th)
@@ -722,149 +726,161 @@
         end
         
         function audio_mdct = mdct(audio_signal,window_function)
-            % mdct Modified discrete cosine transform (MDCT) using the DCT-IV
-            %   audio_mdct = zaf.mdct(audio_signal,window_function);
+            % mdct Compute the modified discrete cosine transform (MDCT) using the FFT.
+            %   audio_mdct = zaf.mdct(audio_signal,window_function)
             %   
-            %   Arguments:
+            %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
             %       window_function: window function [window_length,1]
+            %   Output:
             %       audio_mdct: audio MDCT [number_frequencies,number_times]
             %   
-            %   Example: Compute and display the MDCT as used in the AC-3 audio coding format
-            %       % Audio file averaged over the channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %   Example: Compute and display the MDCT as used in the AC-3 audio coding format.
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
             %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
+            % 
+            %       % Compute the Kaiser-Bessel-derived (KBD) window as used in the AC-3 audio coding format
             %       window_length = 512;
             %       alpha_value = 5;
             %       window_function = kaiser(window_length/2+1,alpha_value*pi);
             %       window_function2 = cumsum(window_function(1:window_length/2));
-            %       window_function = sqrt([window_function2;window_function2(window_length/2:-1:1)]./sum(window_function));
-            %       
-            %       % MDCT
+            %       window_function = sqrt([window_function2; window_function2(window_length/2:-1:1)]/sum(window_function));
+            % 
+            %       % Compute the MDCT
             %       audio_mdct = zaf.mdct(audio_signal,window_function);
-            %       
-            %       % MDCT displayed in dB, s, and kHz
+            % 
+            %       % Display the MDCT in dB, seconds, and Hz
+            %       xtick_step = 1;
+            %       ytick_step = 1000;
             %       figure
-            %       imagesc(db(audio_mdct))
-            %       axis xy
-            %       colormap(jet)
+            %       zaf.specshow(abs(audio_mdct),length(audio_signal),sampling_frequency,xtick_step,ytick_step)
             %       title('MDCT (dB)')
-            %       xticks(round((1:floor(length(audio_signal)/sample_rate))*sample_rate/(window_length/2)))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)')
-            %       yticks(round((1e3:1e3:sample_rate/2)/sample_rate*window_length))
-            %       yticklabels(1:sample_rate/2*1e-3)
-            %       ylabel('Frequency (kHz)')
-            %       set(gca,'FontSize',30)
-            %
-            %   See also dct, zaf.imdct
             
-            % Number of samples and window length
+            % Get the number of samples and the window length in samples
             number_samples = length(audio_signal);
             window_length = length(window_function);
             
-            % Number of time frames
-            number_times = ceil(2*number_samples/window_length)+1;
+            % Derive the step length and the number of frequencies (for clarity)
+            step_length = window_length/2;
+            number_frequencies = window_length/2;
             
-            % Pre and post zero-padding of the signal
-            audio_signal = [zeros(window_length/2,1);audio_signal;zeros((number_times+1)*window_length/2-number_samples,1)];
+            % Derive the number of time frames
+            number_times = ceil(number_samples/step_length)+1;
+            
+            % Zero-pad the start and the end of the signal to center the windows
+            audio_signal = [zeros(step_length,1);audio_signal; ...
+                zeros((number_times+1)*step_length-number_samples,1)];
             
             % Initialize the MDCT
-            audio_mdct = zeros(window_length/2,number_times);
+            audio_mdct = zeros(number_frequencies,number_times);
+            
+            % Prepare the pre-processing and post-processing arrays
+            preprocessing_array = exp(-1j*pi/window_length*(0:window_length-1)');
+            postprocessing_array = exp(-1j*pi/window_length ...
+                *(window_length/2+1)*(0.5:window_length/2-0.5)');
             
             % Loop over the time frames
-            for time_index = 1:number_times
+            % (do the pre and post-processing, and take the FFT in the loop to avoid storing twice longer frames)
+            i = 0;
+            for j = 1:number_times
                 
                 % Window the signal
-                sample_index = (time_index-1)*window_length/2;
-                audio_segment = audio_signal(1+sample_index:window_length+sample_index).*window_function;
+                audio_segment = audio_signal(i+1:i+window_length).*window_function;
+                i = i+step_length;
                 
-                % Time-domain aliasing cancellation (TDAC) principle
-                audio_mdct(:,time_index) = [-audio_segment(3*window_length/4:-1:window_length/2+1)-audio_segment(3*window_length/4+1:window_length); ...
-                    audio_segment(1:window_length/4)-audio_segment(window_length/2:-1:window_length/4+1)];
+                % Compute the Fourier transform of the windowed segment using the FFT after pre-processing
+                audio_segment = fft(audio_segment.*preprocessing_array);
+
+                % Truncate to the first half before post-processing (and take the real to ensure real values)
+                audio_mdct(:,j) = real(audio_segment(1:number_frequencies).*postprocessing_array);
+                
             end
-            
-            % DCT-IV
-            audio_mdct = sqrt(window_length/4)*dct(audio_mdct,'Type',4);
             
         end
         
         function audio_signal = imdct(audio_mdct,window_function)
-            % imdct Inverse modified discrete cosine transform (MDCT) using the DCT-IV
-            %   audio_signal = zaf.imdct(audio_mdct,window_function);
+            % imdct Compute the inverse modified discrete cosine transform (MDCT) using the FFT.
+            %   audio_signal = zaf.imdct(audio_mdct,window_function)
             %   
-            %   Arguments:
+            %   Inputs:
             %       audio_mdct: audio MDCT [number_frequencies,number_times]
             %       window_function: window function [window_length,1]
+            %   Output:
             %       audio_signal: audio signal [number_samples,1]
             %   
-            %   Example: Verify that the MDCT is perfectly invertible
-            %       % Audio file averaged over the channels and sample rate in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %   Example: Verify that the MDCT is perfectly invertible.
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
             %       audio_signal = mean(audio_signal,2);
-            %       
-            %       % MDCT with a slope function as used in the Vorbis audio coding format
+            % 
+            %       % Compute the MDCT with a slope function as used in the Vorbis audio coding format
             %       window_length = 2048;
-            %       window_function = sin((pi/2)*sin((pi/window_length)*(0.5:(window_length-0.5))).^2)';
+            %       window_function = sin(pi/2*(sin(pi/window_length*(0.5:window_length-0.5)').^2));
             %       audio_mdct = zaf.mdct(audio_signal,window_function);
-            %       
-            %       % Inverse MDCT and error signal
+            % 
+            %       % Compute the inverse MDCT
             %       audio_signal2 = zaf.imdct(audio_mdct,window_function);
             %       audio_signal2 = audio_signal2(1:length(audio_signal));
-            %       error_signal = audio_signal-audio_signal2;
-            %       
-            %       % Original, resynthesized, and error signals displayed in s
+            % 
+            %       % Compute the differences between the original signal and the resynthesized one
+            %       audio_differences = audio_signal-audio_signal2;
+            %       y_max = max(abs(audio_differences));
+            % 
+            %       % Display the original and resynthesized signals, and their differences in seconds
+            %       xtick_step = 1;
             %       figure
-            %       subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
-            %       xticks(sample_rate:sample_rate:length(audio_signal))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)'), set(gca,'FontSize',30)
-            %       subplot(3,1,2), plot(audio_signal2), axis tight, title('Resynthesized Signal')
-            %       xticks(sample_rate:sample_rate:length(audio_signal))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)'), set(gca,'FontSize',30)
-            %       subplot(3,1,3), plot(error_signal), axis tight, title('Error Signal')
-            %       xticks(sample_rate:sample_rate:length(audio_signal))
-            %       xticklabels(1:floor(length(audio_signal)/sample_rate))
-            %       xlabel('Time (s)'), set(gca,'FontSize',30)
-            %
-            %   See also dct, zaf.mdct
+            %       subplot(3,1,1)
+            %       zaf.sigplot(audio_signal,sampling_frequency,xtick_step)
+            %       ylim([-1,1]), title('Original signal')
+            %       subplot(3,1,2)
+            %       zaf.sigplot(audio_signal2,sampling_frequency,xtick_step)
+            %       ylim([-1,1]), title('Resyntesized signal')
+            %       subplot(3,1,3)
+            %       zaf.sigplot(audio_differences,sampling_frequency,xtick_step)
+            %       ylim([-y_max,y_max]), title('Original - resyntesized signal')
             
-            % Number of frequency channels and time frames
+            % Get the number of frequency channels and time frames
             [number_frequencies,number_times] = size(audio_mdct);
             
-            % Number of samples for the signal
-            number_samples = number_frequencies*(number_times+1);
+            % Derive the window length and the step length in samples (for clarity)
+            window_length = 2*number_frequencies;
+            step_length = number_frequencies;
+            
+            % Derive the number of samples for the signal
+            number_samples = step_length*(number_times+1);
             
             % Initialize the audio signal
             audio_signal = zeros(number_samples,1);
             
-            % DCT-IV (which is its own inverse)
-            audio_mdct = dct(audio_mdct,'Type',4);
+            % Prepare the pre-processing and post-processing arrays
+            preprocessing_array = exp(-1j*pi/(2*number_frequencies) ...
+                *(number_frequencies+1)*(0:number_frequencies-1)');
+            postprocessing_array = exp(-1j*pi/(2*number_frequencies) ...
+                *(0.5+number_frequencies/2:2*number_frequencies+number_frequencies/2-0.5)') ...
+                /number_frequencies;
             
-            % Time-domain aliasing cancellation (TDAC) principle
-            audio_mdct = [audio_mdct(number_frequencies/2+1:number_frequencies,:); ...
-                -audio_mdct(number_frequencies:-1:number_frequencies/2+1,:); ...
-                -audio_mdct(number_frequencies/2:-1:1,:); ...
-                -audio_mdct(1:number_frequencies/2,:)];
+            % Compute the Fourier transform of the frames using the FFT after pre-processing
+            % (zero-pad to get twice the length)
+            audio_mdct = fft(audio_mdct.*preprocessing_array,2*number_frequencies,1);
             
-            % Apply the window to the frames
-            audio_mdct = window_function.*audio_mdct;
-
+            % Apply the window function to the frames after post-processing
+            % (take the real to ensure real values)
+            audio_mdct = 2*real(audio_mdct.*postprocessing_array).*window_function;
+            
             % Loop over the time frames
-            for time_index = 1:number_times
+            i = 0;
+            for j = 1:number_times
                 
-                % Recover the signal thanks to the TDAC principle
-                sample_index = (time_index-1)*number_frequencies+1;
-                audio_signal(sample_index:sample_index+2*number_frequencies-1,1) ...
-                    = audio_signal(sample_index:sample_index+2*number_frequencies-1,1)+audio_mdct(:,time_index);
+                % Recover the signal with the time-domain aliasing cancellation (TDAC) principle
+                audio_signal(i+1:i+window_length) ...
+                    = audio_signal(i+1:i+window_length)+audio_mdct(:,j);
+                i = i+step_length;
                 
             end
             
-            % Remove the pre and post zero-padding
-            audio_signal = audio_signal(number_frequencies+1:end-number_frequencies);
+            % Remove the zero-padding at the start and at the end of the signal
+            audio_signal = audio_signal(step_length+1:end-step_length);
             
         end
         
