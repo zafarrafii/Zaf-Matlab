@@ -84,6 +84,8 @@ title('Spectrogram (dB)')
 
 <img src="images/stft.png" width="1000">
 
+![alt text](https://raw.githubusercontent.com/zafarrafii/Zaf-Matlab/master/images/stft.png)
+
 
 ### istft
 
