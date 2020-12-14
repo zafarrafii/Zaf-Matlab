@@ -506,34 +506,35 @@ Output:
 #### Example: Verify that the MDCT is perfectly invertible.
 
 ```
-% Audio file averaged over the channels and sample rate in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% MDCT with a slope function as used in the Vorbis audio coding format
+% Compute the MDCT with a slope function as used in the Vorbis audio coding format
 window_length = 2048;
-window_function = sin((pi/2)*sin((pi/window_length)*(1/2:(window_length-1/2))).^2)';
-audio_mdct = z.mdct(audio_signal,window_function);
+window_function = sin(pi/2*(sin(pi/window_length*(0.5:window_length-0.5)').^2));
+audio_mdct = zaf.mdct(audio_signal,window_function);
 
-% Inverse MDCT and error signal
-audio_signal2 = z.imdct(audio_mdct,window_function);
+% Compute the inverse MDCT
+audio_signal2 = zaf.imdct(audio_mdct,window_function);
 audio_signal2 = audio_signal2(1:length(audio_signal));
-error_signal = audio_signal-audio_signal2;
 
-% Original, resynthesized, and error signals displayed in
+% Compute the differences between the original signal and the resynthesized one
+audio_differences = audio_signal-audio_signal2;
+y_max = max(abs(audio_differences));
+
+% Display the original and resynthesized signals, and their differences in seconds
+xtick_step = 1;
 figure
-subplot(3,1,1), plot(audio_signal), axis tight, title('Original Signal')
-xticks(sample_rate:sample_rate:length(audio_signal))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,2), plot(audio_signal2), axis tight, title('Resynthesized Signal')
-xticks(sample_rate:sample_rate:length(audio_signal))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
-subplot(3,1,3), plot(error_signal), axis tight, title('Error Signal')
-xticks(sample_rate:sample_rate:length(audio_signal))
-xticklabels(1:floor(length(audio_signal)/sample_rate))
-xlabel('Time (s)'), set(gca,'FontSize',30)
+subplot(3,1,1)
+zaf.sigplot(audio_signal,sampling_frequency,xtick_step)
+ylim([-1,1]), title('Original signal')
+subplot(3,1,2)
+zaf.sigplot(audio_signal2,sampling_frequency,xtick_step)
+ylim([-1,1]), title('Resyntesized signal')
+subplot(3,1,3)
+zaf.sigplot(audio_differences,sampling_frequency,xtick_step)
+ylim([-y_max,y_max]), title('Original - resyntesized signal')
 ```
 
 <img src="images/imdct.png" width="1000">
