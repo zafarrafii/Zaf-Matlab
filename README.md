@@ -20,10 +20,12 @@ Simply copy the file `zaf.m` in your working directory and you are good to go.
 Functions:
 - [`stft`](#stft) - Compute the short-time Fourier transform (STFT).
 - [`istft`](#istft) - Compute the inverse STFT.
+- [`melfilterbank`](#melfilterbank) - Compute the mel filterbank.
+- [`melspectrogram`](#melspectrogram) - Compute the mel spectrogram using a mel filterbank.
+- [`mfcc`](#mfcc) - Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
 - [`cqtkernel`](#cqtkernel) - Compute the constant-Q transform (CQT) kernel.
 - [`cqtspectrogram`](#cqtspectrogram) - Compute the CQT spectrogram using a CQT kernel.
 - [`cqtchromagram`](#cqtchromagram) - Compute the CQT chromagram using a CQT kernel.
-- [`mfcc`](#mfcc) - Compute the mel frequency cepstrum coefficients (MFCCs).
 - [`dct`](#dct) - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
 - [`dst`](#dst) - Compute the discrete sine transform (DST) using the FFT.
 - [`mdct`](#mdct) - Compute the modified discrete cosine transform (MDCT) using the FFT.
@@ -31,9 +33,12 @@ Functions:
 
 Other:
 - `sigplot` - Plot a signal in seconds.
-- `specshow` - Display a spectrogram in dB, seconds, and Hz..
+- `specshow` - Display a spectrogram in dB, seconds, and Hz.
+- `melspecshow` - Display a mel spectrogram in dB, seconds, and Hz.
+- `mfccshow` - Display MFCCs in seconds.
 - `cqtspecshow` - Display a CQT spectrogram in dB, seconds, and Hz.
 - `cqtchromshow` - Display a CQT chromagram in seconds.
+
 
 ### stft
 
@@ -159,6 +164,81 @@ ylim([-1,1]), title("Sides signal")
 <img src="images/istft.png" width="1000">
 
 
+### melfilterbank
+
+Compute the mel filterbank.
+
+```
+mel_filterbank = zaf.melfilterbank(sampling_frequency, frequency_resolution, minimum_frequency, maximum_frequency)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    window_function: window function (window_length,)
+    step_length: step length in samples
+    mel_filterbank: mel filterbank (number_mels, number_frequencies)
+Output:
+    mel_spectrogram: mel spectrogram (number_mels, number_times)
+```
+
+#### Example: Compute and display the mel filterbank.
+
+```
+
+```
+
+<img src="images/melfilterbank.png" width="1000">
+
+
+### melspectrogram
+
+Compute the mel spectrogram using a mel filterbank.
+
+```
+mel_filterbank = zaf.melspectrogram(audio_signal, window_function, step_length, mel_filterbank)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    window_function: window function (window_length,)
+    step_length: step length in samples
+    mel_filterbank: mel filterbank (number_mels, number_frequencies)
+Output:
+    mel_spectrogram: mel spectrogram (number_mels, number_times)
+```
+
+#### Example: Compute and display the mel spectrogram.
+
+```
+
+```
+
+<img src="images/melspectrogram.png" width="1000">
+
+
+### mfcc
+
+Compute the mel frequency cepstrum coefficients (MFFCs) using a mel filterbank.
+
+```
+audio_mfcc = zaf.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
+
+Inputs:
+    audio_signal: audio signal (number_samples,)
+    sampling_frequency: sampling frequency in Hz
+    number_filters: number of filters
+    number_coefficients: number of coefficients (without the 0th coefficient)
+Output:
+    audio_mfcc: audio MFCCs (number_times, number_coefficients)
+```
+
+#### Example: Compute and display the MFCCs, delta MFCCs, and delta-delta MFCCs.
+
+```
+
+```
+
+<img src="images/mfcc.png" width="1000">
+
+
 ### cqtkernel
 
 Compute the constant-Q transform (CQT) kernel.
@@ -245,7 +325,7 @@ title('CQT spectrogram (dB)')
 
 ### cqtchromagram
 
-Compute the constant-Q transform (CQT) chromagram using a kernel.
+Compute the constant-Q transform (CQT) chromagram using a CQT kernel.
 
 ```
 audio_chromagram = zaf.cqtchromagram(audio_signal, sampling_frequency, time_resolution, frequency_resolution, cqt_kernel)
@@ -285,55 +365,6 @@ title('CQT chromagram')
 ```
 
 <img src="images/cqtchromagram.png" width="1000">
-
-
-### mfcc
-
-Compute the mel frequency cepstrum coefficients (MFFCs).
-
-```
-audio_mfcc = zaf.mfcc(audio_signal, sampling_frequency, number_filters, number_coefficients)
-
-Inputs:
-    audio_signal: audio signal (number_samples,)
-    sampling_frequency: sampling frequency in Hz
-    number_filters: number of filters
-    number_coefficients: number of coefficients (without the 0th coefficient)
-Output:
-    audio_mfcc: audio MFCCs (number_times, number_coefficients)
-```
-
-#### Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
-
-```
-% Read the audio signal with its sampling frequency in Hz, and average it over its channels
-[audio_signal,sampling_frequency] = audioread('audio_file.wav')
-audio_signal = mean(audio_signal,2);
-
-% Compute the MFCCs with a given number of filters and coefficients
-number_filters = 40;
-number_coefficients = 20;
-audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients);
-
-% Compute the delta and delta-delta MFCCs
-audio_dmfcc = diff(audio_mfcc,1,2);
-audio_ddmfcc = diff(audio_dmfcc,1,2);
-
-% Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
-time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
-
-% Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
-xtick_step = 1;
-figure
-subplot(3,1,1)
-zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
-subplot(3,1,2)
-zaf.sigplot(audio_dmfcc',time_resolution,xtick_step), title('Delta MFCCs')
-subplot(3,1,3)
-zaf.sigplot(audio_ddmfcc',time_resolution,xtick_step), title('Delta MFCCs')
-```
-
-<img src="images/mfcc.png" width="1000">
 
 
 ### dct
