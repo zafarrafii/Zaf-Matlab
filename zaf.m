@@ -4,10 +4,12 @@
     % zaf Methods:
 	%   stft - Compute the short-time Fourier transform (STFT).
 	%   istft - Compute the inverse STFT.
+    %   melfilterbank - Compute the mel filterbank.
+    %   melspectrogram - Compute the mel spectrogram using a mel filterbank.
+    %   mfcc - Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
 	%   cqtkernel - Compute the constant-Q transform (CQT) kernel.
 	%   cqtspectrogram - Compute the CQT spectrogram using a CQT kernel.
 	%   cqtchromagram - Compute the CQT chromagram using a CQT kernel.
-	%   mfcc - Compute the mel frequency cepstrum coefficients (MFCCs).
 	%   dct - Compute the discrete cosine transform (DCT) using the fast Fourier transform (FFT).
 	%   dst - Compute the discrete sine transform (DST) using the FFT.
 	%   mdct - Compute the modified discrete cosine transform (MDCT) using the FFT.
@@ -16,6 +18,8 @@
 	% zaf Other:
 	%   sigplot - Plot a signal in seconds.
 	%   specshow - Display an spectrogram in dB, seconds, and Hz.
+    %	melspecshow - Display a mel spectrogram in dB, seconds, and Hz.
+    %   mfccshow - Display MFCCs in seconds.
 	%   cqtspecshow - Display a CQT spectrogram in dB, seconds, and Hz.
 	%   cqtchromshow - Display a CQT chromagram in seconds.
 	%
@@ -25,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   12/13/20
+    %   03/08/21
     
     methods (Static = true)
         
@@ -194,6 +198,90 @@
             
             % Normalize the signal by the gain introduced by the COLA (if any)
             audio_signal = audio_signal/sum(window_function(1:step_length:window_length));
+            
+        end
+        
+        function audio_mfcc = mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
+            % mfcc Compute the mel frequency cepstrum coefficients (MFFCs).
+            %   audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
+            %   
+            %   Inputs:
+            %       audio_signal: audio signal [number_samples,1]
+            %       sampling_frequency: sample frequency in Hz
+            %       number_filters: number of filters
+            %       number_coefficients: number of coefficients (without the 0th coefficient)
+            %   Output:
+            %       audio_mfcc: audio MFCCs [number_times,number_coefficients]
+            %   
+            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
+            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav')
+            %       audio_signal = mean(audio_signal,2);
+            % 
+            %       % Compute the MFCCs with a given number of filters and coefficients
+            %       number_filters = 40;
+            %       number_coefficients = 20;
+            %       audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients);
+            % 
+            %       % Compute the delta and delta-delta MFCCs
+            %       audio_dmfcc = diff(audio_mfcc,1,2);
+            %       audio_ddmfcc = diff(audio_dmfcc,1,2);
+            % 
+            %       % Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
+            %       time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
+            % 
+            %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
+            %       xtick_step = 1;
+            %       figure
+            %       subplot(3,1,1)
+            %       zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
+            %       subplot(3,1,2)
+            %       zaf.sigplot(audio_dmfcc',time_resolution,xtick_step), title('Delta MFCCs')
+            %       subplot(3,1,3)
+            %       zaf.sigplot(audio_ddmfcc',time_resolution,xtick_step), title('Delta MFCCs')
+            
+            % Set the parameters for the STFT
+            window_length = 2^nextpow2(0.04*sampling_frequency);
+            window_function = hamming(window_length,'periodic');
+            step_length = window_length/2;
+            
+            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
+            audio_stft = zaf.stft(audio_signal,window_function,step_length);
+            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+            
+            % Compute the minimum and maximum frequencies in mels
+            mininum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
+            maximum_melfrequency = 2595*log10(1+(sampling_frequency/2)/700);
+            
+            % Derive the width of the overlapping filters in the mel scale (constant)
+            filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
+            
+            % Compute the indices of the overlapping filters in the mel scale (linearly spaced)
+            filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
+            
+            % Derive the indices of the overlapping filters in the linear frequency scale (log spaced)
+            filter_indices = round(700*(10.^(filter_indices/2595)-1)*window_length/sampling_frequency);
+            
+            % Initialize the filter bank
+            filter_bank = zeros(number_filters,window_length/2);
+            
+            % Loop over the filters
+            for i = 1:number_filters
+                                
+                % Compute the left and right sides of the triangular filters
+                % (linspace is more accurate than triang or bartlett!)
+                filter_bank(i,filter_indices(i):filter_indices(i+1)) ...
+                    = linspace(0,1,filter_indices(i+1)-filter_indices(i)+1);
+                filter_bank(i,filter_indices(i+1):filter_indices(i+2)) ...
+                    = linspace(1,0,filter_indices(i+2)-filter_indices(i+1)+1);
+            end
+            
+            % Compute the discrete cosine transform of the log magnitude spectrogram 
+            % mapped onto the mel scale using the filter bank
+            audio_mfcc = dct(log(filter_bank*audio_spectrogram+eps));
+            
+            % Keep only the first coefficients (without the 0th)
+            audio_mfcc = audio_mfcc(2:number_coefficients+1,:);
             
         end
         
@@ -396,90 +484,6 @@
                 audio_chromagram(i,:) = sum(audio_spectrogram(i:number_chromas:number_frequencies,:),1);
                 
             end
-            
-        end
-        
-        function audio_mfcc = mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
-            % mfcc Compute the mel frequency cepstrum coefficients (MFFCs).
-            %   audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
-            %   
-            %   Inputs:
-            %       audio_signal: audio signal [number_samples,1]
-            %       sampling_frequency: sample frequency in Hz
-            %       number_filters: number of filters
-            %       number_coefficients: number of coefficients (without the 0th coefficient)
-            %   Output:
-            %       audio_mfcc: audio MFCCs [number_times,number_coefficients]
-            %   
-            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
-            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
-            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav')
-            %       audio_signal = mean(audio_signal,2);
-            % 
-            %       % Compute the MFCCs with a given number of filters and coefficients
-            %       number_filters = 40;
-            %       number_coefficients = 20;
-            %       audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients);
-            % 
-            %       % Compute the delta and delta-delta MFCCs
-            %       audio_dmfcc = diff(audio_mfcc,1,2);
-            %       audio_ddmfcc = diff(audio_dmfcc,1,2);
-            % 
-            %       % Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
-            %       time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
-            % 
-            %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
-            %       xtick_step = 1;
-            %       figure
-            %       subplot(3,1,1)
-            %       zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
-            %       subplot(3,1,2)
-            %       zaf.sigplot(audio_dmfcc',time_resolution,xtick_step), title('Delta MFCCs')
-            %       subplot(3,1,3)
-            %       zaf.sigplot(audio_ddmfcc',time_resolution,xtick_step), title('Delta MFCCs')
-            
-            % Set the parameters for the STFT
-            window_length = 2^nextpow2(0.04*sampling_frequency);
-            window_function = hamming(window_length,'periodic');
-            step_length = window_length/2;
-            
-            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
-            audio_stft = zaf.stft(audio_signal,window_function,step_length);
-            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
-            
-            % Compute the minimum and maximum frequencies in mels
-            mininum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
-            maximum_melfrequency = 2595*log10(1+(sampling_frequency/2)/700);
-            
-            % Derive the width of the overlapping filters in the mel scale (constant)
-            filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
-            
-            % Compute the indices of the overlapping filters in the mel scale (linearly spaced)
-            filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
-            
-            % Derive the indices of the overlapping filters in the linear frequency scale (log spaced)
-            filter_indices = round(700*(10.^(filter_indices/2595)-1)*window_length/sampling_frequency);
-            
-            % Initialize the filter bank
-            filter_bank = zeros(number_filters,window_length/2);
-            
-            % Loop over the filters
-            for i = 1:number_filters
-                                
-                % Compute the left and right sides of the triangular filters
-                % (linspace is more accurate than triang or bartlett!)
-                filter_bank(i,filter_indices(i):filter_indices(i+1)) ...
-                    = linspace(0,1,filter_indices(i+1)-filter_indices(i)+1);
-                filter_bank(i,filter_indices(i+1):filter_indices(i+2)) ...
-                    = linspace(1,0,filter_indices(i+2)-filter_indices(i+1)+1);
-            end
-            
-            % Compute the discrete cosine transform of the log magnitude spectrogram 
-            % mapped onto the mel scale using the filter bank
-            audio_mfcc = dct(log(filter_bank*audio_spectrogram+eps));
-            
-            % Keep only the first coefficients (without the 0th)
-            audio_mfcc = audio_mfcc(2:number_coefficients+1,:);
             
         end
         
