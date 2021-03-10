@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/08/21
+    %   03/09/21
     
     methods (Static = true)
         
@@ -201,84 +201,96 @@
             
         end
         
-        function audio_mfcc = mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
-            % mfcc Compute the mel frequency cepstrum coefficients (MFFCs).
-            %   audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
+        function mel_filterbank = melfilterbank(sampling_frequency, window_length, number_filters)
+            % melfilterbank Compute the mel filterbank.
+            %   audio_mfcc = zaf.melfilterbank(audio_signal,sampling_frequency,number_filters,number_coefficients)
             %   
             %   Inputs:
-            %       audio_signal: audio signal [number_samples,1]
-            %       sampling_frequency: sample frequency in Hz
-            %       number_filters: number of filters
-            %       number_coefficients: number of coefficients (without the 0th coefficient)
+            %       sampling_frequency: sampling frequency in Hz
+            %       window_length: window length for the Fourier analysis in samples
+            %       number_mels: number of mel filters
             %   Output:
-            %       audio_mfcc: audio MFCCs [number_times,number_coefficients]
+            %       mel_filterbank: mel filterbank (sparse) [number_mels,number_frequencies]
             %   
-            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
-            %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
-            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav')
-            %       audio_signal = mean(audio_signal,2);
-            % 
-            %       % Compute the MFCCs with a given number of filters and coefficients
-            %       number_filters = 40;
-            %       number_coefficients = 20;
-            %       audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients);
-            % 
-            %       % Compute the delta and delta-delta MFCCs
-            %       audio_dmfcc = diff(audio_mfcc,1,2);
-            %       audio_ddmfcc = diff(audio_dmfcc,1,2);
-            % 
-            %       % Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
-            %       time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
-            % 
-            %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
-            %       xtick_step = 1;
-            %       figure
-            %       subplot(3,1,1)
-            %       zaf.sigplot(audio_mfcc',time_resolution,xtick_step), title('MFCCs')
-            %       subplot(3,1,2)
-            %       zaf.sigplot(audio_dmfcc',time_resolution,xtick_step), title('Delta MFCCs')
-            %       subplot(3,1,3)
-            %       zaf.sigplot(audio_ddmfcc',time_resolution,xtick_step), title('Delta MFCCs')
+            %   Example: Compute and display the mel filterbank.
             
-            % Set the parameters for the STFT
-            window_length = 2^nextpow2(0.04*sampling_frequency);
-            window_function = hamming(window_length,'periodic');
-            step_length = window_length/2;
-            
-            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
-            audio_stft = zaf.stft(audio_signal,window_function,step_length);
-            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
-            
-            % Compute the minimum and maximum frequencies in mels
+            % Compute the minimum and maximum mels
             mininum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
             maximum_melfrequency = 2595*log10(1+(sampling_frequency/2)/700);
             
-            % Derive the width of the overlapping filters in the mel scale (constant)
+            % Derive the width of the half-overlapping filters in the mel scale (constant)
             filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
             
-            % Compute the indices of the overlapping filters in the mel scale (linearly spaced)
+            % Compute the start and end indices of the overlapping filters in the mel scale (linearly spaced)
             filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
             
-            % Derive the indices of the overlapping filters in the linear frequency scale (log spaced)
+            % Derive the indices of the filters in the linear frequency scale (log spaced)
             filter_indices = round(700*(10.^(filter_indices/2595)-1)*window_length/sampling_frequency);
             
-            % Initialize the filter bank
-            filter_bank = zeros(number_filters,window_length/2);
+            % Initialize the mel filterbank
+            mel_filterbank = zeros(number_filters,window_length/2);
             
             % Loop over the filters
             for i = 1:number_filters
                                 
                 % Compute the left and right sides of the triangular filters
-                % (linspace is more accurate than triang or bartlett!)
-                filter_bank(i,filter_indices(i):filter_indices(i+1)) ...
+                % (this is more accurate than creating triangular filters directly)
+                mel_filterbank(i,filter_indices(i):filter_indices(i+1)) ...
                     = linspace(0,1,filter_indices(i+1)-filter_indices(i)+1);
-                filter_bank(i,filter_indices(i+1):filter_indices(i+2)) ...
+                mel_filterbank(i,filter_indices(i+1):filter_indices(i+2)) ...
                     = linspace(1,0,filter_indices(i+2)-filter_indices(i+1)+1);
             end
             
+            % Make the mel filterbank sparse
+            mel_filterbank = sparse(mel_filterbank);
+            
+        end
+        
+        function mel_spectrogram = melspectrogram(audio_signal, window_function, step_length, mel_filterbank)
+            % melspectrogram Compute the mel spectrogram using a mel filterbank.
+            %   mel_spectrogram = zaf.melspectrogram(audio_signal, window_function, step_length, mel_filterbank)
+            %   
+            %   Inputs:
+            %       audio_signal: audio signal [number_samples,1]
+            %       window_function: window function [window_length,1]
+            %       step_length: step length in samples
+            %       mel_filterbank: mel filterbank [number_mels,number_frequencies]
+            %   Output:
+            %       mel_spectrogram: mel spectrogram [number_mels,number_times]
+            %   
+            %   Example: Compute and display the mel spectrogram.
+            
+            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
+            audio_stft = zaf.stft(audio_signal,window_function,step_length);
+            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+            
+            % Compute the mel spectrogram by using the filterbank
+            mel_spectrogram = mel_filterbank*audio_spectrogram;
+    
+        end
+        
+        function audio_mfcc = mfcc(audio_signal,window_function, step_length, mel_filterbank,number_coefficients)
+            % mfcc Compute the mel frequency cepstrum coefficients (MFFCs) using a mel filterbank.
+            %   audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
+            %   
+            %   Inputs:
+            %       audio_signal: audio signal [number_samples,1]
+            %       window_function: window function [window_length,1]
+            %       step_length: step length in samples
+            %       mel_filterbank: mel filterbank [number_mels,number_frequencies]
+            %       number_coefficients: number of coefficients (without the 0th coefficient)
+            %   Output:
+            %       audio_mfcc: audio MFCCs [number_coefficients, number_times]
+            %   
+            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
+            
+            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
+            audio_stft = zaf.stft(audio_signal,window_function,step_length);
+            audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
+            
             % Compute the discrete cosine transform of the log magnitude spectrogram 
             % mapped onto the mel scale using the filter bank
-            audio_mfcc = dct(log(filter_bank*audio_spectrogram+eps));
+            audio_mfcc = dct(log(mel_filterbank*audio_spectrogram+eps));
             
             % Keep only the first coefficients (without the 0th)
             audio_mfcc = audio_mfcc(2:number_coefficients+1,:);
@@ -294,7 +306,8 @@
             %       frequency_resolution: frequency resolution in number of frequency channels per semitone
             %       minimum_frequency: minimum frequency in Hz
             %       maximum_frequency: maximum frequency in Hz
-            %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
+            %   Output:
+            %       cqt_kernel: CQT kernel (sparse) [number_frequencies,fft_length]
             %   
             %   Example: Compute and display the CQT kernel.
             %       % Set the parameters for the CQT kernel
@@ -369,9 +382,9 @@
             
         end
         
-        function audio_spectrogram = cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel)
-            % cqtspectrogram Constant-Q transform (CQT) spectrogram using a kernel.
-            %   audio_spectrogram = zaf.cqtspectrogram(audio_signal,sample_rate,time_resolution,cqt_kernel);
+        function cqt_spectrogram = cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel)
+            % cqtspectrogram Compute the constant-Q transform (CQT) spectrogram using a CQT kernel.
+            %   cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             %   
             %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
@@ -379,7 +392,7 @@
             %       time_resolution: time resolution in number of time frames per second
             %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
             %   Output:
-            %       audio_spectrogram: audio spectrogram in magnitude [number_frequencies,number_times]
+            %       cqt_spectrogram: CQT spectrogram [number_frequencies,number_times]
             %   
             %   Example: Compute and display the CQT spectrogram.
             %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
@@ -394,12 +407,12 @@
             % 
             %       % Compute the (magnitude) CQT spectrogram using the kernel
             %       time_resolution = 25;
-            %       audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+            %       cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             % 
             %       % Display the CQT spectrogram in dB, seconds, and Hz
             %       xtick_step = 1;
             %       figure
-            %       zaf.cqtspecshow(audio_spectrogram,time_resolution,frequency_resolution,minimum_frequency,xtick_step);
+            %       zaf.cqtspecshow(cqt_spectrogram,time_resolution,frequency_resolution,minimum_frequency,xtick_step);
             %       title('CQT spectrogram (dB)')
             
             % Derive the number of time samples per time frame
@@ -415,15 +428,15 @@
             audio_signal = [zeros(ceil((fft_length-step_length)/2),1); ...
                 audio_signal;zeros(floor((fft_length-step_length)/2),1)];
             
-            % Initialize the spectrogram
-            audio_spectrogram = zeros(number_frequencies,number_times);
+            % Initialize the CQT spectrogram
+            cqt_spectrogram = zeros(number_frequencies,number_times);
             
             % Loop over the time frames
             i = 0;
             for j = 1:number_times
                 
                 % Compute the magnitude CQT using the kernel
-                audio_spectrogram(:,j) = abs(cqt_kernel...
+                cqt_spectrogram(:,j) = abs(cqt_kernel...
                     *fft(audio_signal(i+1:i+fft_length)));
                 i = i+step_length;
                 
@@ -431,9 +444,9 @@
             
         end
         
-        function audio_chromagram = cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
-            % cqtchromagram Compute the constant-Q transform (CQT) chromagram using a kernel.
-            %   audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
+        function cqt_chromagram = cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
+            % cqtchromagram Compute the constant-Q transform (CQT) chromagram using a CQT kernel.
+            %   cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
             %   
             %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
@@ -442,7 +455,7 @@
             %       frequency_resolution: frequency resolution in number of frequency channels per semitones
             %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
             %   Output:
-            %       audio_chromagram: audio chromagram [number_chromas,number_times]
+            %       cqt_chromagram: CQT chromagram [number_chromas,number_times]
             %   
             %   Example: Compute and display the CQT chromagram.
             %       % Read the audio signal with its sampling frequency in Hz, and average it over its channels
@@ -457,31 +470,31 @@
             % 
             %       % Compute the CQT chromagram
             %       time_resolution = 25;
-            %       audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
+            %       cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
             % 
             %       % Display the CQT chromagram in seconds
             %       xtick_step = 1;
             %       figure
-            %       zaf.cqtchromshow(audio_chromagram,time_resolution,xtick_step)
+            %       zaf.cqtchromshow(cqt_chromagram,time_resolution,xtick_step)
             %       title('CQT chromagram')
             
             % Compute the CQT spectrogram
-            audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+            cqt_chromagram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             
             % Get the number of frequency channels and time frames
-            [number_frequencies,number_times] = size(audio_spectrogram);
+            [number_frequencies,number_times] = size(cqt_chromagram);
             
             % Derive the number of chroma channels
             number_chromas = 12*frequency_resolution;
             
-            % Initialize the chromagram
-            audio_chromagram = zeros(number_chromas,number_times);
+            % Initialize the CQT chromagram
+            cqt_chromagram = zeros(number_chromas,number_times);
             
             % Loop over the chroma bins
             for i = 1:number_chromas
                 
                 % Sum the energy of the frequency channels for every chroma
-                audio_chromagram(i,:) = sum(audio_spectrogram(i:number_chromas:number_frequencies,:),1);
+                cqt_chromagram(i,:) = sum(cqt_chromagram(i:number_chromas:number_frequencies,:),1);
                 
             end
             
