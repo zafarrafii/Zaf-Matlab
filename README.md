@@ -285,7 +285,7 @@ ylabel('CQT frequency')
 Compute the constant-Q transform (CQT) spectrogram using a CQT kernel.
 
 ```
-audio_spectrogram = zaf.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
+cqt_spectrogram = zaf.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
 
 Inputs:
     audio_signal: audio signal (number_samples,)
