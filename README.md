@@ -252,7 +252,7 @@ Inputs:
     minimum_frequency: minimum frequency in Hz
     maximum_frequency: maximum frequency in Hz
 Output:
-    cqt_kernel: CQT kernel (number_frequencies, fft_length)
+    cqt_kernel: CQT kernel (sparse) (number_frequencies, fft_length)
 ```
 
 #### Example: Compute and display the CQT kernel.
@@ -282,7 +282,7 @@ ylabel('CQT frequency')
 
 ### cqtspectrogram
 
-Compute the constant-Q transform (CQT) kernel.
+Compute the constant-Q transform (CQT) spectrogram using a CQT kernel.
 
 ```
 audio_spectrogram = zaf.cqtspectrogram(audio_signal, sample_rate, time_resolution, cqt_kernel)
@@ -293,7 +293,7 @@ Inputs:
     time_resolution: time resolution in number of time frames per second
     cqt_kernel: CQT kernel (number_frequencies, fft_length)
 Output:
-    audio_spectrogram: audio spectrogram in magnitude (number_frequencies, number_times)
+    cqt_spectrogram: CQT spectrogram in magnitude (number_frequencies, number_times)
 ```
 
 #### Example: Compute and display the CQT spectrogram.
@@ -311,12 +311,12 @@ cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequ
 
 % Compute the (magnitude) CQT spectrogram using the kernel
 time_resolution = 25;
-audio_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
 
 % Display the CQT spectrogram in dB, seconds, and Hz
 xtick_step = 1;
 figure
-zaf.cqtspecshow(audio_spectrogram,time_resolution,frequency_resolution,minimum_frequency,xtick_step);
+zaf.cqtspecshow(cqt_spectrogram,time_resolution,frequency_resolution,minimum_frequency,xtick_step);
 title('CQT spectrogram (dB)')
 ```
 
@@ -328,7 +328,7 @@ title('CQT spectrogram (dB)')
 Compute the constant-Q transform (CQT) chromagram using a CQT kernel.
 
 ```
-audio_chromagram = zaf.cqtchromagram(audio_signal, sampling_frequency, time_resolution, frequency_resolution, cqt_kernel)
+cqt_chromagram = zaf.cqtchromagram(audio_signal, sampling_frequency, time_resolution, frequency_resolution, cqt_kernel)
 
 Inputs:
     audio_signal: audio signal (number_samples,)
@@ -337,7 +337,7 @@ Inputs:
     frequency_resolution: frequency resolution in number of frequency channels per semitones
     cqt_kernel: CQT kernel (number_frequencies, fft_length)
 Output:
-    audio_chromagram: audio chromagram (number_chromas, number_times)
+    cqt_chromagram: CQT chromagram (number_chromas, number_times)
 ```
 
 #### Example: Compute and display the CQT chromagram.
@@ -353,14 +353,14 @@ minimum_frequency = 55;
 maximum_frequency = 3520;
 cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
 
-% Compute the CQT chromagram
+% Compute the CQT chromagram using the kernel
 time_resolution = 25;
-audio_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
+cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
 
 % Display the CQT chromagram in seconds
 xtick_step = 1;
 figure
-zaf.cqtchromshow(audio_chromagram,time_resolution,xtick_step)
+zaf.cqtchromshow(cqt_chromagram,time_resolution,xtick_step)
 title('CQT chromagram')
 ```
 
