@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/09/21
+    %   03/10/21
     
     methods (Static = true)
         
@@ -282,7 +282,7 @@
             %   Output:
             %       audio_mfcc: audio MFCCs [number_coefficients, number_times]
             %   
-            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-detla MFCCs.
+            %   Example: Compute and display the MFCCs, delta MFCCs, and delta-delta MFCCs.
             
             % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
             audio_stft = zaf.stft(audio_signal,window_function,step_length);
