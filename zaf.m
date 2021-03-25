@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/10/21
+    %   03/25/21
     
     methods (Static = true)
         
@@ -119,11 +119,11 @@
             %   
             %   Example: Estimate the center and sides signals from a stereo audio file.
             %       % Read the (stereo) audio signal with its sampling frequency in Hz
-            %       [audio_signal,sample_rate] = audioread('audio_file.wav');
+            %       [audio_signal,sampling_frequency] = audioread('audio_file.wav');
             % 
             %       % Set the parameters for the STFT
             %       window_duration = 0.04;
-            %       window_length = 2^nextpow2(window_duration*sample_rate);
+            %       window_length = 2^nextpow2(window_duration*sampling_frequency);
             %       window_function = hamming(window_length,'periodic');
             %       step_length = window_length/2;
             % 
@@ -153,8 +153,8 @@
             %       sides_signal = audio_signal-center_signal;
             % 
             %       % Write the center and sides signals
-            %       audiowrite('center_signal.wav',center_signal,sample_rate);
-            %       audiowrite('sides_signal.wav',sides_signal,sample_rate);
+            %       audiowrite('center_signal.wav',center_signal,sampling_frequency);
+            %       audiowrite('sides_signal.wav',sides_signal,sampling_frequency);
             % 
             %       % Display the original, center, and sides signals in seconds
             %       xtick_step = 1;
@@ -213,6 +213,20 @@
             %       mel_filterbank: mel filterbank (sparse) [number_mels,number_frequencies]
             %   
             %   Example: Compute and display the mel filterbank.
+            %       % Compute the mel filterbank using some parameters
+            %       sampling_frequency = 44100;
+            %       window_length = 2^nextpow2(0.04*sampling_frequency);
+            %       number_mels = 128;
+            %       mel_filterbank = zaf.melfilterbank(sampling_frequency,window_length,number_mels);
+            %       
+            %       % Display the mel filterbank
+            %       figure
+            %       imagesc(mel_filterbank)
+            %       axis xy
+            %       colormap(jet)
+            %       title('Mel filterbank')
+            %       xlabel('Frequency index')
+            %       ylabel('Mel index')
             
             % Compute the minimum and maximum mels
             mininum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
