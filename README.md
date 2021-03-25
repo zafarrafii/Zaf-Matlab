@@ -110,11 +110,11 @@ Output:
 
 ```
 % Read the (stereo) audio signal with its sampling frequency in Hz
-[audio_signal,sample_rate] = audioread('audio_file.wav');
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
 
 % Set the parameters for the STFT
 window_duration = 0.04;
-window_length = 2^nextpow2(window_duration*sample_rate);
+window_length = 2^nextpow2(window_duration*sampling_frequency);
 window_function = hamming(window_length,'periodic');
 step_length = window_length/2;
 
@@ -144,8 +144,8 @@ center_signal = center_signal(1:length(audio_signal),:);
 sides_signal = audio_signal-center_signal;
 
 % Write the center and sides signals
-audiowrite('center_signal.wav',center_signal,sample_rate);
-audiowrite('sides_signal.wav',sides_signal,sample_rate);
+audiowrite('center_signal.wav',center_signal,sampling_frequency);
+audiowrite('sides_signal.wav',sides_signal,sampling_frequency);
 
 % Display the original, center, and sides signals in seconds
 xtick_step = 1;
