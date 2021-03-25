@@ -183,7 +183,20 @@ Output:
 #### Example: Compute and display the mel filterbank.
 
 ```
+% Compute the mel filterbank using some parameters
+sampling_frequency = 44100;
+window_length = 2^nextpow2(0.04*sampling_frequency);
+number_mels = 128;
+mel_filterbank = zaf.melfilterbank(sampling_frequency,window_length,number_mels);
 
+% Display the mel filterbank
+figure
+imagesc(mel_filterbank)
+axis xy
+colormap(jet)
+title('Mel filterbank')
+xlabel('Frequency index')
+ylabel('Mel index')
 ```
 
 <img src="images/melfilterbank.png" width="1000">
