@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/25/21
+    %   03/26/21
     
     methods (Static = true)
         
@@ -942,6 +942,50 @@
             xticks(xtick_locations)
             xticklabels(xtick_labels)
             xlabel('Time (s)')
+            
+        end
+        
+        function melspecshow(mel_spectrogram,number_samples,sampling_frequency,window_length,xtick_step,ytick_step)
+            % melspecshow Display a mel spectrogram in dB, seconds, and Hz.
+            %   zaf.melspecshow(mel_spectrogram,number_samples,sampling_frequency,window_length,xtick_step,ytick_step)
+            %   
+            %   Inputs:
+            %       mel_spectrogram: mel spectrogram [number_mels, number_times]
+            %       sampling_frequency: sampling frequency from the original signal in Hz
+            %       window_length: window length for the Fourier analysis in number of samples
+            %       xtick_step: step for the x-axis ticks in seconds (default: 1 second)
+            %       ytick_step: step for the y-axis ticks in Hz (default: 1000 Hz)
+            
+            % Set the default values for xtick_step
+            if nargin <= 5
+                xtick_step = 1;
+                ytick_step = 1000;
+            end
+            
+            % Get the number of mels and time frames
+            [number_mels,number_times] = size(mel_spectrogram);
+            
+            % Derive the octave resolution
+            octave_resolution = 12*frequency_resolution;
+            
+            % Prepare the tick locations and labels for the x-axis
+            xtick_locations = xtick_step*time_resolution:xtick_step*time_resolution:number_times;
+            xtick_labels = xtick_step:xtick_step:number_times/time_resolution;
+            
+            % Prepare the tick locations and labels for the y-axis
+            ytick_locations = 0:octave_resolution:number_frequencies;
+            ytick_labels = minimum_frequency*2.^(ytick_locations/octave_resolution);
+            
+            % Display the mel spectrogram in dB, seconds, and Hz
+            imagesc(db(mel_spectrogram))
+            axis xy
+            colormap(jet)
+            xticks(xtick_locations)
+            xticklabels(xtick_labels)
+            yticks(ytick_locations)
+            yticklabels(ytick_labels)
+            xlabel('Time (s)')
+            ylabel('Frequency (Hz)')
             
         end
         
