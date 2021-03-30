@@ -249,7 +249,7 @@ title('Mel spectrogram (dB)')
 
 ### mfcc
 
-Compute the mel frequency cepstrum coefficients (MFFCs) using a mel filterbank.
+Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
 
 ```
 audio_mfcc = zaf.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
