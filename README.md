@@ -221,7 +221,27 @@ Output:
 #### Example: Compute and display the mel spectrogram.
 
 ```
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
+audio_signal = mean(audio_signal,2);
 
+% Set the parameters for the Fourier analysis
+window_length = 2^nextpow2(0.04*sampling_frequency);
+window_function = hamming(window_length,'periodic');
+step_length = window_length/2;
+
+% Compute the mel filterbank
+number_mels = 128;
+mel_filterbank = zaf.melfilterbank(sampling_frequency,window_length,number_mels);
+
+% Compute the mel spectrogram using the filterbank
+mel_spectrogram = zaf.melspectrogram(audio_signal,window_function,step_length,mel_filterbank);
+
+% Display the mel spectrogram in in dB, seconds, and Hz
+xtick_step = 1;
+figure
+zaf.melspecshow(mel_spectrogram, length(audio_signal), sampling_frequency, window_length, xtick_step)
+title('Mel spectrogram (dB)')
 ```
 
 <img src="images/melspectrogram.png" width="1000">
