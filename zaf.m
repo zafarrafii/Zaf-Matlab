@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/30/21
+    %   03/31/21
     
     methods (Static = true)
         
@@ -365,13 +365,13 @@
             
         end
         
-        function cqt_kernel = cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency)
+        function cqt_kernel = cqtkernel(sampling_frequency,octave_resolution,minimum_frequency,maximum_frequency)
             % cqtkernel Compute the constant-Q transform (CQT) kernel.
-            %   cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency)
+            %   cqt_kernel = zaf.cqtkernel(sampling_frequency,octave_resolution,minimum_frequency,maximum_frequency)
             %   
             %   Inputs:
             %       sampling_frequency: sample frequency in Hz
-            %       frequency_resolution: frequency resolution in number of frequency channels per semitone
+            %       octave_resolution: number of frequency channels per octave
             %       minimum_frequency: minimum frequency in Hz
             %       maximum_frequency: maximum frequency in Hz
             %   Output:
@@ -380,12 +380,12 @@
             %   Example: Compute and display the CQT kernel.
             %       % Set the parameters for the CQT kernel
             %       sampling_frequency = 44100;
-            %       frequency_resolution = 2;
+            %       octave_resolution = 24;
             %       minimum_frequency = 55;
             %       maximum_frequency = sampling_frequency/2;
             % 
             %       % Compute the CQT kernel
-            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,octave_resolution,minimum_frequency,maximum_frequency);
             % 
             %       % Display the magnitude CQT kernel
             %       figure
@@ -395,9 +395,6 @@
             %       title('Magnitude CQT kernel')
             %       xlabel('FFT length')
             %       ylabel('CQT frequency')
-
-            % Derive the umber of frequency channels per octave
-            octave_resolution = 12*frequency_resolution;
             
             % Compute the constant ratio of frequency to resolution (= fk/(fk+1-fk))
             quality_factor = 1/(2^(1/octave_resolution)-1);
@@ -512,15 +509,15 @@
             
         end
         
-        function cqt_chromagram = cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
+        function cqt_chromagram = cqtchromagram(audio_signal,sampling_frequency,time_resolution,octave_resolution,cqt_kernel)
             % cqtchromagram Compute the constant-Q transform (CQT) chromagram using a CQT kernel.
-            %   cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel)
+            %   cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,octave_resolution,cqt_kernel)
             %   
             %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
             %       sampling_frequency: sample frequency in Hz
-            %       time_resolution: time resolution in number of time frames per second
-            %       frequency_resolution: frequency resolution in number of frequency channels per semitones
+            %       time_resolution: number of time frames per second
+            %       octave_resolution: number of frequency channels per octave
             %       cqt_kernel: CQT kernel [number_frequencies,fft_length]
             %   Output:
             %       cqt_chromagram: CQT chromagram [number_chromas,number_times]
@@ -531,14 +528,14 @@
             %       audio_signal = mean(audio_signal,2);
             % 
             %       % Compute the CQT kernel using some parameters
-            %       frequency_resolution = 2;
+            %       octave_resolution = 24;
             %       minimum_frequency = 55;
             %       maximum_frequency = 3520;
-            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,frequency_resolution,minimum_frequency,maximum_frequency);
+            %       cqt_kernel = zaf.cqtkernel(sampling_frequency,octave_resolution,minimum_frequency,maximum_frequency);
             % 
             %       % Compute the CQT chromagram
             %       time_resolution = 25;
-            %       cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,frequency_resolution,cqt_kernel);
+            %       cqt_chromagram = zaf.cqtchromagram(audio_signal,sampling_frequency,time_resolution,octave_resolution,cqt_kernel);
             % 
             %       % Display the CQT chromagram in seconds
             %       xtick_step = 1;
@@ -547,22 +544,19 @@
             %       title('CQT chromagram')
             
             % Compute the CQT spectrogram
-            cqt_chromagram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+            cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
             
             % Get the number of frequency channels and time frames
-            [number_frequencies,number_times] = size(cqt_chromagram);
-            
-            % Derive the number of chroma channels
-            number_chromas = 12*frequency_resolution;
+            [number_frequencies,number_times] = size(cqt_spectrogram);
             
             % Initialize the CQT chromagram
-            cqt_chromagram = zeros(number_chromas,number_times);
+            cqt_chromagram = zeros(octave_resolution,number_times);
             
-            % Loop over the chroma bins
-            for i = 1:number_chromas
+            % Loop over the chroma channels
+            for i = 1:octave_resolution
                 
                 % Sum the energy of the frequency channels for every chroma
-                cqt_chromagram(i,:) = sum(cqt_chromagram(i:number_chromas:number_frequencies,:),1);
+                cqt_chromagram(i,:) = sum(cqt_spectrogram(i:octave_resolution:number_frequencies,:),1);
                 
             end
             
