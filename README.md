@@ -249,15 +249,16 @@ title('Mel spectrogram (dB)')
 
 ### mfcc
 
-Compute the mel frequency cepstrum coefficients (MFFCs) using a mel filterbank.
+Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
 
 ```
-audio_mfcc = zaf.mfcc(audio_signal, sample_rate, number_filters, number_coefficients)
+audio_mfcc = zaf.mfcc(audio_signal, window_function, step_length, mel_filterbank, number_coefficients)
 
 Inputs:
     audio_signal: audio signal (number_samples,)
-    sampling_frequency: sampling frequency in Hz
-    number_filters: number of filters
+    window_function: window function (window_length,)
+    step_length: step length in samples
+    mel_filterbank: mel filterbank (number_mels, number_frequencies)
     number_coefficients: number of coefficients (without the 0th coefficient)
 Output:
     audio_mfcc: audio MFCCs (number_times, number_coefficients)
@@ -266,7 +267,39 @@ Output:
 #### Example: Compute and display the MFCCs, delta MFCCs, and delta-delta MFCCs.
 
 ```
+% Read the audio signal with its sampling frequency in Hz, and average it over its channels
+[audio_signal,sampling_frequency] = audioread('audio_file.wav');
+audio_signal = mean(audio_signal,2);
 
+% Set the parameters for the Fourier analysis
+window_length = 2^nextpow2(0.04*sampling_frequency);
+window_function = hamming(window_length,'periodic');
+step_length = window_length/2;
+
+% Compute the mel filterbank
+number_mels = 40;
+mel_filterbank = zaf.melfilterbank(sampling_frequency,window_length,number_mels);
+
+% Compute the MFCCs using the filterbank
+number_coefficients = 20;
+audio_mfcc = zaf.mfcc(audio_signal,window_function,step_length,mel_filterbank,number_coefficients);
+
+% Compute the delta and delta-delta MFCCs
+audio_dmfcc = diff(audio_mfcc,1,2);
+audio_ddmfcc = diff(audio_dmfcc,1,2);
+
+% Compute the time resolution for the MFCCs in number of time frames per second (~ sampling frequency for the MFCCs)
+time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
+
+% Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
+xtick_step = 1;
+figure
+subplot(3,1,1)
+zaf.mfccshow(audio_mfcc,length(audio_signal),sampling_frequency,xtick_step), title('MFCCs')
+subplot(3,1,2)
+zaf.mfccshow(audio_dmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta MFCCs')
+subplot(3,1,3)
+zaf.mfccshow(audio_ddmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta-delta MFCCs')
 ```
 
 <img src="images/mfcc.png" width="1000">
