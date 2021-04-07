@@ -6,7 +6,7 @@
 	%   istft - Compute the inverse STFT.
     %   melfilterbank - Compute the mel filterbank.
     %   melspectrogram - Compute the mel spectrogram using a mel filterbank.
-    %   mfcc - Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
+    %   mfcc - Compute the mel-frequency cepstral coefficients (MFCCs) using a mel filterbank.
 	%   cqtkernel - Compute the constant-Q transform (CQT) kernel.
 	%   cqtspectrogram - Compute the CQT spectrogram using a CQT kernel.
 	%   cqtchromagram - Compute the CQT chromagram using a CQT kernel.
@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   03/31/21
+    %   04/06/21
     
     methods (Static = true)
         
@@ -305,7 +305,7 @@
         end
         
         function audio_mfcc = mfcc(audio_signal,window_function, step_length, mel_filterbank,number_coefficients)
-            % mfcc Compute the mel frequency cepstrum coefficients (MFCCs) using a mel filterbank.
+            % mfcc Compute the mel-frequency cepstral coefficients (MFCCs) using a mel filterbank.
             %   audio_mfcc = zaf.mfcc(audio_signal,sampling_frequency,number_filters,number_coefficients)
             %   
             %   Inputs:
