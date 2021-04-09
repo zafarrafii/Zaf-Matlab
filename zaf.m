@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   04/06/21
+    %   04/09/21
     
     methods (Static = true)
         
@@ -229,14 +229,14 @@
             %       ylabel('Mel index')
             
             % Compute the minimum and maximum mels
-            mininum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
+            minimum_melfrequency = 2595*log10(1+(sampling_frequency/window_length)/700);
             maximum_melfrequency = 2595*log10(1+(sampling_frequency/2)/700);
             
             % Derive the width of the half-overlapping filters in the mel scale (constant)
-            filter_width = 2*(maximum_melfrequency-mininum_melfrequency)/(number_filters+1);
+            filter_width = 2*(maximum_melfrequency-minimum_melfrequency)/(number_filters+1);
             
             % Compute the start and end indices of the overlapping filters in the mel scale (linearly spaced)
-            filter_indices = mininum_melfrequency:filter_width/2:maximum_melfrequency;
+            filter_indices = minimum_melfrequency:filter_width/2:maximum_melfrequency;
             
             % Derive the indices of the filters in the linear frequency scale (log spaced)
             filter_indices = round(700*(10.^(filter_indices/2595)-1)*window_length/sampling_frequency);
