@@ -293,13 +293,14 @@ time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
 
 % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
 xtick_step = 1;
+number_samples = length(audio_signal);
 figure
 subplot(3,1,1)
-zaf.mfccshow(audio_mfcc,length(audio_signal),sampling_frequency,xtick_step), title('MFCCs')
+zaf.mfccshow(audio_mfcc,number_samples,sampling_frequency,xtick_step), title('MFCCs')
 subplot(3,1,2)
-zaf.mfccshow(audio_dmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta MFCCs')
+zaf.mfccshow(audio_dmfcc,number_samples,sampling_frequency,xtick_step), title('Delta MFCCs')
 subplot(3,1,3)
-zaf.mfccshow(audio_ddmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta-delta MFCCs')
+zaf.mfccshow(audio_ddmfcc,number_samples,sampling_frequency,xtick_step), title('Delta-delta MFCCs')
 ```
 
 <img src="images/mfcc.png" width="1000">
