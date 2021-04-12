@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   04/09/21
+    %   04/12/21
     
     methods (Static = true)
         
@@ -344,13 +344,14 @@
             % 
             %       % Display the MFCCs, delta MFCCs, and delta-delta MFCCs in seconds
             %       xtick_step = 1;
+			%		number_samples = length(audio_signal);
             %       figure
             %       subplot(3,1,1)
-            %       zaf.mfccshow(audio_mfcc,length(audio_signal),sampling_frequency,xtick_step), title('MFCCs')
+            %       zaf.mfccshow(audio_mfcc,number_samples,sampling_frequency,xtick_step), title('MFCCs')
             %       subplot(3,1,2)
-            %       zaf.mfccshow(audio_dmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta MFCCs')
+            %       zaf.mfccshow(audio_dmfcc,number_samples,sampling_frequency,xtick_step), title('Delta MFCCs')
             %       subplot(3,1,3)
-            %       zaf.mfccshow(audio_ddmfcc,length(audio_signal),sampling_frequency,xtick_step), title('Delta-delta MFCCs')
+            %       zaf.mfccshow(audio_ddmfcc,number_samples,sampling_frequency,xtick_step), title('Delta-delta MFCCs')
             
             % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
             audio_stft = zaf.stft(audio_signal,window_function,step_length);
