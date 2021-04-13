@@ -81,6 +81,7 @@ audio_stft = zaf.stft(audio_signal,window_function,step_length);
 audio_spectrogram = abs(audio_stft(2:window_length/2+1,:));
 
 % Display the spectrogram in dB, seconds, and Hz
+number_samples = length(audio_signal);
 xtick_step = 1;
 ytick_step = 1000;
 figure
@@ -237,9 +238,10 @@ mel_filterbank = zaf.melfilterbank(sampling_frequency,window_length,number_mels)
 mel_spectrogram = zaf.melspectrogram(audio_signal,window_function,step_length,mel_filterbank);
 
 % Display the mel spectrogram in in dB, seconds, and Hz
+number_samples = length(audio_signal);
 xtick_step = 1;
 figure
-zaf.melspecshow(mel_spectrogram, length(audio_signal), sampling_frequency, window_length, xtick_step)
+zaf.melspecshow(mel_spectrogram, number_samples, sampling_frequency, window_length, xtick_step)
 title('Mel spectrogram (dB)')
 ```
 
@@ -339,8 +341,8 @@ imagesc(abs(cqt_kernel))
 axis xy
 colormap(jet)
 title('Magnitude CQT kernel')
-xlabel('FFT length')
-ylabel('CQT frequency')
+xlabel('FFT index')
+ylabel('CQT index')
 ```
 
 <img src="images/cqtkernel.png" width="1000">
@@ -375,7 +377,7 @@ minimum_frequency = 55;
 maximum_frequency = 3520;
 cqt_kernel = zaf.cqtkernel(sampling_frequency,octave_resolution,minimum_frequency,maximum_frequency);
 
-% Compute the (magnitude) CQT spectrogram using the kernel
+% Compute the CQT spectrogram using the kernel
 time_resolution = 25;
 cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
 
@@ -577,10 +579,11 @@ window_function = sqrt([window_function2; window_function2(window_length/2:-1:1)
 audio_mdct = zaf.mdct(audio_signal,window_function);
 
 % Display the MDCT in dB, seconds, and Hz
+number_samples = length(audio_signal);
 xtick_step = 1;
 ytick_step = 1000;
 figure
-zaf.specshow(abs(audio_mdct),length(audio_signal),sampling_frequency,xtick_step,ytick_step)
+zaf.specshow(abs(audio_mdct),number_samples,sampling_frequency,xtick_step,ytick_step)
 title('MDCT (dB)')
 ```
 
