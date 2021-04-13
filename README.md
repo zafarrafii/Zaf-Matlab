@@ -113,8 +113,7 @@ Output:
 [audio_signal,sampling_frequency] = audioread('audio_file.wav');
 
 % Set the parameters for the STFT
-window_duration = 0.04;
-window_length = 2^nextpow2(window_duration*sampling_frequency);
+window_length = 2^nextpow2(0.04*sampling_frequency);
 window_function = hamming(window_length,'periodic');
 step_length = window_length/2;
 
