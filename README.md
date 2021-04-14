@@ -150,15 +150,9 @@ audiowrite('sides_signal.wav',sides_signal,sampling_frequency);
 % Display the original, center, and sides signals in seconds
 xtick_step = 1;
 figure
-subplot(3,1,1)
-zaf.sigplot(audio_signal, sampling_frequency, xtick_step)
-ylim([-1,1]), title("Original signal")
-subplot(3,1,2)
-zaf.sigplot(center_signal, sampling_frequency, xtick_step)
-ylim([-1,1]), title("Center signal")
-subplot(3,1,3)
-zaf.sigplot(sides_signal, sampling_frequency, xtick_step)
-ylim([-1,1]), title("Sides signal")
+subplot(3,1,1), zaf.sigplot(audio_signal, sampling_frequency, xtick_step), ylim([-1,1]), title("Original signal")
+subplot(3,1,2), zaf.sigplot(center_signal, sampling_frequency, xtick_step), ylim([-1,1]), title("Center signal")
+subplot(3,1,3), zaf.sigplot(sides_signal, sampling_frequency, xtick_step), ylim([-1,1]), title("Sides signal")
 ```
 
 <img src="images/istft.png" width="1000">
@@ -296,12 +290,9 @@ time_resolution = sampling_frequency*size(audio_mfcc,2)/length(audio_signal);
 xtick_step = 1;
 number_samples = length(audio_signal);
 figure
-subplot(3,1,1)
-zaf.mfccshow(audio_mfcc,number_samples,sampling_frequency,xtick_step), title('MFCCs')
-subplot(3,1,2)
-zaf.mfccshow(audio_dmfcc,number_samples,sampling_frequency,xtick_step), title('Delta MFCCs')
-subplot(3,1,3)
-zaf.mfccshow(audio_ddmfcc,number_samples,sampling_frequency,xtick_step), title('Delta-delta MFCCs')
+subplot(3,1,1), zaf.mfccshow(audio_mfcc,number_samples,sampling_frequency,xtick_step), title('MFCCs')
+subplot(3,1,2), zaf.mfccshow(audio_dmfcc,number_samples,sampling_frequency,xtick_step), title('Delta MFCCs')
+subplot(3,1,3), zaf.mfccshow(audio_ddmfcc,number_samples,sampling_frequency,xtick_step), title('Delta-delta MFCCs')
 ```
 
 <img src="images/mfcc.png" width="1000">
@@ -371,7 +362,7 @@ Output:
 [audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% Compute the CQT kernel using some parameters
+% Compute the CQT kernel
 octave_resolution = 24;
 minimum_frequency = 55;
 maximum_frequency = 3520;
@@ -415,7 +406,7 @@ Output:
 [audio_signal,sampling_frequency] = audioread('audio_file.wav');
 audio_signal = mean(audio_signal,2);
 
-% Compute the CQT kernel using some parameters
+% Compute the CQT kernel
 octave_resolution = 24;
 minimum_frequency = 55;
 maximum_frequency = 3520;
@@ -627,15 +618,9 @@ y_max = max(abs(audio_differences));
 % Display the original and resynthesized signals, and their differences in seconds
 xtick_step = 1;
 figure
-subplot(3,1,1)
-zaf.sigplot(audio_signal,sampling_frequency,xtick_step)
-ylim([-1,1]), title('Original signal')
-subplot(3,1,2)
-zaf.sigplot(audio_signal2,sampling_frequency,xtick_step)
-ylim([-1,1]), title('Resyntesized signal')
-subplot(3,1,3)
-zaf.sigplot(audio_differences,sampling_frequency,xtick_step)
-ylim([-y_max,y_max]), title('Original - resyntesized signal')
+subplot(3,1,1), zaf.sigplot(audio_signal,sampling_frequency,xtick_step), ylim([-1,1]), title('Original signal')
+subplot(3,1,2), zaf.sigplot(audio_signal2,sampling_frequency,xtick_step), ylim([-1,1]), title('Resyntesized signal')
+subplot(3,1,3), zaf.sigplot(audio_differences,sampling_frequency,xtick_step), ylim([-y_max,y_max]), title('Original - resyntesized signal')
 ```
 
 <img src="images/imdct.png" width="1000">
