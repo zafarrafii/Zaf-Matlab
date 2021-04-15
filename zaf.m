@@ -197,7 +197,7 @@
         
         function mel_filterbank = melfilterbank(sampling_frequency, window_length, number_filters)
             % melfilterbank Compute the mel filterbank.
-            %   audio_mfcc = zaf.melfilterbank(audio_signal,sampling_frequency,number_filters,number_coefficients)
+            %   melfilterbank = zaf.melfilterbank(audio_signal,sampling_frequency,number_filters,number_coefficients)
             %   
             %   Inputs:
             %       sampling_frequency: sampling frequency in Hz
@@ -442,7 +442,7 @@
         
         function cqt_spectrogram = cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel)
             % cqtspectrogram Compute the constant-Q transform (CQT) spectrogram using a CQT kernel.
-            %   cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel);
+            %   cqt_spectrogram = zaf.cqtspectrogram(audio_signal,sampling_frequency,time_resolution,cqt_kernel)
             %   
             %   Inputs:
             %       audio_signal: audio signal [number_samples,1]
