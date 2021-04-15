@@ -201,7 +201,7 @@ ylabel('Mel index')
 Compute the mel spectrogram using a mel filterbank.
 
 ```
-mel_filterbank = zaf.melspectrogram(audio_signal, window_function, step_length, mel_filterbank)
+mel_spectrogram = zaf.melspectrogram(audio_signal, window_function, step_length, mel_filterbank)
 
 Inputs:
     audio_signal: audio signal (number_samples,)
