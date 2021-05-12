@@ -29,7 +29,7 @@
     %   http://zafarrafii.com
     %   https://github.com/zafarrafii
     %   https://www.linkedin.com/in/zafarrafii/
-    %   04/14/21
+    %   05/11/21
     
     methods (Static = true)
         
@@ -345,9 +345,9 @@
             %       subplot(3,1,2), zaf.mfccshow(audio_dmfcc,number_samples,sampling_frequency,xtick_step), title('Delta MFCCs')
             %       subplot(3,1,3), zaf.mfccshow(audio_ddmfcc,number_samples,sampling_frequency,xtick_step), title('Delta-delta MFCCs')
             
-            % Compute the magnitude spectrogram (without the DC component and the mirrored frequencies)
+            % Compute the power spectrogram (without the DC component and the mirrored frequencies)
             audio_stft = zaf.stft(audio_signal,window_function,step_length);
-            audio_spectrogram = abs(audio_stft(2:length(window_function)/2+1,:));
+            audio_spectrogram = abs(audio_stft(2:length(window_function)/2+1,:)).^2;
             
             %  Compute the discrete cosine transform of the log magnitude spectrogram 
             % mapped onto the mel scale using the filter bank
